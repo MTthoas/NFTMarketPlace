@@ -21,12 +21,23 @@
 }
 
 
+.font-RoseQuay {
+  font-family: "Cinzel-VariableFont_wght";
+}
+
+[data-theme="dark"] .font-RoseQuay {
+  color: white;
+}
+
+
 
 @media only screen and (min-width : 899px) {
 
   .Search{
     width: 350px;
   }
+
+  
 }
 
 @media only screen and (min-width : 1468px) {
@@ -35,6 +46,7 @@
     width: 600px;
     margin-right: 200px;
   }
+
 }
 
 @media only screen and (min-width : 1900px) {

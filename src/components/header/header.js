@@ -73,16 +73,16 @@ function Header() {
                   <li><a href="#" className="btn-ghost mt-2">Item 1</a></li>
                   <li><a href="#" className="btn-ghost mt-2">Item 2</a></li>
                   <li tabIndex={0}>
-                    <a className="btn-ghost mt-2">
+                    <a href="#" className="btn-ghost mt-2">
                       Parent
                       <svg className="fill-current" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"/></svg>
                     </a>
                     <ul className="p-2">
-                      <li><a className="btn-ghost ">Submenu 1</a></li>
+                      <li><a className="btn-ghost">Submenu 1</a></li>
                       <li><a className="btn-ghost">Submenu 2</a></li>
                     </ul>
                   </li>
-                  <li><a className="btn-ghost mt-2">Item 3</a></li>
+                  <li><a href="#" className="btn-ghost mt-2">Item 3</a></li>
                 </ul>
             </div>
 
@@ -103,6 +103,7 @@ function Header() {
             
           </div>
         </div>
+        
         <div className="drawer-side">
         <label htmlFor="my-drawer-3" className="drawer-overlay"></label> 
         <ul className="menu p-4 w-60 bg-base-100">
