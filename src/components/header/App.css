@@ -1,3 +1,5 @@
+
+
 [data-theme="dark"] a{
   color: #fff;
 }
@@ -16,10 +18,6 @@
 
 }
 
-[data-theme="dark"] .Hamburger{
-  color: white;
-}
-
 
 .font-RoseQuay {
   font-family: "Cinzel-VariableFont_wght";
@@ -28,7 +26,6 @@
 [data-theme="dark"] .font-RoseQuay {
   color: white;
 }
-
 
 
 @media only screen and (min-width : 899px) {

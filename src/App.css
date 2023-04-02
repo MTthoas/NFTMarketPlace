@@ -1,0 +1,7 @@
+* {
+    /* text-align: center; */
+    /* user-select: none; */
+    
+    @apply transition-colors duration-700;
+  }
+
