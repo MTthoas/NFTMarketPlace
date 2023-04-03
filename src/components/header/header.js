@@ -28,7 +28,7 @@ function Header() {
 
   return (
 
-    <div className="navbar bg-base-100 pr-2 lg:px-7">
+    <div className="navbar bg-transparant pr-2 lg:px-7 z-20">
 
             <div className="navbar-start">
                 <div className="dropdown pt-5 Hamburger">
@@ -39,7 +39,10 @@ function Header() {
                 </label>
                   
                 </div>
-                <a className=" text-4xl font-bold text-neutral dark:text-white ml-3"> artx </a>
+                <a class="text-3xl font-bold text-neutral dark:text-white ml-3 mt-1">
+                  <span class="text-white">ART</span>
+                  <span class="text-secondary">X</span>
+                </a>
 
                 
             </div>
@@ -67,10 +70,12 @@ function Header() {
             <div className="navbar-end mr-3">
 {/* 
                 <a className="px-3">Login</a> */}
-                <btn className="btn  mb- md:mx-4 SignUp text-white mt-2"> Connect to wallet </btn>
+                <button class="bg-transparent mt-3 mr-3 hover:bg-secondary text-secondary font-semibold hover:text-white py-2 px-4 border border-secondary hover:border-transparent rounded-full">
+                Connect to wallet 
+                </button>
 
                     <DarkModeSwitch
-                      className='ml-3 mr-1 mt-1'
+                      className='ml-3 mr-1 mt-3'
                       checked={darkSide}
                       onChange={toggleDarkMode}
                       size={20}

@@ -28,10 +28,10 @@ module.exports = {
       },
       dark: {
         "primary": "#8851d6",   
-        "secondary": "#dcf7a3",          
+        "secondary": "#ff9800",          
         "accent": "#5047ef",          
         "neutral": "#f3f4f6",            
-        "base-100": "#181818",       
+        "base-100": "#000000",       
         "info": "#84D0F6",           
         "success": "#24A388",            
         "warning": "#F4D366",            

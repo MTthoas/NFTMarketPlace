@@ -5,3 +5,31 @@
     @apply transition-colors duration-700;
   }
 
+  .circle1{
+    position: absolute;
+    width: 1018.15px;
+    height: 1013.82px;
+    left: 971.49px;
+    top: -481px;
+    
+    background: radial-gradient(50% 50% at 50% 50%, rgba(74, 74, 123, 0.6) 0%, rgba(74, 74, 123, 0) 100%);
+    }
+  
+  .circle2{
+
+    position: absolute;
+    width: 1267px;
+    height: 1200px;
+    left: -706px;
+    top: 150px;
+    
+    background: radial-gradient(50% 50% at 50% 50%, rgba(74, 74, 123, 0.6) 0%, rgba(74, 74, 123, 0) 100%);
+      }
+      
+    .circle-container {
+  position: fixed;
+  top: 50px; /* adjust this value as needed */
+  left: 50%; /* adjust this value as needed */
+  transform: translateX(-50%);
+  z-index: -1;
+}
