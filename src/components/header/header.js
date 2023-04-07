@@ -31,7 +31,7 @@ function Header() {
     <div className="navbar bg-transparant pr-2 lg:px-7 z-20">
 
             <div className="navbar-start">
-                <div className="dropdown pt-5 Hamburger">
+                <div className="dropdown pt-1 Hamburger">
                 <label tabIndex={0} className="btn btn-ghost lg:hidden" htmlFor="my-drawer-3">
                   <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${theme === 'dark' ? 'dark:text-white' : 'text-current'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />
