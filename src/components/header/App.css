@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap');
+
+
+[data-theme="dark"] a{
+  color: #fff;
+}
+
+[data-theme="light"] .SignUp{
+  /* /* color: #0000; */
+  background-color: #18191A;
+  text-transform: none;
+}
+
+[data-theme="dark"] .SignUp{
+  background-color: white;
+  color: black;
+   text-transform: none;
+  
+
+}
+
+.logo{
+  font-family: 'Poppins', sans-serif;
+}
+
+
+.font-RoseQuay {
+  font-family: "Cinzel-VariableFont_wght";
+}
+
+[data-theme="dark"] .font-RoseQuay {
+  color: white;
+}
+
+
+@media only screen and (min-width : 899px) {
+
+  .Search{
+    width: 350px;
+  }
+
+  
+}
+
+@media only screen and (min-width : 1468px) {
+
+  .Search{
+    width: 600px;
+    margin-right: 200px;
+  }
+
+}
+
+@media only screen and (min-width : 1900px) {
+
+  .Search{
+    width: 850px;
+    margin-right: 1000px;
+  }
+
+}
+
+
+
