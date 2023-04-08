@@ -54,7 +54,6 @@ function App() {
           <div className="circle1"> </div> */}
 
           {/* Main menu */}
-
           <div className="h-screen w-full">
 
             <div className="relative isolate px-6 pt-14 lg:px-8">
@@ -111,46 +110,30 @@ function App() {
               <NftCardGrid />
             </div>
 
+
+
           </div>
-
-
-
-
         </main>
 
 
-
-
         {/* Drawer */}
-
         <div className="drawer-side">
           <label htmlFor="my-drawer-3" className="drawer-overlay"></label>
           <ul className="menu p-4 w-60 bg-base-100">
-
             <div class="mt-5">
               <a class="text-3xl font-bold text-neutral dark:text-white ml-3 mt-1">
                 <span class="text-white">ART</span>
                 <span class="text-secondary">X</span>
               </a>
-
               <div className="form-control mt-5">
                 <input type="text" placeholder="Search" className="input input-bordered w-48" />
               </div>
-
             </div>
-
-
           </ul>
         </div>
 
 
-
       </div>
-
-
-
-
-
     </div>
   );
 }
