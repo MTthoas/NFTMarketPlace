@@ -231,11 +231,11 @@ const NftCardGrid = () => {
   }, []);
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto">
       <div className="flex mb-6">
         <span className="orange-bar rounded mr-2 mt-1"></span>
         <div className='flex justify-between w-full'>
-          <h1 className="text-2xl font-semibold text-white">Explore New NFTs</h1>
+          <h2 className="text-2xl font-bold text-white">Explore New NFTs</h2>
           <button class="bg-secondary font-semibold text-black py-1 px-3 border border-secondary rounded-full">View all</button>
         </div>
       </div>
