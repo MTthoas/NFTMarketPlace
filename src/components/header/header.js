@@ -4,6 +4,9 @@ import 'react-modern-drawer/dist/index.css'
 import useDarkSide from "hook/useDarkSide.jsx" ;
 import { DarkModeSwitch } from 'react-toggle-dark-mode'
 import './App.css'
+import Wallet from './Wallet'
+
+
 
 function Header() {
 
@@ -11,6 +14,7 @@ function Header() {
   const [darkSide, setDarkSide] = useState( theme === "light" ? false : true);
   const [drawerOpen, setDrawerOpen] = useState(true);
 
+ 
   
   const toggleDarkMode = (checked) => {
       setTheme(theme)
@@ -25,6 +29,7 @@ function Header() {
     setDrawerOpen(false);
   };
 
+  
 
   return (
 
@@ -39,12 +44,11 @@ function Header() {
                 </label>
                   
                 </div>
-                <a class="text-3xl font-bold text-neutral dark:text-white ml-3 mt-1">
-                  <span class="text-white">ART</span>
-                  <span class="text-secondary">X</span>
+                <a className="text-3xl font-bold text-neutral dark:text-white ml-3 mt-1">
+                  <span className="text-white">ART</span>
+                  <span className="text-secondary">X</span>
                 </a>
 
-                
             </div>
 
             <div className="navbar-center hidden lg:flex">
@@ -68,11 +72,8 @@ function Header() {
 
 
             <div className="navbar-end mr-3">
-{/* 
-                <a className="px-3">Login</a> */}
-                <button class="bg-transparent mt-3 mr-3 hover:bg-secondary text-secondary font-semibold hover:text-white py-2 px-4 border border-secondary hover:border-transparent rounded-full">
-                Connect to wallet 
-                </button>
+
+                <Wallet />
 
                     <DarkModeSwitch
                       className='ml-3 mr-1 mt-3'

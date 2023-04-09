@@ -4,8 +4,7 @@ import 'react-modern-drawer/dist/index.css'
 import useDarkSide from "hook/useDarkSide.jsx" ;
 import { DarkModeSwitch } from 'react-toggle-dark-mode'
 import './App.css'
-
-import NFT1 from './storage/NFT1.png'
+import toast, { Toaster } from 'react-hot-toast';
 
 import Header from './components/header/header'
 import Footer from './components/footer/footer'
@@ -48,6 +47,7 @@ function App() {
         <main className="drawer-content flex flex-col bg-base-100">
 
           <Header/>
+          <Toaster/>
 
           {/* <div className="circle1"> </div>
           <div className="circle1"> </div> */}
@@ -80,13 +80,14 @@ function App() {
                   Digital marketplace for Non-Fungible Tokens (NFTs). Buy, sell, and discover exclusive digital assets.
                 </p>
                 <div className="mt-10 flex items-center justify-center gap-x-6">
-                <button class="bg-transparent  mr-3 hover:bg-secondary text-secondary font-semibold hover:text-white py-2 px-4 border border-secondary hover:border-transparent rounded-full">
+                <button className="bg-transparent  mr-3 hover:bg-secondary text-secondary font-semibold hover:text-white py-2 px-4 border border-secondary hover:border-transparent rounded-full">
                     View collection
                     </button>
                   <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
                     Learn more <span aria-hidden="true">→</span>
                   </a>
                 </div>
+                
               </div>
             </div>
 
@@ -101,19 +102,10 @@ function App() {
                     'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
                 }}
               />
-            </div>
-          
+            </div>   
           </div>
-
-          
-
           </div>
-
-
         </main>
-
-        
-        
         
         {/* Drawer */}
 
@@ -121,10 +113,10 @@ function App() {
           <label htmlFor="my-drawer-3" className="drawer-overlay"></label> 
             <ul className="menu p-4 w-60 bg-base-100">
 
-              <div class="mt-5">
-              <a class="text-3xl font-bold text-neutral dark:text-white ml-3 mt-1">
-                  <span class="text-white">ART</span>
-                  <span class="text-secondary">X</span>
+              <div className="mt-5">
+              <a className="text-3xl font-bold text-neutral dark:text-white ml-3 mt-1">
+                  <span className="text-white">ART</span>
+                  <span className="text-secondary">X</span>
                 </a>
  
                 <div className="form-control mt-5">
@@ -136,29 +128,8 @@ function App() {
       
             </ul>
         </div>
-{/*         
-        <p> test </p> */}
-      </div>
-
-      <div className="h-screen w-screen">
-
-           <div className="container flex flex-row px-4 py-4  mx-auto">
-
-                    <div className="flex flex-row  mx-auto">
-                      <div>
-                        <img src={NFT1} alt="NFT1" className="max-w-sm rounded-lg shadow-2xl" />
-                      </div>
-                      <div>
-                        <h1 className="text-white"> Live Auction</h1>
-                      </div>
-                    </div>
-
-           </div>
 
       </div>
-  
-   
-
 
     </div>
   );
