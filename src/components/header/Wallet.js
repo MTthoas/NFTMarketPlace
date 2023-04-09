@@ -33,11 +33,13 @@ const customStyles = {
 
 
 export default function Wallet() {
+  
 
   const { activate, account, deactivate } = useWeb3React();
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [connected, setConnected] = useState(false);
-  const [accounts, setAccounts] = useState([]);
+
+  const [accounts, setAccounts] = useState(null);
 
   useEffect(() => {
     const isMetaMaskConnected = async () => {
@@ -45,18 +47,29 @@ export default function Wallet() {
       if (ethereum && ethereum.isMetaMask) {
         try {
           const accounts = await ethereum.request({ method: "eth_accounts" });
+          console.log("Il y'en a un " + accounts + "")
           if (accounts.length > 0) {
             setConnected(true);
             setAccounts(accounts);
             console.log(accounts)
+          } else {
+            setConnected(false);
+            setAccounts([]);
           }
         } catch (error) {
           console.error(error);
         }
       }
     };
-    isMetaMaskConnected();
-  }, []);
+    const isConnected = localStorage.getItem('connected') === 'true';
+    if (isConnected) {
+      isMetaMaskConnected();
+      setConnected(isConnected);
+      console.log("Connected")
+    } else {
+      console.log("Not connected")
+    }
+  }, [localStorage.getItem('connected')]);
 
   const openModal = () => {
     setModalIsOpen(true);
@@ -67,14 +80,21 @@ export default function Wallet() {
   };
 
   const connectMetamask = async () => {
-    await activate(metamaskConnector);
+    localStorage.setItem('connected', 'true');
     setModalIsOpen(false);
+    await activate(metamaskConnector);
     setConnected(true);
   };
     
   const handleDisconnect = async() => {
-     deactivate();
-     setConnected(false);
+    try {
+       deactivate();
+      setConnected(false);
+      setAccounts(null); // Réinitialiser la valeur de "accounts" à null
+      localStorage.setItem('connected', 'false');
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   const handleCopy = async(param) =>{
@@ -85,7 +105,7 @@ export default function Wallet() {
 
   return (
     <div>
-               {!connected && (
+      {!connected && (
         <button
           type="button"
           onClick={openModal}
@@ -97,17 +117,18 @@ export default function Wallet() {
         </button>
       )}
 
-      {connected && (
-        <div className="dropdown dropdown-bottom">
-            <button  tabIndex={0}  className="bg-transparent mt-3 mr-3 hover:bg-secondary text-secondary font-semibold hover:text-white py-2 px-4 border border-secondary hover:border-transparent rounded-full">
-            {accounts[0].substring(0, 6)}...{accounts[0].substring(accounts[0].length - 4)}
-          </button>
-          <ul tabIndex={0} className="dropdown-content menu p-2 mt-1 shadow bg-zinc-900 rounded-box w-30">
-          <li><a onClick={handleCopy}>Copy address</a></li>
-          <li><a onClick={handleDisconnect}>Disconnect</a></li>
-        </ul>
-        </div>
-      )}
+    {connected && accounts && accounts.length > 0 && (
+      <div className="dropdown dropdown-bottom">
+          <button  tabIndex={0}  className="bg-transparent mt-3 mr-3 hover:bg-secondary text-secondary font-semibold hover:text-white py-2 px-4 border border-secondary hover:border-transparent rounded-full">
+          {accounts[0].substring(0, 6)}...{accounts[0].substring(accounts[0].length - 4)}
+        </button>
+        <ul tabIndex={0} className="dropdown-content menu p-2 mt-1 shadow bg-base-100 rounded-box w-40">
+        <li><a onClick={handleCopy}>Copy address</a></li>
+        <li><a onClick={handleDisconnect}>Disconnect</a></li>
+      </ul>
+      </div>
+    )}
+
 
                 <Modal
                     isOpen={modalIsOpen}
