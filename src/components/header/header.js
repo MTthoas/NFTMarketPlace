@@ -6,6 +6,7 @@ import { DarkModeSwitch } from 'react-toggle-dark-mode'
 import './App.css'
 import Wallet from './Wallet'
 
+import { Link  } from "react-router-dom";
 
 
 function Header() {
@@ -54,19 +55,22 @@ function Header() {
             <div className="navbar-center hidden lg:flex">
               
                 <ul className="menu menu-horizontal px-4 space-x-4 mt-1">
-                  <li><a href="#" className="btn-ghost mt-2"> Item 1 </a></li>
-                  <li><a href="#" className="btn-ghost mt-2"> Item 2 </a></li>
-                  <li tabIndex={0}>
-                    <a href="#" className="btn-ghost mt-2">
-                      Parent
-                      <svg className="fill-current" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"/></svg>
-                    </a>
-                    <ul className="p-2">
-                      <li><a className="btn-ghost"> Submenu 1</a></li>
-                      <li><a className="btn-ghost"> Submenu 2</a></li>
-                    </ul>
+                  <li>
+                    <Link to="/">
+                      <a  className="btn-ghost mt-2 text-neutral"> Home </a>
+                    </Link>
                   </li>
-                  <li><a href="#" className="btn-ghost mt-2"> Item 3 </a></li>
+                  <li>
+                    <Link to="/market">
+                      <a href="#" className="btn-ghost mt-2 text-neutral "> Marketplace </a>
+                    </Link>
+                  </li>
+                  <li><a href="#" className="btn-ghost mt-2 text-neutral"> Workshop </a>
+
+                  </li>
+
+                  <li><a href="#" className="btn-ghost mt-2 text-neutral"> About </a>
+                  </li>
                 </ul>
             </div>
 

@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  /* text-align: center; */
+  /* user-select: none; */
+
+  @apply transition-colors duration-300;
+}
+
 @font-face {
   font-family: "RoseQuay";   /*Can be any text*/
   src: local("RoseQuay"),
@@ -60,23 +67,6 @@
   font-family: "Cinzel-VariableFont_wght";   /*Can be any text*/
   src: local("Cinzel-VariableFont_wght"),
     url("./fonts/Cinzel-VariableFont_wght.ttf") format("truetype");
-}
-
-
-
-
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
 }
 
 

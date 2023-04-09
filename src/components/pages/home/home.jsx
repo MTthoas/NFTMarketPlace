@@ -11,8 +11,6 @@ import Footer from "../../footer/footer";
 import NftCardGrid from "./nftCarGrid/nftCardGrid";
 import NftTopCollection from "./nfttopCollection/nftTopCollection";
 
-import "./App.css";
-
 function App() {
   const [theme, setTheme] = useDarkSide();
   const [darkSide, setDarkSide] = useState(theme === "light" ? false : true);
@@ -55,7 +53,7 @@ function App() {
         </div>
         <div className="mx-auto max-w-2xl py-12 sm:py-12 lg:py-24">
           <div className="hidden sm:mb-8 sm:flex sm:justify-center">
-            <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-400 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
+            <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-400 ">
               Announcing our next round of funding.{" "}
               <a href="#" className="font-semibold text-indigo-600">
                 <span className="absolute inset-0" aria-hidden="true" />
@@ -64,7 +62,7 @@ function App() {
             </div>
           </div>
           <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
+            <h1 className="text-4xl font-bold tracking-tight text-neutral sm:text-6xl">
               Discover, collect and sell extraordinary NFTs
             </h1>
             <p className="mt-6 text-lg leading-8 text-gray-400">
@@ -77,9 +75,9 @@ function App() {
               </button>
               <a
                 href="#"
-                className="text-sm font-semibold leading-6 text-gray-900"
+                className="text-sm font-semibold leading-6 text-neutral"
               >
-                Learn more <span aria-hidden="true">→</span>
+                About us <span aria-hidden="true">→</span>
               </a>
             </div>
           </div>

@@ -1,23 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap');
 
 
-[data-theme="dark"] a{
-  color: #fff;
-}
-
-[data-theme="light"] .SignUp{
-  /* /* color: #0000; */
-  background-color: #18191A;
-  text-transform: none;
-}
-
-[data-theme="dark"] .SignUp{
-  background-color: white;
-  color: black;
-   text-transform: none;
-  
-
-}
 
 .logo{
   font-family: 'Poppins', sans-serif;
@@ -28,9 +11,9 @@
   font-family: "Cinzel-VariableFont_wght";
 }
 
-[data-theme="dark"] .font-RoseQuay {
+/* [data-theme="dark"] .font-RoseQuay {
   color: white;
-}
+} */
 
 
 @media only screen and (min-width : 899px) {
