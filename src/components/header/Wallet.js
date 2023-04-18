@@ -146,7 +146,7 @@ export default function Wallet() {
                             </button>
                             
 
-                            <div className="px-6 py-4 border-b rounded-t dark:border-gray-600">
+                            <div className="px-6 py-4  rounded-t dark:border-gray-600">
                                 <h3 className="text-base font-semibold text-gray-900 lg:text-xl dark:text-white">
                                     Connect wallet
                                 </h3>

@@ -34,7 +34,7 @@ function Header() {
 
   return (
 
-    <div className="navbar bg-transparant pr-2 lg:px-7 z-20">
+    <div className="navbar bg-transparant pr-2 z-20 container mx-auto">
 
             <div className="navbar-start">
                 <div className="dropdown pt-1 Hamburger">
