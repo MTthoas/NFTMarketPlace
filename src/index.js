@@ -4,13 +4,13 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  createBrowserRouter,
 } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import { Web3ReactProvider } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 
 import Header from "./components/header/header";
+import Footer from "./components/footer/footer";
 import Home from "./components/pages/home/home";
 import Market from "./components/pages/market/market";
 
@@ -40,13 +40,15 @@ root.render(
               <Route path="/market" element={<Market />} />
               <Route path="/nft/:id" element={<NFT />} />
             </Routes>
+
+            <Footer />
           </div>
 
           <div className="drawer-side">
             <label htmlFor="my-drawer-3" className="drawer-overlay"></label>
             <ul className="menu p-4 w-60 bg-base-100">
               <div class="mt-5">
-                <a class="text-3xl font-bold text-neutral dark:text-white ml-3 mt-1">
+                <a href="/" class="text-3xl font-bold text-neutral dark:text-white ml-3 mt-1">
                   <span class="text-white">ART</span>
                   <span class="text-secondary">X</span>
                 </a>

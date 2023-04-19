@@ -2,32 +2,28 @@ import React, { useState } from "react";
 import "react-modern-drawer/dist/index.css";
 
 import useDarkSide from "hook/useDarkSide.jsx";
-import { DarkModeSwitch } from "react-toggle-dark-mode";
 import "./App.css";
-import toast, { Toaster } from "react-hot-toast";
 
-import Header from "../../header/header";
-import Footer from "../../footer/footer";
 import NftCardGrid from "./nftCarGrid/nftCardGrid";
 import NftTopCollection from "./nfttopCollection/nftTopCollection";
 
 function App() {
   const [theme, setTheme] = useDarkSide();
-  const [darkSide, setDarkSide] = useState(theme === "light" ? false : true);
-  const [drawerOpen, setDrawerOpen] = useState(true);
+  // const [darkSide, setDarkSide] = useState(theme === "light" ? false : true);
+  // const [drawerOpen, setDrawerOpen] = useState(true);
 
-  const toggleDarkMode = (checked) => {
-    setTheme(theme);
-    setDarkSide(checked);
-  };
+  // const toggleDarkMode = (checked) => {
+  //   setTheme(theme);
+  //   setDarkSide(checked);
+  // };
 
   React.useEffect(() => {
     document.querySelector("html").setAttribute("data-theme", theme);
   }, [theme]);
 
-  const handleClose = () => {
-    setDrawerOpen(false);
-  };
+  // const handleClose = () => {
+  //   setDrawerOpen(false);
+  // };
 
   let Links = [
     { name: "HOME", link: "/" },
@@ -37,7 +33,8 @@ function App() {
   ];
 
   return (
-    <div className="h-screen w-full">
+    <div className="w-full">
+      {/* Header / nav */}
       <div className="relative isolate px-6 pt-14 lg:px-8">
         <div
           className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
@@ -104,7 +101,7 @@ function App() {
 
       {/* Text part : Create and Sell Your NFTs */}
       <div className="container px-4 py-7 mx-auto">
-        <h2 className="text-2xl text-center font-semibold text-white pt-5 pb-7">
+        <h2 className="text-2xl text-center font-semibold text-white pb-7">
           Create and Sell Your NFTs
         </h2>
         <div className="flex flex-col md:flex-row justify-around gap-10 md:gap-20">
