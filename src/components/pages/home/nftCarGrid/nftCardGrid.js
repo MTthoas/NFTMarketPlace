@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Link  } from "react-router-dom";
+
 
 /* 
 * Explore New NFTs must contain
@@ -19,6 +21,7 @@ import React, { useState, useEffect } from 'react';
 const nfts = [
   {
     id: 1,
+    link: "/nft/1",
     sellType: 'Auction',
     sellerName: 'John Doe',
     sellerImage: 'https://via.placeholder.com/150',
@@ -32,6 +35,7 @@ const nfts = [
   },
   {
     id: 2,
+    link: "/nft/2",
     sellType: 'Instant Sale',
     sellerName: 'John Doe',
     sellerImage: 'https://via.placeholder.com/150',
@@ -45,6 +49,7 @@ const nfts = [
   },
   {
     id: 3,
+    link: "/nft/3",
     sellType: 'Instant Sale',
     sellerName: 'John Doe',
     sellerImage: 'https://via.placeholder.com/150',
@@ -58,6 +63,7 @@ const nfts = [
   },
   {
     id: 4,
+    link: "/nft/4",
     sellType: 'Auction',
     sellerName: 'John Doe',
     sellerImage: 'https://via.placeholder.com/150',
@@ -71,6 +77,7 @@ const nfts = [
   },
   {
     id: 5,
+    link: "/nft/5",
     sellType: 'Auction',
     sellerName: 'John Doe',
     sellerImage: 'https://via.placeholder.com/150',
@@ -84,6 +91,7 @@ const nfts = [
   },
   {
     id: 6,
+    link: "/nft/6",
     sellType: 'Instant Sale',
     sellerName: 'John Doe',
     sellerImage: 'https://via.placeholder.com/150',
@@ -97,6 +105,7 @@ const nfts = [
   },
   {
     id: 7,
+    link: "/nft/7",
     sellType: 'Instant Sale',
     sellerName: 'John Doe',
     sellerImage: 'https://via.placeholder.com/150',
@@ -110,6 +119,7 @@ const nfts = [
   },
   {
     id: 8,
+    link: "/nft/8",
     sellType: 'Auction',
     sellerName: 'John Doe',
     sellerImage: 'https://via.placeholder.com/150',
@@ -123,6 +133,7 @@ const nfts = [
   },
   {
     id: 9,
+    link: "/nft/9",
     sellType: 'Auction',
     sellerName: 'John Doe',
     sellerImage: 'https://via.placeholder.com/150',
@@ -136,6 +147,7 @@ const nfts = [
   },
   {
     id: 10,
+    link: "/nft/10",
     sellType: 'Instant Sale',
     sellerName: 'John Doe',
     sellerImage: 'https://via.placeholder.com/150',
@@ -149,6 +161,7 @@ const nfts = [
   },
   {
     id: 11,
+    link: "/nft/11",
     sellType: 'Instant Sale',
     sellerName: 'John Doe',
     sellerImage: 'https://via.placeholder.com/150',
@@ -162,6 +175,7 @@ const nfts = [
   },
   {
     id: 12,
+    link: "/nft/12",
     sellType: 'Instant Sale',
     sellerName: 'John Doe',
     sellerImage: 'https://via.placeholder.com/150',
@@ -176,27 +190,31 @@ const nfts = [
 ];
 
 const NftCard = ({ nft }) => (
-  <div className="bg-white shadow-md rounded-md p-4">
+  <div className="bg-white shadow-md rounded-md p-4 m-2 transition duration-500 hover:scale-110 cursor-pointer ">
+    <Link to ={nft.link}>
     <div className="flex justify-start mb-4">
       <img className="h-8 w-8 rounded-full object-cover mr-2" src={nft.sellerImage} alt={nft.sellerName} />
       <h2 className="text-center my-auto font-semibold text-black">{nft.sellerName}</h2>
     </div>
-    <img className="object-cover w-full max-h-44 rounded object-cover mr-2" src={nft.nftImage} alt={nft.nftName} />
-    <div className="flex my-2">
+    <img className="object-cover w-full max-h-44 roundedmr-2" src={nft.nftImage} alt={nft.nftName} />
+    {/* <div className="flex my-2">
       <p className="py-1 px-3 bg-black bg-opacity-10 text-black text-sm font-medium rounded-full">{nft.sellType === 'Auction' ? nft.nftTimeLeft : nft.sellType}</p>
-    </div>
-    <p className="mb-3 text-black font-bold text-xl">{nft.nftName} {nft.nftTag}</p>
-    <p className="text-black text-sm text-black font-medium">{nft.sellType === 'Auction' ? 'Highest bid' : 'Price'}</p>
+    </div> */}
+    <p className="mb-3 mt-3 text-black font-bold text-xl">{nft.nftName} {nft.nftTag}</p>
+    <p className="text-black text-sm  font-medium">{nft.sellType === 'Auction' ? 'Highest bid' : 'Price'}</p>
     <div className="flex">
-      <p className="text-black my-auto text-xl font-bold">
+      <p className="text-black my-auto text-md font-bold">
         {nft.sellType === 'Auction' ? nft.nftHighestBid : nft.nftPrice}{nft.nftCoin}
       </p>
-      {nft.sellType === 'Auction' ? (
+      {/* <button className="bg-black text-white font-medium py-1 px-3 rounded-full ml-auto">Place a bid</button> */}
+
+      {/* {nft.sellType === 'Auction' ? (
         <button className="bg-black text-white font-medium py-1 px-3 rounded-full ml-auto">Place a bid</button>
       ) : (
         <button className="bg-black text-white font-medium py-1 px-3 rounded-full ml-auto">Buy now</button>
-      )}
+      )} */}
     </div>
+    </Link>
   </div>
 );
 

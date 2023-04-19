@@ -14,6 +14,8 @@ import Header from "./components/header/header";
 import Home from "./components/pages/home/home";
 import Market from "./components/pages/market/market";
 
+import NFT from "./components/pages/nft/Nft";
+
 import ErrorPage from "./components/pages/error/error-page";
 import "./index.css";
 
@@ -36,6 +38,7 @@ root.render(
               <Route path="*" element={<ErrorPage />} />
               <Route path="/" element={<Home />} />
               <Route path="/market" element={<Market />} />
+              <Route path="/nft/:id" element={<NFT />} />
             </Routes>
           </div>
 
