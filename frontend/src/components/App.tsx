@@ -1,39 +1,15 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { WalletContext } from './WalletContext';
-import Web3 from 'web3';
+import { ethers } from 'ethers';
 
+import { WalletProvider } from './WalletContext';
 import Home from './Home';
 import Header from './h&f/Header';
 
-class App extends React.Component<{}, { web3: Web3 | null, selectedAddress: string | null, balance: string | null }> {
-  constructor(props: {}) {
-    super(props);
-    this.state = {
-      web3: null,
-      selectedAddress: null,
-      balance: null
-    };
-    this.setWallet = this.setWallet.bind(this);
-    this.setBalance = this.setBalance.bind(this); // Add the setBalance function
-  }
-
-  setWallet = (web3: Web3 | null, selectedAddress: string | null) => {
-    this.setState({ web3, selectedAddress });
-  }
-
-  setBalance = (balance: string | null) => {
-    this.setState({ balance });
-  }
-
+class App extends React.Component {
   render() {
     return (
-      <WalletContext.Provider value={{
-        web3: this.state.web3,
-        selectedAddress: this.state.selectedAddress,
-        setWallet: this.setWallet,
-        setBalance: this.setBalance // Add the setBalance function to the context value
-      }}>
+      <WalletProvider>
         <Router>
           <div className="body">
             <Header />
@@ -43,7 +19,7 @@ class App extends React.Component<{}, { web3: Web3 | null, selectedAddress: stri
             </Routes>
           </div>
         </Router>
-      </WalletContext.Provider>
+      </WalletProvider>
     );
   }
 }

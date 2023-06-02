@@ -1,26 +1,25 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { WalletContext } from './WalletContext';
-import Web3 from 'web3';
 import { ethers } from "ethers";
-
 
 const Home: React.FC = () => {
   const walletContext = useContext(WalletContext);
   const [balance, setBalance] = useState<string | null>(null);
 
   useEffect(() => {
-    updateBalance();
-  }, [walletContext]);
+    const fetchBalance = async () => {
+      if (walletContext.selectedAddress && walletContext.provider) {
+        const balance = await walletContext.provider.getBalance(walletContext.selectedAddress);
+        setBalance(ethers.utils.formatEther(balance || '0'));
+      }
+    };
 
-  const updateBalance = async () => {
-    if (walletContext?.web3 && walletContext?.selectedAddress) {
-      const balanceWei = await walletContext.web3.eth.getBalance(walletContext.selectedAddress);
-      const balanceEther = Web3.utils.fromWei(balanceWei, 'ether');
-      setBalance(balanceEther);
-    } else {
-      setBalance(null); // User is disconnected, set balance to null
-    }
-  };
+    fetchBalance();
+
+    const intervalId = setInterval(fetchBalance, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [walletContext]);
 
   return (
     <div>

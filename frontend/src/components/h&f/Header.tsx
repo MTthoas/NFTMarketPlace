@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { DarkModeSwitch } from 'react-toggle-dark-mode';
 import Web3 from 'web3';
 import { WalletContext } from '../WalletContext';
+import { ethers } from 'ethers';
 
 declare global {
   interface Window {
@@ -56,23 +57,27 @@ class Header extends Component<{}, HeaderState> {
     document.querySelector('html')?.setAttribute('data-theme', theme);
   }
 
-  _connectWallet = async () => {
-    if (this.context && this.context.setWallet) { // Vérifier si le contexte et la fonction setWallet existent
-      if (window.ethereum) {
-        const web3 = new Web3(window.ethereum);
-        try {
-          const accounts = await web3.eth.requestAccounts();
-          this.context.setWallet(web3, accounts[0]); // Appeler la fonction setWallet du contexte
-        } catch (err) {
-          console.error(err);
+ _connectWallet = async () => {
+    if (window.ethereum) {
+      try {
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const selectedAddress = await signer.getAddress();
+
+        if (this.context) {
+          this.context.setProvider(provider);
+          this.context.setSigner(signer);
+          this.context.setSelectedAddress(selectedAddress);
         }
+      } catch (err) {
+        console.error(err);
       }
     }
   }
 
   _disconnectWallet = () => {
-    if (this.context && this.context.setWallet) { // Vérifier si le contexte et la fonction setWallet existent
-      this.context.setWallet(null, null); // Appeler la fonction setWallet du contexte
+    if (this.context) { // Vérifier si le contexte et la fonction setWallet existent
       this.context.setBalance(null); // Réinitialiser le solde dans le contexte
     }
   }
