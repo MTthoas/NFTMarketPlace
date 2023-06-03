@@ -1,9 +1,9 @@
 import React, { Component, useContext } from 'react';
 import { Link } from "react-router-dom";
 import { DarkModeSwitch } from 'react-toggle-dark-mode';
-import Web3 from 'web3';
-import { WalletContext } from '../WalletContext';
 import { ethers } from 'ethers';
+
+import {CustomButton} from './CustomConnectButton';
 
 declare global {
   interface Window {
@@ -19,8 +19,6 @@ type HeaderState = {
 };
 
 class Header extends Component<{}, HeaderState> {
-  static contextType = WalletContext; // Définir le contexte du composant
-  context!: React.ContextType<typeof WalletContext>; // Ajouter une annotation de type pour le contexte
 
   constructor(props: {}) {
     super(props);
@@ -57,36 +55,6 @@ class Header extends Component<{}, HeaderState> {
     document.querySelector('html')?.setAttribute('data-theme', theme);
   }
 
- _connectWallet = async () => {
-    if (window.ethereum) {
-      try {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const selectedAddress = await signer.getAddress();
-
-        if (this.context) {
-          this.context.setProvider(provider);
-          this.context.setSigner(signer);
-          this.context.setSelectedAddress(selectedAddress);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    }
-  }
-
-  _disconnectWallet = () => {
-    if (this.context) { // Vérifier si le contexte et la fonction setWallet existent
-      this.context.setBalance(null); // Réinitialiser le solde dans le contexte
-    }
-  }
-
-  _copyAdress = () => {
-    if (this.context && this.context.selectedAddress) { // Vérifier si le contexte et la propriété selectedAddress existent
-      navigator.clipboard.writeText(this.context.selectedAddress); // Copier l'adresse dans le presse-papier
-    }
-  }
 
 
   render() {
@@ -111,45 +79,25 @@ class Header extends Component<{}, HeaderState> {
           <div className="navbar-center hidden lg:flex">
             <ul className="menu menu-horizontal px-4 space-x-4 mt-1">
               <li>
-                <Link to="/">
+                {/* <Link to="/"> */}
                   <p className="btn-ghost mt-2 text-neutral"> Home </p>
-                </Link>
+                {/* </Link> */}
               </li>
               <li>
-                <Link to="/market">
+                {/* <Link to="/market"> */}
                   <p className="btn-ghost mt-2 text-neutral "> Marketplace </p>
-                </Link>
+                {/* </Link> */}
               </li>
               <li><a href="#" className="btn-ghost mt-2 text-neutral"> Workshop </a></li>
               <li><a href="#" className="btn-ghost mt-2 text-neutral"> About </a></li>
             </ul>
           </div>
-          <div className="navbar-end mr-3">
-            <div className="flex-none gap-2">
-              <div className="dropdown dropdown-end mt-2">
-                {!this.context || !this.context.selectedAddress ? ( // Utiliser le contexte pour vérifier l'adresse sélectionnée
-                  <button
-                    type="button"
-                    onClick={this._connectWallet}
-                    data-modal-target="crypto-modal"
-                    data-modal-toggle="crypto-modal"
-                    className="bg-transparent mr-3 hover:bg-neutral text-neutral font-semibold hover:text-white py-2 px-4 border border-neutral  hover:border-transparent rounded-full"
-                  >
-                    Connect to wallet
-                  </button>
-                ) : (
-                  <div className="dropdown dropdown-bottom mt-2">
-                    <button tabIndex={0} className="bg-transparent  mr-3 hover:bg-neutral text-info font-semibold hover:text-white py-2 px-4 border border-neutral hover:border-transparent rounded-full">
-                      {this.context.selectedAddress.substring(0, 6)}...{this.context.selectedAddress.substring(this.context.selectedAddress.length - 4)}
-                    </button>
-                    <ul tabIndex={0} className="dropdown-content menu p-2 mt-1 shadow bg-base-100 rounded-box w-40 bg-light">
-                      <li><a onClick={this._copyAdress}>Copy address</a></li>
-                      <li><a onClick={this._disconnectWallet}>Disconnect</a></li>
-                    </ul>
-                  </div>
-                )}
-              </div>
+          <div className="navbar-end mr-3 gap-x-3">
+			
+            <div className="mt-3">
+				<CustomButton/>
             </div>
+
             <DarkModeSwitch
               className='ml-3 mr-1 mt-3'
               checked={darkSide}
