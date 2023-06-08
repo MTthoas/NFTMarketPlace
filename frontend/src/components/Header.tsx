@@ -95,7 +95,7 @@ class Header extends Component<{}, HeaderState> {
           <div className="navbar-end mr-3 gap-x-3">
 			
             <div className="mt-3">
-				<CustomButton/>
+				      <CustomButton/>
             </div>
 
             <DarkModeSwitch

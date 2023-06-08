@@ -5,9 +5,10 @@ import './index.css';
 import '@rainbow-me/rainbowkit/styles.css';
 import { getDefaultWallets, RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig, sepolia, WagmiConfig } from 'wagmi';
-import { mainnet, polygon, optimism, arbitrum, goerli } from 'wagmi/chains';
+import { mainnet, polygon, optimism, arbitrum, goerli, hardhat } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
-import App from './App';
+import App from './components/App';
+import { localhost } from 'viem/chains';
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
@@ -16,6 +17,7 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
     optimism,
     arbitrum,
     sepolia,
+    hardhat,
     ...(process.env.REACT_APP_ENABLE_TESTNETS === 'true' ? [goerli] : []),
   ],
   [publicProvider()]
@@ -41,9 +43,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains}
-      
-      >
+      <RainbowKitProvider chains={chains}>
         <App />
       </RainbowKitProvider>
     </WagmiConfig>

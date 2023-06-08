@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './Header';
 import Home from './Home'; // assurez-vous que Home est correctement importé
-import { AccountContext } from './AccountContext';  // Assurez-vous que le chemin est correct
+
 
 import { useState } from 'react';
 
@@ -10,7 +10,6 @@ const App = () => {
   const [account, setAccount] = useState<any | null>(null);
 
   return (
-    <AccountContext.Provider value={{ account, setAccount }}>
     <div>
       <Router>
         <div className="body">
@@ -22,7 +21,6 @@ const App = () => {
         </div>
       </Router>
     </div>
-    </AccountContext.Provider>
   );
 };
 

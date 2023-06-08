@@ -1,11 +1,49 @@
-require("@nomicfoundation/hardhat-toolbox");
+require("@nomiclabs/hardhat-waffle");
+require('dotenv').config()
+require("@nomiclabs/hardhat-ethers");
+const fs = require('fs');
 
-// The next line is part of the sample project, you don't need it in your
-// project. It imports a Hardhat task definition, that can be used for
-// testing the frontend.
-require("./tasks/faucet");
+task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
+  const accounts = await hre.ethers.getSigners();
 
-/** @type import('hardhat/config').HardhatUserConfig */
+  for (const account of accounts) {
+    console.log(account.address);
+  }
+});
+
+
 module.exports = {
-  solidity: "0.8.17",
-};
+  solidity: {
+    version: "0.8.14",
+    settings: {
+      metadata: {
+        bytecodeHash: "none",
+      },
+      optimizer: {
+        enabled: true,
+        runs: 200,
+      },
+    },
+  },
+  networks: {
+    goerli: {
+      url: process.env.GOERLI_URL,
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    },
+    sepholia: {
+      url: process.env.SEPHOLIA_URL,
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    }
+  },
+  gasReporter: {
+    enabled: !!process.env.REPORT_GAS,
+  },
+  etherscan: {
+    apiKey: process.env.ETHERSCAN_API_KEY,
+  },
+  mocha: {
+    timeout: 40000
+  }
+}

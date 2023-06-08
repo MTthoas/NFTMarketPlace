@@ -1,6 +1,4 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { AccountContext } from './AccountContext';  // Assurez-vous que le chemin est correct
-
 
 export const CustomButton = () => {
 
@@ -39,7 +37,7 @@ export const CustomButton = () => {
             {(() => {
               if (!connected) {
                 return (
-                  <button onClick={openConnectModal} type="button">
+                  <button onClick={openConnectModal} type="button" className="pr-5">
                     Connect Wallet
                   </button>
                 );

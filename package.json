@@ -2,6 +2,7 @@
   "name": "hardhat-boilerplate",
   "version": "1.0.0",
   "description": "A boilerplate repository to get you started with Hardhat and Ethereum development",
+  "main": "index.js",
   "scripts": {
     "test": "hardhat test"
   },
@@ -23,16 +24,31 @@
     "@nomicfoundation/hardhat-toolbox": "^2.0.0",
     "@nomiclabs/hardhat-ethers": "^2.2.1",
     "@nomiclabs/hardhat-etherscan": "^3.1.4",
+    "@nomiclabs/hardhat-waffle": "^2.0.6",
     "chai": "^4.3.7",
+    "ethereum-waffle": "^4.0.10",
     "ethers": "^5.7.2",
+    "Faker": "^0.7.2",
     "hardhat": "^2.12.5",
     "hardhat-gas-reporter": "^1.0.9",
     "solidity-coverage": "^0.8.2",
     "tailwindcss": "^3.3.2"
   },
   "dependencies": {
+    "@alch/alchemy-web3": "^1.4.7",
+    "@faker-js/faker": "^8.0.2",
+    "@openzeppelin/contracts": "^4.9.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.1.3",
+    "express": "^4.18.2",
+    "express-fileupload": "^1.4.0",
+    "faker": "^6.6.6",
+    "ipfs-http-client": "^60.0.1",
+    "mime": "^3.0.0",
+    "nft.storage": "^7.1.0",
     "react-hot-toast": "^2.4.1",
     "react-router-dom": "^6.11.2",
-    "react-toggle-dark-mode": "^1.1.1"
+    "react-toggle-dark-mode": "^1.1.1",
+    "sharp": "^0.32.1"
   }
 }
