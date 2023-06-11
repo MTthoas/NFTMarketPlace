@@ -84,9 +84,9 @@ class Header extends Component<{}, HeaderState> {
                 {/* </Link> */}
               </li>
               <li>
-                {/* <Link to="/market"> */}
+                <Link to="/marketplace">
                   <p className="btn-ghost mt-2 text-neutral "> Marketplace </p>
-                {/* </Link> */}
+                </Link>
               </li>
               <li><a href="#" className="btn-ghost mt-2 text-neutral"> Workshop </a></li>
               <li><a href="#" className="btn-ghost mt-2 text-neutral"> About </a></li>

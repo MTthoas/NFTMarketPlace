@@ -8,9 +8,10 @@ import axios from 'axios';
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
 
-const contract = new ethers.Contract(MarketPlace.address, MarketPlace.abi, signer);
+const contract = new ethers.Contract(MarketPlace.address, MarketPlace.abi as any, signer);
 
 function Home() {
+  
   const { address } = useAccount();
   const { data: balanceData, isError: balanceError, isLoading: balanceLoading } = useBalance({ address: address });
   
@@ -27,27 +28,6 @@ function Home() {
   const [tokenURI, setTokenURI] = useState('');
   const [price, setPrice] = useState(0);
 
-  useEffect(() => {
-    async function fetchNFTs() {
-      const nftsData = await contract.getAllNFTs();
-      setNfts(nftsData);
-    }
-
-    fetchNFTs();
-  }, []);
-
-  const createNFT = async () => {
-    const priceInWei = ethers.utils.parseEther(price.toString());
-    const transaction = await contract.createToken(tokenURI, priceInWei, { value: ethers.utils.parseEther("0.01") });
-    await transaction.wait();
-
-    setTokenURI('');
-    setPrice(0);
-
-    const nftsData = await contract.getAllNFTs();
-    setNfts(nftsData);
-  }
-
   const [file, setFile] = useState<File | null>(null);
   const [tokenPrice, setTokenPrice] = useState("");
 
@@ -57,7 +37,9 @@ function Home() {
     }
   };
 
-  const JWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJjN2U5ZjAyYy04MzAzLTRjOGYtOWIwZC0xMzQ1YWI5MDlmMjIiLCJlbWFpbCI6Im1hbHRoYXphcjIyN0BnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJpZCI6IkZSQTEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX0seyJpZCI6Ik5ZQzEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX1dLCJ2ZXJzaW9uIjoxfSwibWZhX2VuYWJsZWQiOmZhbHNlLCJzdGF0dXMiOiJBQ1RJVkUifSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiZGM0MTUyYzk5YThhYTI0ZmEzMjIiLCJzY29wZWRLZXlTZWNyZXQiOiJhZmZlYzRiZDQ2ZGE1NjUzZWMyMWE3ZGU4Nzc0OGZlNThlNzVmYTI4MWI0YjczZjBmYzVjMzcxYjIxYmEzOGFjIiwiaWF0IjoxNjg2MjYwNTI2fQ.GwwGHhM8E6ZN_YnMtJIqIB8KVArhxFmc-0Uq5h5it88'
+  
+
+  const JWT = process.env.JWT
 
   const createNewNFT = async () => {
     if (file) {
@@ -97,15 +79,16 @@ function Home() {
           });
   
           const priceInWei = ethers.utils.parseEther(tokenPrice);
+
+          let listingPrice = await contract.getListPrice()
+          listingPrice = listingPrice.toString()
+
   
-          const transaction = await contract.createToken(tokenURI, priceInWei, { value: ethers.utils.parseEther("0.01") });
+          const transaction = await contract.createToken(tokenURI, priceInWei, { value: listingPrice });
           await transaction.wait();
   
           console.log("NFT created successfully");
   
-          // Refresh NFTs
-          const nftsData = await contract.getAllNFTs();
-          setNfts(nftsData);
         }
       } catch (error: any) {
         if (error.message.message) {
@@ -127,57 +110,25 @@ function Home() {
     }
   };
   
-
-
-
-
-      // try{
-      //   const res = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", formData, {
-      //     headers: {
-      //       'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
-      //       Authorization: JWT
-      //     }
-      //   });
-      //   console.log(res.data);
-      // } catch (error) {
-      //   console.log(error);
-      // }
-
-      // if (uploadResult.success && uploadResult.pinataURL) {
-      //   const priceInWei = ethers.utils.parseEther(tokenPrice);
-      //   await contract.createToken(uploadResult.pinataURL, priceInWei);
-      //   console.log("NFT created successfully")
-      // }
-
-
-
-
-
-  return (
-    <div>
-      {address ? (
+      return (
         <div>
-          <h1>Home</h1>
-          <p>Address: {address}</p>
-          <p>Balance: {balanceData?.formatted}</p>
-          <div>
-            <input type="file" onChange={onFileChange} />
-            <input type="text" value={tokenPrice} onChange={(e) => setTokenPrice(e.target.value)} placeholder="Price in Ether" />
-            <button onClick={createNewNFT}>Create NFT</button>
-            {/* {nfts.map((nft, index) => (
-              <div key={index}>
-                <p>Token ID: {nft.tokenId}</p>
-                <p>Owner: {nft.owner}</p>
-                <p>Seller: {nft.seller}</p>
-                <p>Price: {ethers.utils.formatEther(nft.price.toString())}</p>
-                <p>Currently Listed: {nft.currentlyListed ? "Yes" : "No"}</p>
+          {address ? (
+            <div>
+              <h1>Home</h1>
+              <p>Address: {address}</p>
+              <p>Balance: {balanceData?.formatted}</p>
+              <div>
+                <input type="file" onChange={onFileChange} />
+                <input type="text" value={tokenPrice} onChange={(e) => setTokenPrice(e.target.value)} placeholder="Price in Ether" />
+                <button onClick={createNewNFT}>Create NFT</button>
+      
               </div>
-            ))} */}
-          </div>
+              
+            </div>
+          ) : null}
         </div>
-      ) : null}
-    </div>
-  );
+      );
+      
 }
 
 export default Home;

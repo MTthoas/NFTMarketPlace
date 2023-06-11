@@ -14,18 +14,16 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 
 module.exports = {
   solidity: {
-    version: "0.8.14",
-    settings: {
-      metadata: {
-        bytecodeHash: "none",
-      },
-      optimizer: {
-        enabled: true,
-        runs: 200,
-      },
-    },
+    version: "0.8.9",
   },
   networks: {
+    hardhat: {
+      chainId: 1337
+    },
+    polygon_mumbai: {
+      url: "https://rpc-mumbai.maticvigil.com",
+      accounts: [process.env.PRIVATE_KEY_ACCOUNT_1],
+   },
     goerli: {
       url: process.env.GOERLI_URL,
       accounts:
@@ -41,7 +39,9 @@ module.exports = {
     enabled: !!process.env.REPORT_GAS,
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
+    apiKey: {
+      polygonMumbai: process.env.POLYGONSCAN_API_KEY
+    }
   },
   mocha: {
     timeout: 40000
