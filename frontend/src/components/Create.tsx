@@ -10,7 +10,7 @@ const signer = provider.getSigner();
 
 const contract = new ethers.Contract(MarketPlace.address, MarketPlace.abi as any, signer);
 
-function Home() {
+function Create() {
   
   const { address } = useAccount();
   const { data: balanceData, isError: balanceError, isLoading: balanceLoading } = useBalance({ address: address });
@@ -39,7 +39,7 @@ function Home() {
 
   
 
-  const JWT = process.env.JWT
+  const JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJjN2U5ZjAyYy04MzAzLTRjOGYtOWIwZC0xMzQ1YWI5MDlmMjIiLCJlbWFpbCI6Im1hbHRoYXphcjIyN0BnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJpZCI6IkZSQTEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX0seyJpZCI6Ik5ZQzEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX1dLCJ2ZXJzaW9uIjoxfSwibWZhX2VuYWJsZWQiOmZhbHNlLCJzdGF0dXMiOiJBQ1RJVkUifSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiZGM0MTUyYzk5YThhYTI0ZmEzMjIiLCJzY29wZWRLZXlTZWNyZXQiOiJhZmZlYzRiZDQ2ZGE1NjUzZWMyMWE3ZGU4Nzc0OGZlNThlNzVmYTI4MWI0YjczZjBmYzVjMzcxYjIxYmEzOGFjIiwiaWF0IjoxNjg2MjYwNTI2fQ.GwwGHhM8E6ZN_YnMtJIqIB8KVArhxFmc-0Uq5h5it88"
 
   const createNewNFT = async () => {
     if (file) {
@@ -83,7 +83,6 @@ function Home() {
           let listingPrice = await contract.getListPrice()
           listingPrice = listingPrice.toString()
 
-  
           const transaction = await contract.createToken(tokenURI, priceInWei, { value: listingPrice });
           await transaction.wait();
   
@@ -121,7 +120,6 @@ function Home() {
                 <input type="file" onChange={onFileChange} />
                 <input type="text" value={tokenPrice} onChange={(e) => setTokenPrice(e.target.value)} placeholder="Price in Ether" />
                 <button onClick={createNewNFT}>Create NFT</button>
-      
               </div>
               
             </div>
@@ -131,4 +129,4 @@ function Home() {
       
 }
 
-export default Home;
+export default Create;

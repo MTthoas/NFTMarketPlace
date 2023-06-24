@@ -34,19 +34,19 @@ class Header extends Component<{}, HeaderState> {
 
   componentDidMount() {
     document.querySelector('html')?.setAttribute('data-theme', this.state.theme);
-    window.addEventListener('scroll', this.handleScroll, { passive: true });
+    // window.addEventListener('scroll', this.handleScroll, { passive: true });
   }
 
   componentWillUnmount() {
-    window.removeEventListener('scroll', this.handleScroll);
+    // window.removeEventListener('scroll', this.handleScroll);
   }
 
-  handleScroll = () => {
-    const position = window.pageYOffset;
-    this.setState({ scrollPosition: position });
-    const headerColor = this.state.scrollPosition >= 1 ? 'base-100 bg-opacity-100' : 'transparent';
-    this.setState({ headerColor });
-  }
+  // handleScroll = () => {
+  //   const position = window.pageYOffset;
+  //   this.setState({ scrollPosition: position });
+  //   const headerColor = this.state.scrollPosition >= 1 ? 'base-100 bg-opacity-100' : 'transparent';
+  //   this.setState({ headerColor });
+  // }
 
   toggleDarkMode = (checked: boolean) => {
     const theme = checked ? 'dark' : 'light';
@@ -61,7 +61,7 @@ class Header extends Component<{}, HeaderState> {
     const { theme, darkSide, headerColor } = this.state;
 
     return (
-      <div className={`sticky top-0 z-20 w-full px-6 transition-all duration-500 ease-in-out bg-${headerColor}`}>
+      <div className={`sticky top-0 z-20 w-full px-6 transition-all duration-500 ease-in-out bg-base-100`}>
         <div className="navbar pr-2 container mx-auto ">
           <div className="navbar-start">
             <div className="dropdown pt-1 Hamburger">
@@ -79,9 +79,9 @@ class Header extends Component<{}, HeaderState> {
           <div className="navbar-center hidden lg:flex">
             <ul className="menu menu-horizontal px-4 space-x-4 mt-1">
               <li>
-                {/* <Link to="/"> */}
+                <Link to="/">
                   <p className="btn-ghost mt-2 text-neutral"> Home </p>
-                {/* </Link> */}
+                </Link>
               </li>
               <li>
                 <Link to="/marketplace">
@@ -89,7 +89,12 @@ class Header extends Component<{}, HeaderState> {
                 </Link>
               </li>
               <li><a href="#" className="btn-ghost mt-2 text-neutral"> Workshop </a></li>
-              <li><a href="#" className="btn-ghost mt-2 text-neutral"> About </a></li>
+              <li>
+                <Link to="/create">
+                  <a href="#" className="btn-ghost mt-2 text-neutral"> Create </a>
+                </Link>
+              </li>
+
             </ul>
           </div>
           <div className="navbar-end mr-3 gap-x-3">

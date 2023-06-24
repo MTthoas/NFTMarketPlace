@@ -7,7 +7,7 @@ import { getDefaultWallets, RainbowKitProvider, darkTheme } from '@rainbow-me/ra
 import { configureChains, createConfig, sepolia, WagmiConfig } from 'wagmi';
 import { mainnet, polygon, optimism, arbitrum, goerli, hardhat, polygonMumbai } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
-import App from './components/App';
+import App from './App';
 import { localhost } from 'viem/chains';
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
