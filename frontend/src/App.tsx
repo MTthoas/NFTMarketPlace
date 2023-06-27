@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import MarketPlace from './components/MarketPlace'; 
 import Create from './components/Create';
+import Wallet from './components/Wallet'
+
 
 import Footer from './components/Footer';
 
@@ -24,6 +26,7 @@ const App = () => {
             {/* add your other routes here */}
             <Route path="/marketplace" element={<MarketPlace />} />
             <Route path="/create" element={<Create />} />
+            <Route path="/wallet" element={<Wallet/>} />
           </Routes>
         </div>
         <Footer />

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 
@@ -9,46 +9,51 @@ import { mainnet, polygon, optimism, arbitrum, goerli, hardhat, polygonMumbai } 
 import { publicProvider } from 'wagmi/providers/public';
 import App from './App';
 import { localhost } from 'viem/chains';
+import detectEthereumProvider from '@metamask/detect-provider';
 
-const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [
-    mainnet,
-    polygon,
-    optimism,
-    arbitrum,
-    sepolia,
-    localhost,
-    hardhat,
-    polygonMumbai,
-    ...(process.env.REACT_APP_ENABLE_TESTNETS === 'true' ? [goerli] : []),
-  ],
-  [publicProvider()]
-);
+const startApp = async () => {
+  const provider = await detectEthereumProvider();
+  if (provider) {
+    // MetaMask is available
+    const { chains, publicClient, webSocketPublicClient } = configureChains(
+      [
+        mainnet,
+        sepolia,
+        ...(process.env.REACT_APP_ENABLE_TESTNETS === 'true' ? [goerli] : []),
+      ],
+      [publicProvider()]
+    );
 
-const { connectors } = getDefaultWallets({
-  appName: 'RainbowKit demo',
-  projectId: 'YOUR_PROJECT_ID',
-  chains,
-});
+    const { connectors } = getDefaultWallets({
+      appName: 'RainbowKit demo',
+      projectId: 'YOUR_PROJECT_ID',
+      chains,
+    });
 
-const wagmiConfig = createConfig({
-  autoConnect: true,
-  connectors,
-  publicClient,
-  webSocketPublicClient,
-});
+    const wagmiConfig = createConfig({
+      autoConnect: true,
+      connectors,
+      publicClient,
+      webSocketPublicClient,
+    });
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
+    const root = ReactDOM.createRoot(
+      document.getElementById('root') as HTMLElement
+    );
 
-root.render(
-  <React.StrictMode>
-    <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains}>
-        <App />
-      </RainbowKitProvider>
-    </WagmiConfig>
-  </React.StrictMode>
-);
+    root.render(
+      <React.StrictMode>
+        <WagmiConfig config={wagmiConfig}>
+          <RainbowKitProvider chains={chains}>
+            <App />
+          </RainbowKitProvider>
+        </WagmiConfig>
+      </React.StrictMode>
+    );
+  } else {
+    // MetaMask is not available, do not render the app
+    console.error('Please install MetaMask.');
+  }
+};
 
+startApp();

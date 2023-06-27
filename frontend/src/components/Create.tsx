@@ -68,7 +68,7 @@ function Create() {
             }
           ];
           const description = "The world's most adorable and sensitive pup.";
-          const image = res.data.IpfsHash;
+          const image = `${res.data.IpfsHash}`;
           const name = "Ramses";
   
           const tokenURI = JSON.stringify({
@@ -79,19 +79,16 @@ function Create() {
           });
   
           const priceInWei = ethers.utils.parseEther(tokenPrice);
-
-          let listingPrice = await contract.getListPrice()
-          listingPrice = listingPrice.toString()
-
-          const transaction = await contract.createToken(tokenURI, priceInWei, { value: listingPrice });
+  
+          const transaction = await contract.createToken(tokenURI, priceInWei);
           await transaction.wait();
   
           console.log("NFT created successfully");
   
         }
       } catch (error: any) {
-        if (error.message.message) {
-          console.log(error.message.message);
+        if (error.message) {
+          console.log(error.message);
         }
         if (error.response) {
           console.log(error.response.data);

@@ -61,8 +61,8 @@ class Header extends Component<{}, HeaderState> {
     const { theme, darkSide, headerColor } = this.state;
 
     return (
-      <div className={`sticky top-0 z-20 w-full px-6 transition-all duration-500 ease-in-out bg-base-100`}>
-        <div className="navbar pr-2 container mx-auto ">
+      <div className={`sticky top-0 z-20 w-full px-6 transition-all duration-500 ease-in-out `}>
+        <div className="navbar pr-2 container mx-auto bg-base-100 ">
           <div className="navbar-start">
             <div className="dropdown pt-1 Hamburger">
               <label tabIndex={0} className="btn btn-ghost lg:hidden" htmlFor="my-drawer-3">
@@ -72,8 +72,9 @@ class Header extends Component<{}, HeaderState> {
               </label>
             </div>
             <a className="text-3xl font-bold ml-3 mt-1">
-              <span className=" text-neutral">ART</span>
-              <span className="text-info">X</span>
+            <span
+                    className=" mt-2 bg-clip-text font-extrabold  text-transparent bg-gradient-to-r from-neutral via-neutral to-base-100 md:inline-block"
+                > ARTX </span>
             </a>
           </div>
           <div className="navbar-center hidden lg:flex">
@@ -88,10 +89,13 @@ class Header extends Component<{}, HeaderState> {
                   <p className="btn-ghost mt-2 text-neutral "> Marketplace </p>
                 </Link>
               </li>
-              <li><a href="#" className="btn-ghost mt-2 text-neutral"> Workshop </a></li>
+              <Link to="/wallet">
+                <li>
+                  <p className="btn-ghost mt-2 text-neutral"> Wallet </p></li>
+              </Link>
               <li>
                 <Link to="/create">
-                  <a href="#" className="btn-ghost mt-2 text-neutral"> Create </a>
+                  <p  className="btn-ghost mt-2 text-neutral"> Create </p>
                 </Link>
               </li>
 

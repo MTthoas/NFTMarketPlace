@@ -1,43 +1,55 @@
-const { ethers } = require('hardhat');
 const { expect } = require('chai');
+const { ethers } = require('hardhat');
 
-describe("NFTMarket", function() {
-  it("Should create and execute market sales", async function() {
-    /* deploy the marketplace */
-    const NFTMarketplace = await ethers.getContractFactory("NFTMarketplace")
-    const nftMarketplace = await NFTMarketplace.deploy()
-    await nftMarketplace.deployed()
+describe('NFTMarketplace', function () {
+  let NFTMarketplace, nftMarketplace, owner, addr1, addr2;
 
-    let listingPrice = await nftMarketplace.getListingPrice()
-    listingPrice = listingPrice.toString()
+  beforeEach(async () => {
+    NFTMarketplace = await ethers.getContractFactory('NFTMarketplace');
+    [owner, addr1, addr2, _] = await ethers.getSigners();
+    nftMarketplace = await NFTMarketplace.deploy();
+    await nftMarketplace.deployed();
+  });
 
-    const auctionPrice = ethers.utils.parseUnits('1', 'ether')
+  describe('Deployment', function () {
+    it('Should set the right owner', async function () {
+      expect(await nftMarketplace.getOwner()).to.equal(owner.address);
+    });
+  });
 
-    /* create two tokens */
-    await nftMarketplace.createToken("https://www.mytokenlocation.com", auctionPrice, { value: listingPrice })
-    await nftMarketplace.createToken("https://www.mytokenlocation2.com", auctionPrice, { value: listingPrice })
+  describe('Transactions', function () {
+    it('Should create and list a token for sale', async function () {
+      await nftMarketplace.createToken('tokenURI', 10);
+      const tokenId = 1;
 
-    const [_, buyerAddress] = await ethers.getSigners()
+      await nftMarketplace.listTokenForSale(tokenId, 10);
+      const { tokenOwner, price, currentlyListed } = await nftMarketplace.getTokenDetails(tokenId);
 
-    /* execute sale of token to another user */
-    await nftMarketplace.connect(buyerAddress).createMarketSale(1, { value: auctionPrice })
+      expect(tokenOwner).to.equal(owner.address);
+      expect(price).to.equal(10);
+      expect(currentlyListed).to.equal(true);
+    });
 
-    /* resell a token */
-    await nftMarketplace.connect(buyerAddress).resellToken(1, auctionPrice, { value: listingPrice })
+    it('Should allow buying a token', async function () {
+      await nftMarketplace.createToken('tokenURI', ethers.utils.parseEther("0.1"));
+      const tokenId = 1;
 
-    /* query for and return the unsold items */
-    items = await nftMarketplace.fetchMarketItems()
-    items = await Promise.all(items.map(async i => {
-      const tokenUri = await nftMarketplace.tokenURI(i.tokenId)
-      let item = {
-        price: i.price.toString(),
-        tokenId: i.tokenId.toString(),
-        seller: i.seller,
-        owner: i.owner,
-        tokenUri
-      }
-      return item
-    }))
-    console.log('items: ', items)
-  })
-})
+      await nftMarketplace.listTokenForSale(tokenId, ethers.utils.parseEther("0.2"));
+      await nftMarketplace.connect(addr1).buyToken(tokenId, { value: ethers.utils.parseEther("0.2") });
+
+      const { tokenOwner, price, currentlyListed } = await nftMarketplace.getTokenDetails(tokenId);
+      expect(tokenOwner).to.equal(addr1.address);
+      expect(price).to.equal(ethers.utils.parseEther("0.2"));
+      expect(currentlyListed).to.equal(false);
+    });
+
+    it('Should test getAllTokenIds', async function () {
+      await nftMarketplace.createToken('tokenURI', ethers.utils.parseEther("0.1"));
+      await nftMarketplace.createToken('tokenURI', ethers.utils.parseEther("0.1"));
+
+      const tokenIds = await nftMarketplace.getAllTokenIds();
+      expect(tokenIds.length).to.equal(2);
+    });
+  });
+
+});

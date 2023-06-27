@@ -5,25 +5,25 @@ function Footer() {
     return (
 
         // Définition d'un footer
-    <div class="relative mt-16 bg-neutral">
-        <svg class="absolute top-0 w-full h-6 -mt-5 sm:-mt-10 sm:h-16 text-neutral" preserveAspectRatio="none" viewBox="0 0 1440 54">
+    <div className="relative mt-16 bg-neutral">
+        <svg className="absolute top-0 w-full h-6 -mt-5 sm:-mt-10 sm:h-16 text-neutral" preserveAspectRatio="none" viewBox="0 0 1440 54">
             <path fill="currentColor" d="M0 22L120 16.7C240 11 480 1.00001 720 0.700012C960 1.00001 1200 11 1320 16.7L1440 22V54H1320C1200 54 960 54 720 54C480 54 240 54 120 54H0V22Z"></path>
         </svg>
 
-        <section class="bg-black pb-12">
+        <section className="bg-black pb-12">
         <div
-                class="max-w-lg bg-black px-4 pt-12 py-8 mx-auto text-left md:max-w-none md:text-center"
+                className="max-w-lg bg-black px-4 pt-12 py-8 mx-auto text-left md:max-w-none md:text-center"
             >
                 <h1
-                class="text-2xl font-extrabold leading-10 tracking-tight text-left text-white text-center sm:leading-none md:text-6xl text-4xl lg:text-3xl"
+                className="text-2xl font-extrabold leading-10 tracking-tight text-left text-white text-center sm:leading-none md:text-6xl lg:text-3xl"
                 >
-                <span class="inline md:block">Join <span
-                    class=" mt-2 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-emerald-400 to-green-500 md:inline-block"
-                > ARTX </span> Community on <span href="" className="underline"> discord </span> </span>
+                <span className="inline md:block">Join  <span
+                    className=" mt-2 bg-clip-text font-extrabold  text-transparent bg-gradient-to-r from-base-100 via-base-100 to-neutral md:inline-block"
+                > ARTX </span> Community on <span className="underline"> discord </span> </span>
                    
                 </h1>
-                <div class="mx-auto rounded-lg font-black mt-5 text-zinc-400 md:mt-12 md:max-w-lg text-center items-center lg:text-lg flex pl-10">
-                    <button class="bg-tkb border text-sm text-white py-3 px-7 rounded-full mr-6">
+                <div className="mx-auto rounded-lg font-black mt-5 text-zinc-400 md:mt-12 md:max-w-lg text-center items-center lg:text-lg flex pl-20">
+                    <button className="bg-tkb border text-sm text-white py-3 px-7 rounded-full mr-6">
                         Submit a ticket
                     </button>
           
@@ -45,11 +45,11 @@ function Footer() {
         </section>
         
 {/*         
-        <hr class="text-white mx-5" />
-        <footer class="bg-black pb-20">
-            <div class="max-w-screen-xl px-4 pt-8 mx-auto sm:px-6 lg:px-8">
-                <div class="sm:flex sm:items-center sm:justify-between">
-                <div class="flex justify-center text-teal-300 sm:justify-start">
+        <hr className="text-white mx-5" />
+        <footer className="bg-black pb-20">
+            <div className="max-w-screen-xl px-4 pt-8 mx-auto sm:px-6 lg:px-8">
+                <div className="sm:flex sm:items-center sm:justify-between">
+                <div className="flex justify-center text-teal-300 sm:justify-start">
                 
                 <a className="text-3xl font-bold ml-3 mt-1">
                     <span className="text-base-100">ART</span>
@@ -57,7 +57,7 @@ function Footer() {
                 </a>
                 </div>
 
-                <p class="mt-4 text-sm text-center text-gray-400 lg:text-right lg:mt-0">
+                <p className="mt-4 text-sm text-center text-gray-400 lg:text-right lg:mt-0">
                     T&C &nbsp; Career &nbsp; Privacy & Policy &nbsp; Developers
                 </p>
                 </div>
