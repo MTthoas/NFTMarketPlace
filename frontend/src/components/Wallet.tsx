@@ -67,13 +67,11 @@ function Wallet() {
     }, []);
 
     const setInfos = async() => {
-
+        
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         setAdress(accounts[0])
 
     }
-
-        
 
 
     return (

@@ -9,6 +9,10 @@
   @apply transition-colors duration-700;
 }
 
+.NonTransition {
+  @apply transition-colors duration-0;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
