@@ -125,8 +125,8 @@ function Create() {
           <p className="text-center mt-2">Address: {address}</p>
           <p className="text-center">Balance: {balanceData?.formatted}</p>
 
-          <div className=" grid place-items-center p-2">
-            <div className="text-center place-items-center grid border border-gray-400 my-6 p-16 rounded-xl border-dashed">
+          <div className="grid place-items-center p-2 my-6">
+            <div className="text-center place-items-center grid border border-gray-400 p-16 rounded-xl border-dashed">
               <svg
                 className="w-12 h-12 text-black"
                 fill="none"
@@ -143,47 +143,56 @@ function Create() {
               <h1 className="text-grey font-semibold text-2xl">
                 JPG, PNG, GIF. Max 10mb.
               </h1>
-              <button className="px-4 py-2 bg-neutral text-white rounded-md mt-3 flex">
-                <svg
-                  className="w-6 h-6 mx-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  ></path>
-                </svg>
-                Choose File
-              </button>
+              <input
+                type="file"
+                onChange={onFileChange}
+                className="block w-full text-sm text-slate-500
+                          file:mr-4 file:py-2 file:px-4
+                          file:rounded-full file:border-0
+                          file:text-sm file:font-semibold
+                          file:bg-black-50 file:text-black-700
+                          hover:file:bg-black-100"
+              />
             </div>
           </div>
 
-          <div>
-            <input
-              type="text"
-              value={tokenName}
-              onChange={(e) => setTokenName(e.target.value)}
-              placeholder="Token Name"
-            />
-
-            <input type="file" onChange={onFileChange} />
-            <input
-              type="text"
-              value={tokenPrice}
-              onChange={(e) => setTokenPrice(e.target.value)}
-              placeholder="Price in Ether"
-            />
-            <input
-              type="text"
-              value={tokenDescription}
-              onChange={(e) => setTokenDescription(e.target.value)}
-              placeholder="Token Description"
-            />
-            <button onClick={createNewNFT}>Create NFT</button>
+          <div className="w-100 grid justify-center">
+            <div className="grid my-2 mx-4">
+              <label className="font-bold text-base">Name</label>
+              <input
+                type="text"
+                value={tokenName}
+                onChange={(e) => setTokenName(e.target.value)}
+                placeholder="Mon premier NFT"
+                className="border-2 border-gray-200 p-2 rounded-lg focus:outline-none focus:border-black-500 transition-colors"
+              />
+            </div>
+            <div className="grid my-2 mx-4">
+              <label className="font-bold text-base">Price</label>
+              <input
+                type="text"
+                value={tokenPrice}
+                onChange={(e) => setTokenPrice(e.target.value)}
+                placeholder="Price in Ether"
+                className="border-2 border-gray-200 p-2 rounded-lg focus:outline-none focus:border-black-500 transition-colors"
+              />
+            </div>
+            <div className="grid my-2 mx-4">
+              <label className="font-bold text-base">Description</label>
+              <input
+                type="text"
+                value={tokenDescription}
+                onChange={(e) => setTokenDescription(e.target.value)}
+                placeholder="NFT Description"
+                className="border-2 border-gray-200 p-2 rounded-lg focus:outline-none focus:border-black-500 transition-colors"
+              />
+            </div>
+            <button
+              onClick={createNewNFT}
+              className="bg-transparent hover:bg-secondary text-neutral font-semibold hover:text-white py-2 px-4 my-4 border border-neutral hover:border-transparent rounded-full"
+            >
+              Create NFT
+            </button>
           </div>
         </div>
       ) : null}
