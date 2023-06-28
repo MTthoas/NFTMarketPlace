@@ -5,6 +5,7 @@ import MarketPlaceJSON from '../contracts/marketplace.json';
 import axios from 'axios';
 
 import { NFT } from './interface/NFT';
+import NFT_CARD from './card/NFT_CARD_WALLET';
 
 export default function MarketPlace() {
 

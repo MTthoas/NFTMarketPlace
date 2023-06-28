@@ -103,7 +103,21 @@ contract NFTMarketplace is ERC721URIStorage {
             true
         );
     }
-    
+
+    function unlistTokenForSale(uint256 tokenId) public payable {
+        require(_exists(tokenId), "Token does not exist");
+        require(ownerOf(tokenId) == msg.sender, "You cannot unlist a token you do not own");
+        idToListedToken[tokenId].currentlyListed = false;
+        idToListedToken[tokenId].price = 0;
+        emit TokenListedSuccess(
+            tokenId,
+            address(this),
+            msg.sender,
+            0,
+            false
+        );
+    }
+
     function getAllNFTs() public view returns (ListedToken[] memory) {
         uint nftCount = _tokenIds.current();
         ListedToken[] memory tokens = new ListedToken[](nftCount);
