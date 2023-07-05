@@ -1,10 +1,22 @@
+export interface Bid {
+    bidder: string;
+    amount: any;
+    time: Date;
+}
+
 export interface NFT {
     tokenId: number;
-    name: string,
+    name?: string;
     owner: string;
     seller: string;
-    uri: any;
+    uri?: any;
     image: string;
-    price: any;
-    currentlyListed: boolean;
-}   
+    price?: any;
+    method?: string;
+    currentlyListed?: boolean;
+    auctionStartTime?: Date;
+    auctionEndTime?: Date;
+    highestBid?: any;
+    highestBidder?: string;
+    bids?: Bid[]; // Un tableau de bids
+}

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 // import Breadcrumb from 'components/utils/breadcrumb'
 import { Link } from "react-router-dom";
+import { ethers } from 'ethers';
 
 import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
@@ -8,11 +10,62 @@ import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
+import MarketPlaceJSON from '../../../contracts/marketplace.json';
+import { NFT } from '../../interface/NFT';
+
 import './Nft.css'
+import { set } from 'date-fns';
 
 function NFTDetails() {
 
-  return (
+    // use params to get the id of the nft
+
+    const { id } = useParams();
+
+    const [nft, setNft] = useState<NFT>();
+    const [dataLogs, setData] = useState();
+    const [key, setKey] = useState(Date.now());
+
+    const getNftFromId = async () => {
+
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+    
+        let contract = new ethers.Contract(MarketPlaceJSON.address, MarketPlaceJSON.abi, provider);
+    
+        const transaction = await contract.getNftById(id);
+
+
+        const metadata = JSON.parse(transaction[1]);
+
+        const data = transaction[0]
+
+        // console.dir(metadata);
+        // console.dir(data);
+        
+        const ethValue = ethers.utils.formatEther(data.price);
+
+        console.log(ethValue)
+    
+        let item = {
+          tokenId: data.tokenId.toNumber(),
+          name: metadata.name,
+          seller: data.seller,
+          owner: data.owner,
+          image: metadata.image,
+          price : ethValue,
+          currentlyListed: data.currentlyListed
+        }
+        // Mise à jour de l'état avec les données du NFT
+        // console.dir(item)
+        setNft(item);
+    }
+
+    useEffect(() => {
+        getNftFromId()
+    }, []);
+
+
+   return (
     <div className='w-full px-10'>
         <div className='mx-0 lg:mx-10 h-fulll'>
             <div className=' flex flex-wrap gap-5 h-full'>
@@ -29,8 +82,8 @@ function NFTDetails() {
                                     <div className="overflow-hidden rounded-lg">
                                         <img
                                             alt="content"
-                                            className="w-100 h-100 md:w-114 md:h-114 lg:w-114 lg:h-114 ml-2 xl:ml-24 rounded-lg"
-                                            src="https://ipfs.pixura.io/ipfs/Qmc9CPdKFV298KvbYQoq5dHFeodFbyXfjVHgwefcdH2DcP/srdrop29.4v2.png"
+                                            className="object-cover w-100 h-100 md:w-114 md:h-114 lg:w-114 lg:h-114 ml-2 xl:ml-24 rounded-lg"
+                                            src={"https://salmon-broad-weasel-155.mypinata.cloud/ipfs/"+nft?.image} 
                                         />
                             
                                     </div>
@@ -168,23 +221,23 @@ function NFTDetails() {
                         <div className="h-200 w-2/5 p-2">
                             <div className="sticky top-20 z-19 w-full ">
 
-                                <h1 className="text-3xl xl:text-4xl font-bold text-neutral mb-1 pt-12">Clod 406 #1</h1>
+                                <h1 className="text-3xl xl:text-4xl font-bold text-neutral mb-1 pt-12">{nft?.name}</h1>
 
                                 <div className="flex flex-row gap-12">
 
-                                    <div className="flex items-center space-x-4 mt-5">
+                                    {/* <div className="flex items-center space-x-4 mt-5">
                                         <img className="w-8 h-8 rounded-full" src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt=""/>
                                         <div className="font-medium ">
                                             <div className='text-gray-500'>Artist</div>
                                             <div className="text-sm ">fabianoLerazi</div>
                                         </div>
-                                    </div>
+                                    </div> */}
 
                                     <div className="flex items-center space-x-4 mt-5">
                                         <img className="w-8 h-8 rounded-full" src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt=""/>
                                         <div className="font-medium">
                                             <div className='text-gray-500'>Owner</div>
-                                            <div className="text-sm ">fabianoLerazi</div>
+                                            <div className="text-sm ">{nft?.owner}</div>
                                         </div>
                                     </div>
 
@@ -199,7 +252,7 @@ function NFTDetails() {
                                         <div className="">
                                             <div className="">Price</div>
                                             <div className="flex flex-row items-center space-x-2">
-                                                <div className="text-neutral font-medium text-3xl">2.86 ETH</div>
+                                                <div className="text-neutral font-medium text-3xl">{nft?.price} ETH</div>
                                                 <div className="stat-title">= $5,641</div>
                                             </div>
                                         </div>
@@ -211,7 +264,7 @@ function NFTDetails() {
                                     
                                     <div className="w-full">
                                         <button type="button" className="bg-transparent w-full mt-3 mr-3 text-text-info font-semibold  py-2 px-4 border border-info rounded-xl">
-                                            Buy now for 2.86 ETH
+                                            Buy now for {nft?.price} ETH
                                         </button>
                                     </div>
 

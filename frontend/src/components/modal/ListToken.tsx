@@ -6,6 +6,7 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 export interface ListTokenProps {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+  listMethod: any;
   value: any;
 }
 
@@ -163,8 +164,24 @@ const ListToken = (props: ListTokenProps) => {
           
             </div>
               
-            <button type="button" className="text-gray-900 bg-gray-100 w-1/3 py-3 h-20 hover:bg-gray-200  focus:outline-none font-medium rounded-lg text-sm px-7 text-center inline-flex items-center dark:focus:ring-gray-500 mr-2">
-                <svg className="w-6 h-6 mr-2 text-[#626890]" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="ethereum" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M311.9 260.8L160 353.6 8 260.8 160 0l151.9 260.8zM160 383.4L8 290.6 160 512l152-221.4-152 92.8z"></path></svg>
+            <button type="button"  onClick={() => {
+                  // Convert time string to minutes
+                    let auctionTime = 0;
+                    if (time !== "none") {
+                      const [value, unit] = time.split(' ');
+                      if (unit.startsWith('minute')) {
+                        auctionTime = parseFloat(value);
+                      } else if (unit.startsWith('heure')) {
+                        auctionTime = parseFloat(value) * 60;
+                      } else if (unit.startsWith('jour')) {
+                        auctionTime = parseFloat(value) * 60 * 24;
+                      }
+                    }
+                    props.listMethod(props.value.tokenId, method, price, auctionTime);
+                    props.setShowModal(false);
+                  }}
+                  className="text-gray-900 bg-gray-100 w-1/3 py-3 h-20 hover:bg-gray-200  focus:outline-none font-medium rounded-lg text-sm px-7 text-center inline-flex items-center dark:focus:ring-gray-500 mr-2">
+                  <svg className="w-6 h-6 mr-2 text-[#626890]" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="ethereum" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M311.9 260.8L160 353.6 8 260.8 160 0l151.9 260.8zM160 383.4L8 290.6 160 512l152-221.4-152 92.8z"></path></svg>
                  List for sale
               </button>
             </div>

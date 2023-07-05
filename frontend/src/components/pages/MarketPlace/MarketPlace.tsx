@@ -25,7 +25,6 @@ export default function MarketPlace() {
 
     }
   
-
     async function getAllNFTs() {
         try {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -34,7 +33,7 @@ export default function MarketPlace() {
     
             let transaction = await contract.getAllListedNFTs();
 
-            console.log(transaction)
+            // console.log(transaction)
     
             const items = await Promise.all(transaction.map(async (i: any) => {
             const tokenURI = await contract.tokenURI(i.tokenId);
@@ -45,20 +44,19 @@ export default function MarketPlace() {
             const ethValue = ethers.utils.formatEther(i.price);
     
             let item = {
-                tokenId: i.tokenId.toNumber(),
-                name: metadata.name,
-                seller: i.seller,
-                owner: i.owner,
-                image: metadata.image,
-                price : ethValue,
-                currentlyListed: i.currentlyListed
+              tokenId: i.tokenId.toNumber(),
+              name: metadata.name,
+              seller: i.seller,
+              owner: i.owner,
+              image: metadata.image,
+              price : ethValue,
+              currentlyListed: i.currentlyListed
             }
-
 
             return item;
             }));
     
-            console.table(items);
+            // console.table(items);
             updateData(items);
 
         } catch (error) {
@@ -91,7 +89,6 @@ export default function MarketPlace() {
             console.log('Erreur lors de l\'achat du NFT: ', error);
         }
     };
-    
     
     
     return (

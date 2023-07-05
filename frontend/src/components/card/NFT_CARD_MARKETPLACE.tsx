@@ -32,10 +32,6 @@ const NFT_CARD_MARKETPLACE = ({tokenId, seller, owner, price, image, data} : {to
         console.log(transaction)
     }
 
-
-
-
-
     return (
         <>
         <Link to={`/nft/${tokenId}`}>

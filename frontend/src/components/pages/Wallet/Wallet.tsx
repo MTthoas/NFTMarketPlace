@@ -69,7 +69,6 @@ function Wallet() {
 
     const ListOnMarketPlace = async (tokenId : any, method: any, price: any, time: any) => {
         try {
-            
             setLoading(prev => ({ ...prev, [tokenId]: true }));
             console.log("List")
             localStorage.setItem(`loading-${tokenId}`, 'true'); // save loading state to local storage
@@ -77,13 +76,19 @@ function Wallet() {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
             const contract = new ethers.Contract(MarketPlaceJSON.address, MarketPlaceJSON.abi, signer);
-        
+    
             // Convert the price to wei (if necessary)
             const priceWei = ethers.utils.parseEther("0.1");
     
             console.log("Token ID: ", tokenId);
     
-            const transaction = await contract.listTokenForSale(tokenId, priceWei);
+            let transaction;
+            if (method === 'Auction') {
+                const duration = time * 60; // Convert time in minutes to seconds
+                transaction = await contract.startAuction(tokenId, priceWei, duration)
+            } else {
+                transaction = await contract.listTokenForSale(tokenId, priceWei);
+            }
     
             const receipt = await transaction.wait();
     
@@ -92,12 +97,11 @@ function Wallet() {
             }
         
             console.log("Transaction Done");
-
-             setData({
+    
+            setData({
                 ...data,
             });
-
-
+    
         } catch (error) {
             console.error("Transaction was rejected: ", error);
         } finally {
@@ -105,6 +109,7 @@ function Wallet() {
             localStorage.setItem(`loading-${tokenId}`, 'false'); // save loading state to local storage
         }
     };
+    
 
     const UnlistOnMarketPlace = async (tokenId : any) => {
         try {
@@ -192,7 +197,11 @@ function Wallet() {
                 </div>
 
                 {showModal ? (
-                     <ListToken setShowModal={setShowModal} value={value} unlistMethod={UnlistOnMarketPlace} listMethod={ListOnMarketPlace}/>
+                     <ListToken 
+                     setShowModal={setShowModal} 
+                     value={value}
+                      unlistMethod={UnlistOnMarketPlace} 
+                      listMethod={ListOnMarketPlace}/>
                 ) : null}
 
 
