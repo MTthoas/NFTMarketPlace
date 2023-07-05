@@ -3,15 +3,15 @@
 @tailwind utilities;
 
 * {
-  /* text-align: center; */
-  /* user-select: none; */
-  
   @apply transition-colors duration-700;
 }
 
+/* CSS spécifique pour annuler la transition pour les éléments avec la classe .NonTransition */
 .NonTransition {
-  @apply transition-colors duration-0;
+  transition-duration: 0s !important;
 }
+
+
 
 body {
   margin: 0;

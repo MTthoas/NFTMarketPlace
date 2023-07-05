@@ -5,6 +5,10 @@ module.exports = {
   ],
   theme: {
     extend: {
+      transitionDuration: {
+        '0': '0ms',
+        '100': '100ms',
+      },
       height: {
         '18': '1rem',
         '70': '10rem',

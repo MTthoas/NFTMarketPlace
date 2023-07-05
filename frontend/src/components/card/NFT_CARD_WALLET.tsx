@@ -3,115 +3,13 @@ import { ethers } from 'ethers';
 import MarketPlaceJSON from '../../contracts/marketplace.json';
 import { NFT } from '../interface/NFT';
 
-import ListToken from '../modal/ListToken';
+import ListToken from '../pages/Create/ListToken';
 
-const NFT_CARD_WALLET = ({tokenId, seller, owner, price, image, data, setShowModal, setValue} : {tokenId: number, seller: string, owner: string, price: string, image: string, data: NFT, setShowModal: any, setValue: any})  => {
-    
-    const [loading, setLoading] = useState(false)
-    const [key, setKey] = useState(Date.now());
-    const [dataLogs, setData] = useState(data);
+const NFT_CARD_WALLET = ({tokenId, seller, owner, price, image, data, setShowModal, setValue, loading} : {tokenId: number, seller: string, owner: string, price: string, image: string, data: NFT, setShowModal: any, setValue: any, loading: any})  => {
 
- 
-    function truncate(str : any, n : any){
-        return (str.length > n) ? str.slice(0, n-1) + '...' : str;
-    };
-
-    const ListOnMarketPlace = async (tokenId : any) => {
-        try {
-            
-
-
-            
-            // setLoading(true); // start loading
-            // localStorage.setItem(`loading-${tokenId}`, 'true'); // save loading state to local storage
-    
-            // const provider = new ethers.providers.Web3Provider(window.ethereum);
-            // const signer = provider.getSigner();
-            // const contract = new ethers.Contract(MarketPlaceJSON.address, MarketPlaceJSON.abi, signer);
-        
-            // // Convert the price to wei (if necessary)
-            // const priceWei = ethers.utils.parseEther("0.1");
-    
-            // console.log("Token ID: ", tokenId);
-    
-            // const transaction = await contract.listTokenForSale(tokenId, priceWei);
-    
-            // const receipt = await transaction.wait();
-    
-            // if (receipt.status === 0) {
-            //     throw new Error('Transaction failed');
-            // }
-        
-            // console.log("Transaction Done");
-
-            //  setData({
-            //     ...dataLogs,
-            //     currentlyListed: true,
-            // });
-
-
-        } catch (error) {
-            console.error("Transaction was rejected: ", error);
-        } finally {
-            setLoading(false); // stop loading regardless of the result
-            localStorage.setItem(`loading-${tokenId}`, 'false'); // save loading state to local storage
-            setKey(Date.now());
-        }
-    };
-
-    // Unlist the NFT from the market place
-
-    const UnlistOnMarketPlace = async (tokenId : any) => {
-        try {
-            setLoading(true); // start loading
-            localStorage.setItem(`loading-${tokenId}`, 'true'); // save loading state to local storage
-
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            const signer = provider.getSigner();
-
-            const contract = new ethers.Contract(MarketPlaceJSON.address, MarketPlaceJSON.abi, signer);
-
-            const transaction = await contract.unlistTokenForSale(tokenId);
-
-            const receipt = await transaction.wait();
-
-            if (receipt.status === 0) {
-                throw new Error('Transaction failed');
-                   localStorage.setItem(`loading-${tokenId}`, 'false'); // save loading state to local storage
-            }
-
-            console.log("Transaction Done");
-
-            setData({
-                ...dataLogs,
-                currentlyListed: false,
-            });
-
-        } catch (error) {
-            console.error("Transaction was rejected: ", error);
-
-            setLoading(false); // stop loading regardless of the result
-
-            localStorage.setItem(`loading-${tokenId}`, 'false'); // save loading state to local storage
-            setKey(Date.now());
-            
-        } finally {
-            setLoading(false); // stop loading regardless of the result
-
-            localStorage.setItem(`loading-${tokenId}`, 'false'); // save loading state to local storage
-            setKey(Date.now());
-        }
-    };
-
-    
-
-    useEffect(() => {
-        const savedLoadingState = localStorage.getItem(`loading-${tokenId}`) === 'true';
-        setLoading(savedLoadingState);
-    }, []);
-    
+    // 
     return (
-        <div key={key} className="shadow-md rounded-md m-2 transition duration-500 hover:scale-110 cursor-pointer h-101">
+        <div className="shadow-md rounded-md m-2 transition duration-500 hover:scale-110 cursor-pointer h-101">
             <img className="object-cover w-full max-h-50 rounded mr-2" src={"https://salmon-broad-weasel-155.mypinata.cloud/ipfs/"+image} alt={`${tokenId}`} />
             {/* <div className="flex my-2">
             <p className="py-1 px-3 bg-black bg-opacity-10 text-black text-sm font-medium rounded-full">{nft.sellType === 'Auction' ? nft.nftTimeLeft : nft.sellType}</p>
@@ -120,19 +18,19 @@ const NFT_CARD_WALLET = ({tokenId, seller, owner, price, image, data, setShowMod
             <div className="px-4">
 
                 <div className='pt-4 flex flex-row  justify-between'>
-                    <p className="  text-black font-medium text-md flex justify-start">{dataLogs.name}</p>
+                    <p className="  text-black font-medium text-md flex justify-start">{data.name}</p>
                     <button className="border border-gray-300 text-xs px-2 rounded-md"> #{tokenId} </button>
                 </div>
                 
                 <p className="text-black  font-medium flex my-2"> {price} ETH </p>
 
-                <p className="text-xs pt-1"> {dataLogs.currentlyListed === true ? "Disponible dans la marketPlace" : "" }</p>
+                <p className="text-xs pt-1"> {data.currentlyListed === true ? "Disponible dans la marketPlace" : "" }</p>
 
-                {dataLogs.currentlyListed == false ? 
+                {data.currentlyListed == false ? 
                     loading == false ? 
                     <button   onClick={() => {
                         setShowModal(true) 
-                        setValue(dataLogs)
+                        setValue(data)
                     }} disabled={loading} className="text-xs  border border-gray-300 rounded-md py-2 mt-5 hover:bg-neutral hover:text-white w-full "> Lister sur le market 
                     </button>
                     : 
@@ -145,9 +43,9 @@ const NFT_CARD_WALLET = ({tokenId, seller, owner, price, image, data, setShowMod
                             <span className="sr-only">Loading...</span>
                         </div>
                     </button>
-                : dataLogs.currentlyListed == true ?
+                : data.currentlyListed == true ?
                     loading == false ?
-                    <button onClick={() => UnlistOnMarketPlace(tokenId)} disabled={loading} className="text-xs  border border-gray-300 rounded-md py-2 mt-1 mb-1 hover:bg-neutral hover:text-white w-full"> Ne plus lister sur le market
+                    <button className="text-xs  border border-gray-300 rounded-md py-2 mt-1 mb-1 hover:bg-neutral hover:text-white w-full"> Ne plus lister sur le market
                     </button>
                     : <button className="text-xs border border-gray-300 rounded-md py-2 mt-1  w-full">
                         <div role="status">

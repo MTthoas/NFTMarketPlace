@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAccount, useBalance } from 'wagmi';
 import { ethers } from 'ethers';
-import MarketPlace from '../contracts/marketplace.json';
-import { uploadFileToIPFS } from '../pinata';
+import MarketPlace from '../../../contracts/marketplace.json';
+import { uploadFileToIPFS } from '../../../pinata';
 import axios from 'axios';
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);

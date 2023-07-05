@@ -1,11 +1,11 @@
 import React from 'react'
 import { useState, useEffect } from "react";
 import { ethers } from 'ethers';
-import MarketPlaceJSON from '../contracts/marketplace.json';
+import MarketPlaceJSON from '../../../contracts/marketplace.json';
 import axios from 'axios';
 
-import { NFT } from './interface/NFT';
-import NFT_CARD_MARKETPLACE from './card/NFT_CARD_MARKETPLACE';
+import { NFT } from '../../interface/NFT';
+import NFT_CARD_MARKETPLACE from '../../card/NFT_CARD_MARKETPLACE';
 
 
 export default function MarketPlace() {
@@ -122,7 +122,7 @@ export default function MarketPlace() {
       <div className={window.innerWidth > 1024 ? 'flex w-100' : ''}>
         {/* Filters */}
         {filtersVisible && (
-          <ul className={window.innerWidth > 1024 ? 'menu menu-compact lg:menu-normal bg-base-100 p-2 rounded-box w-1/5' : 'menu menu-compact lg:menu-normal bg-base-100 p-2 rounded-box w-full'}>
+          <ul className={window.innerWidth > 1024 ? 'menu menu-compact lg:menu-normal bg-base-100 rounded-box w-1/5 mr-2' : 'menu menu-compact lg:menu-normal bg-base-100 p-2 rounded-box w-full'}>
             <div className="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box my-2">
               <input type="checkbox" />
               <div className="collapse-title text-xl font-medium px-auto">Status</div>

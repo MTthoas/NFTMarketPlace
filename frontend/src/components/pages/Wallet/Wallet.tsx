@@ -1,10 +1,10 @@
 import React, { useState, useEffect }  from 'react';
 import { ethers } from 'ethers';
-import MarketPlaceJSON from '../contracts/marketplace.json';
-import { NFT } from './interface/NFT';
-import NFT_CARD_WALLET from './card/NFT_CARD_WALLET';
+import MarketPlaceJSON from '../../../contracts/marketplace.json';
+import { NFT } from '../../interface/NFT';
+import NFT_CARD_WALLET from '../../card/NFT_CARD_WALLET';
 
-import ListToken from './modal/ListToken';
+import ListToken from '../Create/ListToken';
 
 
 function Wallet() {
@@ -13,6 +13,12 @@ function Wallet() {
     const [adress, setAdress] = useState("")
     const [showModal, setShowModal] = useState(false);
     const [value, setValue] = useState<NFT>();
+    const [dataLogs, setData] = useState(data);
+
+    
+
+    const [loading, setLoading] = useState<Record<string, boolean>>({});
+
 
     async function getMyNFTs() {
         try {
@@ -61,6 +67,84 @@ function Wallet() {
 
     }
 
+    const ListOnMarketPlace = async (tokenId : any, method: any, price: any, time: any) => {
+        try {
+            
+            setLoading(prev => ({ ...prev, [tokenId]: true }));
+            console.log("List")
+            localStorage.setItem(`loading-${tokenId}`, 'true'); // save loading state to local storage
+    
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
+            const contract = new ethers.Contract(MarketPlaceJSON.address, MarketPlaceJSON.abi, signer);
+        
+            // Convert the price to wei (if necessary)
+            const priceWei = ethers.utils.parseEther("0.1");
+    
+            console.log("Token ID: ", tokenId);
+    
+            const transaction = await contract.listTokenForSale(tokenId, priceWei);
+    
+            const receipt = await transaction.wait();
+    
+            if (receipt.status === 0) {
+                throw new Error('Transaction failed');
+            }
+        
+            console.log("Transaction Done");
+
+             setData({
+                ...data,
+            });
+
+
+        } catch (error) {
+            console.error("Transaction was rejected: ", error);
+        } finally {
+            setLoading(prev => ({ ...prev, [tokenId]: false }));
+            localStorage.setItem(`loading-${tokenId}`, 'false'); // save loading state to local storage
+        }
+    };
+
+    const UnlistOnMarketPlace = async (tokenId : any) => {
+        try {
+            setLoading(prev => ({ ...prev, [tokenId]: true }));
+            localStorage.setItem(`loading-${tokenId}`, 'true'); // save loading state to local storage
+
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
+
+            const contract = new ethers.Contract(MarketPlaceJSON.address, MarketPlaceJSON.abi, signer);
+
+            const transaction = await contract.unlistTokenForSale(tokenId);
+
+            const receipt = await transaction.wait();
+
+            if (receipt.status === 0) {
+                throw new Error('Transaction failed');
+                   localStorage.setItem(`loading-${tokenId}`, 'false'); // save loading state to local storage
+            }
+
+            console.log("Transaction Done");
+
+            setData({
+                ...data
+            });
+
+        } catch (error) {
+            console.error("Transaction was rejected: ", error);
+
+            setLoading(prev => ({ ...prev, [tokenId]: false }));
+
+            localStorage.setItem(`loading-${tokenId}`, 'false'); // save loading state to local storage
+            
+        } finally {
+            setLoading(prev => ({ ...prev, [tokenId]: false }));
+
+            localStorage.setItem(`loading-${tokenId}`, 'false'); // save loading state to local storage
+        }
+    };
+
     useEffect(() => {
         setInfos();
         getMyNFTs();
@@ -99,6 +183,7 @@ function Wallet() {
                                 data={value}
                                 setShowModal={setShowModal}
                                 setValue={setValue}
+                                loading = {loading[value.tokenId] || false}
                             />
                         </div>
                         
@@ -107,7 +192,7 @@ function Wallet() {
                 </div>
 
                 {showModal ? (
-                     <ListToken setShowModal={setShowModal} value={value}/>
+                     <ListToken setShowModal={setShowModal} value={value} unlistMethod={UnlistOnMarketPlace} listMethod={ListOnMarketPlace}/>
                 ) : null}
 
 

@@ -1,6 +1,9 @@
 import React, { useState, useEffect }  from 'react';
 import { ethers } from 'ethers';
 import MarketPlaceJSON from '../../contracts/marketplace.json';
+
+import { Link } from 'react-router-dom';
+
 import { NFT } from '../interface/NFT';
 
 const NFT_CARD_MARKETPLACE = ({tokenId, seller, owner, price, image, data} : {tokenId: number, seller: string, owner: string, price: string, image: string, data: NFT})  => {
@@ -8,8 +11,34 @@ const NFT_CARD_MARKETPLACE = ({tokenId, seller, owner, price, image, data} : {to
     const [dataLogs, setData] = useState(data);
     const [key, setKey] = useState(Date.now());
 
+    const getNftFromId = async () => {
+        const provider = new ethers.providers.Web3Provider((window as any).ethereum);
+        const signer = provider.getSigner();
+
+        const contract = new ethers.Contract(
+            process.env.REACT_APP_MARKETPLACE_CONTRACT_ADDRESS!,
+            MarketPlaceJSON.abi,
+            signer
+        );
+
+        const transaction = await contract.getNftById(tokenId);
+
+        const receipt = await transaction.wait();
+
+        if (receipt.status === 0) {
+            throw new Error('Transaction failed');
+        }
+
+        console.log(transaction)
+    }
+
+
+
+
 
     return (
+        <>
+        <Link to={`/nft/${tokenId}`}>
         <div key={key} className="shadow-md rounded-md m-2 transition duration-500 hover:scale-110 cursor-pointer h-64">
             <img className="object-cover w-full max-h-50 rounded mr-2" src={"https://salmon-broad-weasel-155.mypinata.cloud/ipfs/"+image} alt={`${tokenId}`} />
             {/* <div className="flex my-2">
@@ -34,6 +63,8 @@ const NFT_CARD_MARKETPLACE = ({tokenId, seller, owner, price, image, data} : {to
             </p>
             </div> */}
       </div>
+        </Link>
+      </>
     );
 }
 

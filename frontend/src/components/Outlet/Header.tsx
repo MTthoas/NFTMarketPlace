@@ -61,9 +61,9 @@ class Header extends Component<{}, HeaderState> {
     const { theme, darkSide, headerColor } = this.state;
 
     return (
-      <div className={`sticky top-0 z-20 w-full px-6 transition-all duration-500 ease-in-out `}>
-        <div className="navbar pr-2 container mx-auto bg-base-100 ">
-          <div className="navbar-start">
+      <div className={`sticky top-0 z-20 w-full  bg-base-100 `}>
+        <div className="navbar  container mx-auto px-9 ">
+          <div className="navbar-start ">
             <div className="dropdown pt-1 Hamburger">
               <label tabIndex={0} className="btn btn-ghost lg:hidden" htmlFor="my-drawer-3">
                 <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${theme === 'dark' ? 'dark:text-white' : 'text-current'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">

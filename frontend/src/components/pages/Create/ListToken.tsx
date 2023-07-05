@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { NFT } from '../interface/NFT';
-
+import { NFT } from '../../interface/NFT';
+import './modal.css';
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 
 export interface ListTokenProps {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+  unlistMethod: any;
+  listMethod: any;
   value: any;
 }
 
@@ -55,8 +57,16 @@ const ListToken = (props: ListTokenProps) => {
               </p>
 
               <div className="flex gap-x-5 mt-4">
-              <div onClick={() => handleMethodChange('fixed')} className={`w-1/2 h-40 border NonTransition hover:border-2 transform transition duration-0 hover:scale-105 text-nautral cursor-pointer border-gray-300 hover:border-gray-600 rounded-xl flex justify-center text-center ${method === 'fixed' ? 'bg-neutral' : 'text-neutral'}`}>
-               <div className={`flex flex-col justify-center font-bold text-white ${method === 'fixed' ? 'text-white': 'text-neutral'}`}>
+              <div 
+                    onClick={() => handleMethodChange('Fixed price')} 
+                    className={`
+                    w-1/2 h-40 border 
+                     hover:scale-105 NonTransition
+                    text-natural cursor-pointer border-gray-300 hover:border-gray-600 
+                    rounded-xl flex justify-center text-center 
+                    ${method === 'Fixed price' ? 'text-white bg-black' : ''}`}
+                    >               
+                    <div className={`flex flex-col justify-center font-bold`}>
                     <div className="flex justify-center mb-2 ">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -81,8 +91,16 @@ const ListToken = (props: ListTokenProps) => {
                     <h2>Fixed price</h2>
                   </div>
                 </div>
-                <div onClick={() => handleMethodChange('auction')} className={`w-1/2 h-40 border NonTransition hover:border-3 hover:scale-105 transform transition duration-0 cursor-pointer border-gray-300 hover:border-gray-600 rounded-xl flex justify-center text-center ${method === 'auction' ? 'bg-neutral' : ''}`}>
-                  <div className={`flex flex-col justify-center font-bold  ${method === 'auction' ? 'text-white' : ''}`}>
+                <div 
+                    onClick={() => handleMethodChange('Timed auction')} 
+                    className={`
+                        w-1/2 h-40 border NonTransition 
+                        hover:scale-105 duration-colors-0
+                        cursor-pointer border-gray-300 hover:border-gray-600 
+                        rounded-xl flex justify-center text-center 
+                        ${method === 'Timed auction' ? 'text-white bg-black' : ''}`}
+                    >                  
+                    <div className={`flex flex-col justify-center font-bold`}>
                     <div className="flex justify-center mb-2">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -163,7 +181,10 @@ const ListToken = (props: ListTokenProps) => {
           
             </div>
               
-            <button type="button" className="text-gray-900 bg-gray-100 w-1/3 py-3 h-20 hover:bg-gray-200  focus:outline-none font-medium rounded-lg text-sm px-7 text-center inline-flex items-center dark:focus:ring-gray-500 mr-2">
+            <button onClick={() => { 
+              props.listMethod(props.value.tokenId, method, price, time)
+              props.setShowModal(false)
+            }} type="button" className="text-gray-900 bg-gray-100 w-1/3 py-3 h-20 hover:bg-gray-200  focus:outline-none font-medium rounded-lg text-sm px-7 text-center inline-flex items-center dark:focus:ring-gray-500 mr-2">
                 <svg className="w-6 h-6 mr-2 text-[#626890]" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="ethereum" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M311.9 260.8L160 353.6 8 260.8 160 0l151.9 260.8zM160 383.4L8 290.6 160 512l152-221.4-152 92.8z"></path></svg>
                  List for sale
               </button>
