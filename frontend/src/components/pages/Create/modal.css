@@ -1,0 +1,7 @@
+* {
+  @apply transition-colors duration-0;
+}
+
+.NonTransition {
+    transition-duration: 0s !important;
+  }

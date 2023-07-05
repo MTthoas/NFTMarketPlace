@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  /* text-align: center; */
+  /* user-select: none; */
+
+  @apply transition-colors duration-300;
+}
+
+@font-face {
+  font-family: "RoseQuay";   /*Can be any text*/
+  src: local("RoseQuay"),
+    url("./fonts/RoseQuay.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Balbek";   /*Can be any text*/
+  src: local("Balbek"),
+    url("./fonts/Balbek-Personal.otf") format("otf");
+}
+
+@font-face {
+  font-family: "DelightCoffee";   /*Can be any text*/
+  src: local("DelightCoffee"),
+    url("./fonts/DelightCoffee.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "BerkshireSwash";   /*Can be any text*/
+  src: local("BerkshireSwash"),
+    url("./fonts/BerkshireSwash-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Lilita";   /*Can be any text*/
+  src: local("Lilita"),
+    url("./fonts/LilitaOne-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "OriginalSurfer";   /*Can be any text*/
+  src: local("OriginalSurfer"),
+    url("./fonts/OriginalSurfer-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Jomhuria-Regular";   /*Can be any text*/
+  src: local("Jomhuria-Regular"),
+    url("./fonts/Jomhuria-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "BalooDa2-VariableFont_wght";   /*Can be any text*/
+  src: local("BalooDa2-VariableFont_wght"),
+    url("./fonts/BalooDa2-VariableFont_wght.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Lancelot-Regular";   /*Can be any text*/
+  src: local("Lancelot-Regular"),
+    url("./fonts/Lancelot-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Cinzel-VariableFont_wght";   /*Can be any text*/
+  src: local("Cinzel-VariableFont_wght"),
+    url("./fonts/Cinzel-VariableFont_wght.ttf") format("truetype");
+}
+
+
