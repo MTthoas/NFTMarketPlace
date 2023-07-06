@@ -21,3 +21,12 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+node_modules
+.idea
+.vscode
+package-lock.json
+
+#Hardhat files
+cache
+artifacts
+.env
