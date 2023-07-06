@@ -1,49 +1,30 @@
-import React, { useState, useEffect } from "react";
-import { useAccount, useBalance } from "wagmi";
+import React, { useState } from "react";
+import { useAccount } from "wagmi";
 import { ethers } from "ethers";
 import MarketPlace from "../contracts/marketplace.json";
-import { uploadFileToIPFS } from "../pinata";
 import axios from "axios";
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
-const signer = provider.getSigner();
-
 const contract = new ethers.Contract(
   MarketPlace.address,
   MarketPlace.abi as any,
-  signer
+  provider.getSigner()
 );
 
 function Create() {
   const { address } = useAccount();
-  const {
-    data: balanceData,
-    isError: balanceError,
-    isLoading: balanceLoading,
-  } = useBalance({ address: address });
 
-  const [nfts, setNfts] = useState<
-    {
-      tokenId: number;
-      owner: string;
-      seller: string;
-      price: number;
-      currentlyListed: boolean;
-    }[]
-  >([]);
-
-  const [tokenURI, setTokenURI] = useState("");
-  const [price, setPrice] = useState(0);
-
-  const [tokenPrice, setTokenPrice] = useState("");
-  const [tokenName, setTokenName] = useState("");
-  const [tokenDescription, setTokenDescription] = useState("");
   const [file, setFile] = useState<File | null>(null);
-
   const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [tokenName, setTokenName] = useState<string>("");
+  const [tokenDescription, setTokenDescription] = useState<string>("");
+  const [tokenPrice, setTokenPrice] = useState<string>("");
+
+  const JWT =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJjN2U5ZjAyYy04MzAzLTRjOGYtOWIwZC0xMzQ1YWI5MDlmMjIiLCJlbWFpbCI6Im1hbHRoYXphcjIyN0BnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJpZCI6IkZSQTEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX0seyJpZCI6Ik5ZQzEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX1dLCJ2ZXJzaW9uIjoxfSwibWZhX2VuYWJsZWQiOmZhbHNlLCJzdGF0dXMiOiJBQ1RJVkUifSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiZGM0MTUyYzk5YThhYTI0ZmEzMjIiLCJzY29wZWRLZXlTZWNyZXQiOiJhZmZlYzRiZDQ2ZGE1NjUzZWMyMWE3ZGU4Nzc0OGZlNThlNzVmYTI4MWI0YjczZjBmYzVjMzcxYjIxYmEzOGFjIiwiaWF0IjoxNjg2MjYwNTI2fQ.GwwGHhM8E6ZN_YnMtJIqIB8KVArhxFmc-0Uq5h5it88";
 
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -51,7 +32,9 @@ function Create() {
       setFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreview(reader.result);
+        if (typeof reader.result === "string") {
+          setPreview(reader.result);
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -62,85 +45,95 @@ function Create() {
     setPreview(null);
   };
 
-  const JWT =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJjN2U5ZjAyYy04MzAzLTRjOGYtOWIwZC0xMzQ1YWI5MDlmMjIiLCJlbWFpbCI6Im1hbHRoYXphcjIyN0BnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJpZCI6IkZSQTEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX0seyJpZCI6Ik5ZQzEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX1dLCJ2ZXJzaW9uIjoxfSwibWZhX2VuYWJsZWQiOmZhbHNlLCJzdGF0dXMiOiJBQ1RJVkUifSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiZGM0MTUyYzk5YThhYTI0ZmEzMjIiLCJzY29wZWRLZXlTZWNyZXQiOiJhZmZlYzRiZDQ2ZGE1NjUzZWMyMWE3ZGU4Nzc0OGZlNThlNzVmYTI4MWI0YjczZjBmYzVjMzcxYjIxYmEzOGFjIiwiaWF0IjoxNjg2MjYwNTI2fQ.GwwGHhM8E6ZN_YnMtJIqIB8KVArhxFmc-0Uq5h5it88";
+  const formatAddress = (address: string) => {
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  };
 
+  
   const createNewNFT = async () => {
+    setErrorMessage(null);
+    setSuccessMessage(null);
     setLoading(true);
-    if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
 
-      try {
-        const res = await axios.post(
-          "https://api.pinata.cloud/pinning/pinFileToIPFS",
-          formData,
-          {
-            maxContentLength: Infinity,
-            maxBodyLength: Infinity,
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${JWT}`,
-            },
-          }
-        );
-
-        if (res.data.IpfsHash) {
-          const attributes = [
-            {
-              trait_type: "Breed",
-              value: "Maltipoo",
-            },
-            {
-              trait_type: "Eye color",
-              value: "Mocha",
-            },
-          ];
-          const description = `${tokenDescription}`;
-          const image = `${res.data.IpfsHash}`;
-          const name = `${tokenName}`;
-
-          const tokenURI = JSON.stringify({
-            attributes,
-            description,
-            image,
-            name,
-          });
-
-          const priceInWei = ethers.utils.parseEther(tokenPrice);
-
-          const transaction = await contract.createToken(tokenURI, priceInWei);
-          await transaction.wait();
-
-          setSuccessMessage("NFT created successfully");
-          console.log("NFT created successfully");
-        }
-      } catch (error: any) {
-        setLoading(false);
-        setErrorMessage("An error occurred while creating the NFT.");
-        if (error.message) {
-          console.log(error.message);
-        }
-        if (error.response) {
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-        } else if (error.request) {
-          console.log(error.request);
-        } else {
-          console.log("Error", error.message);
-        }
-      } finally {
-        setFile(null);
-        setPreview(null);
-        setTokenPrice("");
-        setTokenName("");
-        setTokenDescription("");
-      }
-    } else {
+    if (!file) {
       setLoading(false);
       setErrorMessage("Please upload an image.");
+      return;
     }
+
+    if (!tokenName || !tokenPrice) {
+      setLoading(false);
+      setErrorMessage("Please fill in all the requested fields.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await axios.post(
+        "https://api.pinata.cloud/pinning/pinFileToIPFS",
+        formData,
+        {
+          maxContentLength: Infinity,
+          maxBodyLength: Infinity,
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${JWT}`,
+          },
+        }
+      );
+
+      if (res.data.IpfsHash) {
+        const attributes = [
+          {
+            trait_type: "Breed",
+            value: "Maltipoo",
+          },
+          {
+            trait_type: "Eye color",
+            value: "Mocha",
+          },
+        ];
+        const tokenURI = JSON.stringify({
+          attributes,
+          description: tokenDescription,
+          image: res.data.IpfsHash,
+          name: tokenName,
+        });
+        const priceInWei = ethers.utils.parseEther(tokenPrice);
+        const transaction = await contract.createToken(tokenURI, priceInWei);
+        await transaction.wait();
+
+        setSuccessMessage("NFT created successfully");
+      }
+    } catch (error: any) {
+      setErrorMessage("An error occurred while creating the NFT.");
+      console.log(error);
+      // if (error.message) {
+      //   console.log(error.message);
+      // }
+      // if (error.response) {
+      //   console.log(error.response.data);
+      //   console.log(error.response.status);
+      //   console.log(error.response.headers);
+      // } else if (error.request) {
+      //   console.log(error.request);
+      // } else {
+      //   console.log("Error", error.message);
+      // }
+    } finally {
+      resetForm();
+      setLoading(false);
+    }
+  };
+
+  const resetForm = () => {
+    setFile(null);
+    setPreview(null);
+    setTokenPrice("");
+    setTokenName("");
+    setTokenDescription("");
   };
 
   return (
@@ -170,7 +163,9 @@ function Create() {
                 </div>
                 <div className="w-full ml-4">
                   <div className="flex grow justify-between">
-                    <p className="font-bold text-lg">0xdd8...e4d8</p>
+                    <p className="font-bold text-lg">
+                      {formatAddress(address)}
+                    </p>
                     <div>
                       <div className="px-1.5 py-1 rounded bg-green-200/[.5]">
                         <p className="text-green-500 text-xs font-medium leading-4">
@@ -257,7 +252,7 @@ function Create() {
                     type="text"
                     value={tokenName}
                     onChange={(e) => setTokenName(e.target.value)}
-                    placeholder="Mon premier NFT"
+                    placeholder="My NFT name"
                     className="border-2 hover:border-gray-400 border-transparent px-4 py-2 rounded-xl transition-colors"
                   />
                 </div>
@@ -268,13 +263,13 @@ function Create() {
                     step="0.000001"
                     value={tokenPrice}
                     onChange={(e) => setTokenPrice(e.target.value)}
-                    placeholder="Price in Ether"
+                    placeholder="Price in ETH"
                     className="border-2 hover:border-gray-400 border-transparent px-4 py-2 rounded-xl transition-colors"
                   />
                 </div>
                 <div className="grid mb-4">
                   <label className="mb-1 font-bold text-base">
-                    Description
+                    Description <span className="text-xs text-slate-600">(Optional)</span>
                   </label>
                   <textarea
                     value={tokenDescription}
@@ -286,14 +281,14 @@ function Create() {
 
                 <button
                   onClick={() => !loading && createNewNFT()}
-                  disabled={loading || successMessage !== null}
+                  disabled={loading !== false}
                   className={`mt-6 bg-black text-white font-semibold py-3 px-12 rounded-xl ${
                     loading
                       ? "opacity-50 cursor-not-allowed"
                       : "hover:bg-gray-900"
                   }`}
                 >
-                  {loading && !successMessage ? (
+                  {loading && !errorMessage && !successMessage ? (
                     <div role="status">
                       <svg
                         aria-hidden="true"
@@ -349,7 +344,7 @@ function Create() {
                             </p>
                           </div>
                           <p className="mx-3 mb-4 text-sm text-slate-500">
-                            @Owner
+                            Owner: {formatAddress(address)}
                           </p>
                           <div className="inline-grid grid-cols-2 gap-3 bg-slate-200 mx-auto px-3 py-2.5 rounded-xl w-full">
                             <div className="col-span-1 w-full">
@@ -385,7 +380,13 @@ function Create() {
             </div>
           </div>
         </div>
-      ) : null}
+      ) : (
+        <div className="flex flex-col items-center justify-center">
+          <p className="text-2xl font-semibold text-red-600">
+            Please connect your wallet to create a new NFT.
+          </p>
+        </div>
+      )}
     </div>
   );
 }
