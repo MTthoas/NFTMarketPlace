@@ -35,15 +35,28 @@ function Create() {
   const [tokenURI, setTokenURI] = useState("");
   const [price, setPrice] = useState(0);
 
-  const [file, setFile] = useState<File | null>(null);
   const [tokenPrice, setTokenPrice] = useState("");
   const [tokenName, setTokenName] = useState("");
   const [tokenDescription, setTokenDescription] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+
+  const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
 
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files?.length) {
-      setFile(event.target.files[0]);
+    const file = event.target.files?.[0];
+    if (file) {
+      setFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
+  };
+
+  const removeImage = () => {
+    setFile(null);
+    setPreview(null);
   };
 
   const JWT =
@@ -113,7 +126,10 @@ function Create() {
       }
 
       setFile(null);
+      setPreview(null);
       setTokenPrice("");
+    } else {
+      alert("Please upload an image");
     }
   };
 
@@ -162,33 +178,64 @@ function Create() {
               {/* Upload file */}
               <div className="mb-8">
                 <p className="mb-2 font-bold text-lg">Upload file</p>
-                <div className="place-items-center grid border border-gray-400 p-16 rounded-xl border-dashed">
-                  <svg
-                    className="w-12 h-12 text-black"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    ></path>
-                  </svg>
-                  <span className="mt-4 mb-2 text-grey font-semibold text-xl">
-                    JPG, PNG, GIF. Max 10mb.
-                  </span>
-                  <input
-                    type="file"
-                    onChange={onFileChange}
-                    className="block w-full text-sm text-slate-500
-                            file:mr-4 file:py-2 file:px-4
-                            file:rounded-full file:border-0
-                            file:text-sm file:font-semibold
-                            file:bg-black-50 file:text-black-700
-                            hover:file:bg-black-100"
-                  />
+                <div className="place-items-center grid border border-gray-400 px-16 py-10 rounded-xl border-dashed relative">
+                  {preview ? (
+                    <div className="flex items-center justify-center">
+                      <img
+                        className="w-full"
+                        src={preview.toString()}
+                        alt="Preview"
+                      />
+                      <div className="absolute top-6 right-6 p-1 border rounded-xl">
+                        <svg
+                          onClick={removeImage}
+                          className="cursor-pointer"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          height="24"
+                          width="24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M7.46967 8.53033C7.17678 8.23744 7.17678 7.76256 7.46967 7.46967C7.76256 7.17678 8.23744 7.17678 8.53033 7.46967L12 10.9393L15.4697 7.46967C15.7626 7.17678 16.2374 7.17678 16.5303 7.46967C16.8232 7.76256 16.8232 8.23744 16.5303 8.53033L13.0607 12L16.5303 15.4697C16.8232 15.7626 16.8232 16.2374 16.5303 16.5303C16.2374 16.8232 15.7626 16.8232 15.4697 16.5303L12 13.0607L8.53033 16.5303C8.23744 16.8232 7.76256 16.8232 7.46967 16.5303C7.17678 16.2374 7.17678 15.7626 7.46967 15.4697L10.9393 12L7.46967 8.53033Z"
+                            clipRule="evenodd"
+                            fill="currentColor"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center">
+                      <svg
+                        className="w-12 h-12 text-black"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        ></path>
+                      </svg>
+                      <span className="mt-4 mb-2 text-grey font-semibold text-xl">
+                        JPG, PNG, GIF. Max 10mb.
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={onFileChange}
+                        className="block w-full text-sm text-slate-500
+                  file:mr-4 file:py-2 file:px-4
+                  file:rounded-full file:border-0
+                  file:text-sm file:font-semibold
+                  file:bg-black-50 file:text-black-700
+                  hover:file:bg-black-100"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -227,6 +274,7 @@ function Create() {
                     className="border-2 hover:border-gray-400 border-transparent px-4 py-2 rounded-xl transition-colors"
                   />
                 </div>
+
                 <button
                   onClick={createNewNFT}
                   className="mt-6 bg-black text-white font-semibold py-3 px-12 rounded-xl"
@@ -241,8 +289,26 @@ function Create() {
               <div className="grid sticky top-24">
                 <p className="mb-2 font-bold text-lg">Preview</p>
                 <div className="min-h-[383px]">
-                  <div className="h-full py-6 px-8 text-center justify-center items-center grow flex flex-col border rounded-xl border-gray-400">
-                    <p className="text-sm text-slate-600">Upload file and choose collection to preview your brand new NFT</p>
+                  <div className="h-full border rounded-xl border-gray-400">
+                    {preview ? (
+                      <div className="flex flex-col p-1.5">
+                        <img
+                          className="w-full rounded-xl"
+                          src={preview.toString()}
+                          alt="Preview"
+                        />
+                        <div className="mt-4 mx-2">
+                          <p className="font-semibold text-lg">Title #001</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="h-full flex flex-col py-6 px-8 text-center justify-center items-center">
+                        <p className="text-sm text-slate-600">
+                          Upload file and choose collection to preview your
+                          brand new NFT
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
