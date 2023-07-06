@@ -41,6 +41,9 @@ function Create() {
   const [file, setFile] = useState<File | null>(null);
 
   const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -63,6 +66,7 @@ function Create() {
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJjN2U5ZjAyYy04MzAzLTRjOGYtOWIwZC0xMzQ1YWI5MDlmMjIiLCJlbWFpbCI6Im1hbHRoYXphcjIyN0BnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJpZCI6IkZSQTEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX0seyJpZCI6Ik5ZQzEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX1dLCJ2ZXJzaW9uIjoxfSwibWZhX2VuYWJsZWQiOmZhbHNlLCJzdGF0dXMiOiJBQ1RJVkUifSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiZGM0MTUyYzk5YThhYTI0ZmEzMjIiLCJzY29wZWRLZXlTZWNyZXQiOiJhZmZlYzRiZDQ2ZGE1NjUzZWMyMWE3ZGU4Nzc0OGZlNThlNzVmYTI4MWI0YjczZjBmYzVjMzcxYjIxYmEzOGFjIiwiaWF0IjoxNjg2MjYwNTI2fQ.GwwGHhM8E6ZN_YnMtJIqIB8KVArhxFmc-0Uq5h5it88";
 
   const createNewNFT = async () => {
+    setLoading(true);
     if (file) {
       const formData = new FormData();
       formData.append("file", file);
@@ -108,9 +112,12 @@ function Create() {
           const transaction = await contract.createToken(tokenURI, priceInWei);
           await transaction.wait();
 
+          setSuccessMessage("NFT created successfully");
           console.log("NFT created successfully");
         }
       } catch (error: any) {
+        setLoading(false);
+        setErrorMessage("An error occurred while creating the NFT.");
         if (error.message) {
           console.log(error.message);
         }
@@ -123,13 +130,16 @@ function Create() {
         } else {
           console.log("Error", error.message);
         }
+      } finally {
+        setFile(null);
+        setPreview(null);
+        setTokenPrice("");
+        setTokenName("");
+        setTokenDescription("");
       }
-
-      setFile(null);
-      setPreview(null);
-      setTokenPrice("");
     } else {
-      alert("Please upload an image");
+      setLoading(false);
+      setErrorMessage("Please upload an image.");
     }
   };
 
@@ -266,8 +276,7 @@ function Create() {
                   <label className="mb-1 font-bold text-base">
                     Description
                   </label>
-                  <input
-                    type="text"
+                  <textarea
                     value={tokenDescription}
                     onChange={(e) => setTokenDescription(e.target.value)}
                     placeholder="NFT Description"
@@ -276,11 +285,44 @@ function Create() {
                 </div>
 
                 <button
-                  onClick={createNewNFT}
-                  className="mt-6 bg-black text-white font-semibold py-3 px-12 rounded-xl"
+                  onClick={() => !loading && createNewNFT()}
+                  disabled={loading || successMessage !== null}
+                  className={`mt-6 bg-black text-white font-semibold py-3 px-12 rounded-xl ${
+                    loading
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:bg-gray-900"
+                  }`}
                 >
-                  Create NFT
+                  {loading && !successMessage ? (
+                    <div role="status">
+                      <svg
+                        aria-hidden="true"
+                        className="w-5 h-5 mx-auto flex justify-start text-gray-200 animate-spin dark:text-gray-600 fill-white"
+                        viewBox="0 0 100 101"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                          fill="currentColor"
+                        />
+                        <path
+                          d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                          fill="currentFill"
+                        />
+                      </svg>
+                      <span className="sr-only">Loading...</span>
+                    </div>
+                  ) : (
+                    "Create NFT"
+                  )}
                 </button>
+                {successMessage && (
+                  <p className="mt-4 text-green-500">{successMessage}</p>
+                )}
+                {errorMessage && (
+                  <p className="mt-4 text-red-500">{errorMessage}</p>
+                )}
               </div>
             </div>
 
@@ -288,7 +330,7 @@ function Create() {
             <div className="hidden md:block">
               <div className="grid sticky top-24">
                 <p className="mb-2 font-bold text-lg">Preview</p>
-                <div className="min-h-[383px]">
+                <div className="min-h-[358px]">
                   <div className="h-full border rounded-xl border-gray-400">
                     {preview ? (
                       <div className="flex flex-col p-1.5">
@@ -297,8 +339,36 @@ function Create() {
                           src={preview.toString()}
                           alt="Preview"
                         />
-                        <div className="mt-4 mx-2">
-                          <p className="font-semibold text-lg">Title #001</p>
+                        <div className="mt-4">
+                          <div className="mx-3 flex justify-between">
+                            <p className="font-semibold text-lg">
+                              {tokenName || "Untitled"}
+                            </p>
+                            <p className="border border-gray-400 text-xs ml-2 my-auto py-1 px-2 rounded-lg">
+                              #1
+                            </p>
+                          </div>
+                          <p className="mx-3 mb-4 text-sm text-slate-500">
+                            @Owner
+                          </p>
+                          <div className="inline-grid grid-cols-2 gap-3 bg-slate-200 mx-auto px-3 py-2.5 rounded-xl w-full">
+                            <div className="col-span-1 w-full">
+                              <p className="font-semibold text-sm text-slate-500">
+                                Price
+                              </p>
+                              <p className="font-semibold">
+                                {tokenPrice || "Not for sell"}
+                              </p>
+                            </div>
+                            <div className="col-span-1 w-full">
+                              <p className="font-semibold text-sm text-slate-500">
+                                Highest bid
+                              </p>
+                              <p className="font-semibold wrapper">
+                                No bids yet
+                              </p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     ) : (
