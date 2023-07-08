@@ -13,6 +13,7 @@ export interface NFT {
     image: string;
     price?: any;
     method?: string;
+    isAuctionActive?: boolean;
     currentlyListed?: boolean;
     auctionStartTime?: Date;
     auctionEndTime?: Date;

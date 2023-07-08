@@ -4,6 +4,9 @@ import { ethers } from 'ethers';
 import MarketPlaceJSON from '../../../contracts/marketplace.json';
 import axios from 'axios';
 
+import Contracts from '../../../contracts/contracts.json';
+
+
 import { NFT } from '../../interface/NFT';
 import NFT_CARD_MARKETPLACE from '../../card/NFT_CARD_MARKETPLACE';
 
@@ -27,37 +30,51 @@ export default function MarketPlace() {
   
     async function getAllNFTs() {
         try {
+
+            console.log("getAllNFTs")
             const provider = new ethers.providers.Web3Provider(window.ethereum);
     
-            let contract = new ethers.Contract(MarketPlaceJSON.address, MarketPlaceJSON.abi, provider);
+            // let contract = new ethers.Contract(MarketPlaceJSON.address, MarketPlaceJSON.abi, provider);
     
-            let transaction = await contract.getAllListedNFTs();
+            // let auctionContract = new ethers.Contract(Contracts.auctionContract.address, Contracts.auctionContract.abi, provider);
+            let saleContract = new ethers.Contract(Contracts.nftContract.address, Contracts.nftContract.abi, provider);
+        
+            // let transactionAuction = await auctionContract.getAllAuctions();
+            let transactionSales = await saleContract.getAllListedNFTs();
+            
+            // console.log(transactionAuction);
+            console.log(transactionSales);
+    
+    
 
-            // console.log(transaction)
-    
-            const items = await Promise.all(transaction.map(async (i: any) => {
-            const tokenURI = await contract.tokenURI(i.tokenId);
-    
-            const metadata = JSON.parse(tokenURI);
-            console.log(metadata);
+        // console.log(transaction)
 
-            const ethValue = ethers.utils.formatEther(i.price);
-    
-            let item = {
-              tokenId: i.tokenId.toNumber(),
-              name: metadata.name,
-              seller: i.seller,
-              owner: i.owner,
-              image: metadata.image,
-              price : ethValue,
-              currentlyListed: i.currentlyListed
-            }
+          // const items = await Promise.all(transaction.map(async (i: any) => {
+            
+          //     const tokenURI = await contract.tokenURI(i.tokenId);
+          //     // const isAuctionActive = await contract.checkIfAuctionExists(i.tokenId); // Check if the token is on auction
+          //     // console.log("NFT : " + i.tokenId.toNumber() + " / " + isAuctionActive)
+          //     const metadata = JSON.parse(tokenURI);
+          //     console.log(metadata);
 
-            return item;
-            }));
-    
-            // console.table(items);
-            updateData(items);
+          //     const ethValue = ethers.utils.formatEther(i.price);
+
+          //     let item = {
+          //         tokenId: i.tokenId.toNumber(),
+          //         name: metadata.name,
+          //         seller: i.seller,
+          //         owner: i.owner,
+          //         image: metadata.image,
+          //         price : ethValue,
+          //         currentlyListed: i.currentlyListed,
+          //         // isAuctionActive: isAuctionActive // New attribute that shows if the NFT is on auction
+          //     }
+
+          //     return item;
+          // }));
+
+        // console.table(items);
+        // updateData(items);
 
         } catch (error) {
             console.log(error);
