@@ -9,8 +9,8 @@ import axios from "axios";
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const contract = new ethers.Contract(
-  Contracts.nftContract.address,
-  Contracts.nftContract.abi as any,
+  Contracts.MyNFT.address,
+  Contracts.MyNFT.abi as any,
   provider.getSigner()
 );
 
@@ -57,22 +57,22 @@ function Create() {
     setErrorMessage(null);
     setSuccessMessage(null);
     setLoading(true);
-
+  
     if (!file) {
       setLoading(false);
       setErrorMessage("Please upload an image.");
       return;
     }
-
+  
     if (!tokenName || !tokenPrice) {
       setLoading(false);
       setErrorMessage("Please fill in all the requested fields.");
       return;
     }
-
+  
     const formData = new FormData();
     formData.append("file", file);
-
+  
     try {
       const res = await axios.post(
         "https://api.pinata.cloud/pinning/pinFileToIPFS",
@@ -86,7 +86,7 @@ function Create() {
           },
         }
       );
-
+  
       if (res.data.IpfsHash) {
         const attributes = [
           {
@@ -98,38 +98,23 @@ function Create() {
             value: "Mocha",
           },
         ];
-        const tokenURI = JSON.stringify({
-          attributes,
-          description: tokenDescription,
-          image: res.data.IpfsHash,
-          name: tokenName,
-        });
+  
         const priceInWei = ethers.utils.parseEther(tokenPrice);
-        const transaction = await contract.createToken(tokenURI, priceInWei);
+  
+        const transaction = await contract.createNFT(tokenName, tokenDescription, res.data.IpfsHash, priceInWei, attributes);
         await transaction.wait();
-
+  
         setSuccessMessage("NFT created successfully");
       }
     } catch (error: any) {
       setErrorMessage("An error occurred while creating the NFT.");
       console.log(error);
-      // if (error.message) {
-      //   console.log(error.message);
-      // }
-      // if (error.response) {
-      //   console.log(error.response.data);
-      //   console.log(error.response.status);
-      //   console.log(error.response.headers);
-      // } else if (error.request) {
-      //   console.log(error.request);
-      // } else {
-      //   console.log("Error", error.message);
-      // }
     } finally {
       resetForm();
       setLoading(false);
     }
   };
+  
 
   const resetForm = () => {
     setFile(null);

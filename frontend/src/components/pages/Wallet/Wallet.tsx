@@ -9,6 +9,10 @@ import NFT_CARD_WALLET from '../../card/NFT_CARD_WALLET';
 
 import ListToken from '../Create/ListToken';
 
+import { BigNumber } from "ethers";
+
+
+
 
 function Wallet() {
 
@@ -28,7 +32,8 @@ function Wallet() {
 
             const provider = new ethers.providers.Web3Provider(window.ethereum);
 
-            let NFTContract = new ethers.Contract(Contracts.nftContract.address, Contracts.nftContract.abi, provider);
+            let NFTContract = new ethers.Contract(Contracts.NFTMarket.address, Contracts.NFTMarket.abi, provider);
+            let myNftMarket = new ethers.Contract(Contracts.MyNFT.address, Contracts.MyNFT.abi, provider);
 
            // Get adress of user
 
@@ -39,28 +44,41 @@ function Wallet() {
 
             let transaction = await NFTContract.getMyNFTs(account);
 
-                const items = await Promise.all(transaction.map(async (i: any) => {
-                const tokenURI = await NFTContract.tokenURI(i.tokenId);
+            // let nftData = await myNftMarket.getTokenData(0);
 
-                const metadata = JSON.parse(tokenURI);
-                console.log(metadata);
-                const ethValue = ethers.utils.formatEther(i.price);
+            //  console.log(nftData)
 
-                console.log(ethValue)
+            const items = await Promise.all(transaction.map(async(tokenId : BigNumber) => {
+                console.log(tokenId.toNumber())
+                const data = await myNftMarket.getTokenData(tokenId.toNumber());
+                const price = ethers.utils.formatEther(data[3]);
 
-                let item = {
-                    tokenId: i.tokenId.toNumber(),
-                    name: metadata.name,
-                    seller: i.seller,
-                    owner: i.owner,
-                    image: metadata.image,
-                    price : ethValue,
-                    currentlyListed: i.currentlyListed
+                const isOnSale = await NFTContract.isTokenOnSale(tokenId);
+                const isOnAuction = await NFTContract.isTokenOnAuction(tokenId);
+
+                let type = "none";
+                
+                if(isOnSale) {
+                    type = "sale";
+                } else if(isOnAuction) {
+                    type = "auction";
                 }
+
+                console.log("Type : " + type)
+
+                const item = {
+                    tokenId: tokenId.toNumber(),
+                    name: data[0],
+                    description: data[1],
+                    image: data[2],
+                    price: price,
+                    type: type 
+                }
+
+                console.dir(item)
                 return item;
             }));
 
-            console.table(items);
             updateData(items);
 
                     
@@ -71,70 +89,27 @@ function Wallet() {
     }
 
     const ListOnMarketPlace = async (tokenId : any, method: any, price: any, time: any) => {
+        
         try {
+
             setLoading(prev => ({ ...prev, [tokenId]: true }));
             console.log("List")
             localStorage.setItem(`loading-${tokenId}`, 'true'); // save loading state to local storage
     
+            console.log("TokenId :" + tokenId)
+            console.log("Method :" + method)
+
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
-            let NFTContract = new ethers.Contract(Contracts.nftContract.address, Contracts.nftContract.abi, signer);
-    
-            // console.log("Token ID: ", tokenId);
-            // console.log("Method: ", method);
-            // console.log("Price: ", price);
+            let NFTContract = new ethers.Contract(Contracts.MyNFT.address, Contracts.MyNFT.abi, signer);
+            let nftMarketContract = new ethers.Contract(Contracts.NFTMarket.address, Contracts.NFTMarket.abi, signer);
 
-            // if (typeof time === 'string') {
-            //     if (time.includes('jour')) {
-            //         // Extract the number from the string
-            //         const days = parseInt(time);
-            //         if (isNaN(days)) {
-            //             throw new Error('Invalid time format. Expected "n jour"');
-            //         }
-            //         // Convert days to seconds
-            //         time = days * 24 * 60 * 60;
-            //     } else if (time.includes('heures')) {
-            //         // Extract the number from the string
-            //         const hours = parseInt(time);
-            //         if (isNaN(hours)) {
-            //             throw new Error('Invalid time format. Expected "n heures"');
-            //         }
-            //         // Convert hours to seconds
-            //         time = hours * 60 * 60;
-            //     }
-            // }
+            const priceInWei = ethers.utils.parseEther(price.toString());
             
-            // // Convert the time to BigNumber
-            // const timeInSeconds = ethers.BigNumber.from(time);
+            const methodNumber = method === "Fixed price" ? 1 : method === "Timed auction" ? 2 : 0;
 
-            const priceInWei = ethers.utils.parseUnits(price.toString(), 'ether');
+            await nftMarketContract.setSale(tokenId, methodNumber, priceInWei);
 
-            
-            // console.log("Type of Token ID: ", typeof tokenId);
-            // console.log("Type of Price: ", typeof priceInWei);
-            // console.log("Type of Time: ", typeof timeInSeconds);
-                        
-    
-            let transaction;
-            if (method === 'Timed auction') {
-                console.log("Auction")
-                // transaction = await contract.startAuction(tokenId, priceInWei, 2);
-            } else {
-                transaction = await NFTContract.listTokenForSale(tokenId, priceInWei);
-            }
-    
-            const receipt = await transaction.wait();
-    
-            if (receipt.status === 0) {
-                throw new Error('Transaction failed');
-            }
-        
-            console.log("Transaction Done");
-    
-            setData({
-                ...data,
-            });
-    
         } catch (error) {
             console.error("Transaction was rejected: ", error);
         } finally {
@@ -206,8 +181,8 @@ function Wallet() {
 
     const setInfos = async() => {
         
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        setAdress(accounts[0])
+        // const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        // setAdress(accounts[0])
 
     }
 
@@ -230,10 +205,9 @@ function Wallet() {
                             <NFT_CARD_WALLET 
                                 key={index}
                                 tokenId={value.tokenId}
-                                seller={value.seller}
-                                owner={value.owner}
                                 price={value.price}
                                 image={value.image}
+                                type={value.type}
                                 data={value}
                                 setShowModal={setShowModal}
                                 setValue={setValue}

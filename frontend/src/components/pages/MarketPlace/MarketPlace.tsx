@@ -8,12 +8,21 @@ import Contracts from '../../../contracts/contracts.json';
 
 
 import { NFT } from '../../interface/NFT';
+
+import { NFT_Auction } from '../../interface/NFT_Auction';
+import { NFT_Sales } from '../../interface/NFT_Sales';
+
+
 import NFT_CARD_MARKETPLACE from '../../card/NFT_CARD_MARKETPLACE';
 
 
 export default function MarketPlace() {
 
     const [data, updateData] = useState<NFT[]>([]);
+
+    const [ NFT_Auction_data, update_NFT_Auction_data] = useState<NFT_Auction[]>([]);
+    const [ NFT_Sales_data, update_NFT_Sales_data] = useState<NFT_Sales[]>([]);
+
     const [filtersVisible, setFiltersVisible] = useState(true);
     const [adress, setAdress] = useState("")
 
@@ -29,56 +38,57 @@ export default function MarketPlace() {
     }
   
     async function getAllNFTs() {
-        try {
 
-            console.log("getAllNFTs")
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-    
-            // let contract = new ethers.Contract(MarketPlaceJSON.address, MarketPlaceJSON.abi, provider);
-    
-            // let auctionContract = new ethers.Contract(Contracts.auctionContract.address, Contracts.auctionContract.abi, provider);
-            let saleContract = new ethers.Contract(Contracts.nftContract.address, Contracts.nftContract.abi, provider);
+      try {
+
+        console.log("getAllNFTs")
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+
+        let myNftMarket = new ethers.Contract(Contracts.NFTMarket.address, Contracts.NFTMarket.abi, provider);
+        let myNFT = new ethers.Contract(Contracts.MyNFT.address, Contracts.MyNFT.abi, provider);
         
-            // let transactionAuction = await auctionContract.getAllAuctions();
-            let transactionSales = await saleContract.getAllListedNFTs();
-            
-            // console.log(transactionAuction);
-            console.log(transactionSales);
-    
-    
+        // let transactionAuction = await auctionContract.getAllAuctions();
+        let transactionSales = await myNftMarket.getAllSales();
+        // let transactionAuction = await myNftMarket.getAllAuctions();
 
-        // console.log(transaction)
+        const Sales = await Promise.all(transactionSales.map(async (i: any) => {
 
-          // const items = await Promise.all(transaction.map(async (i: any) => {
-            
-          //     const tokenURI = await contract.tokenURI(i.tokenId);
-          //     // const isAuctionActive = await contract.checkIfAuctionExists(i.tokenId); // Check if the token is on auction
-          //     // console.log("NFT : " + i.tokenId.toNumber() + " / " + isAuctionActive)
-          //     const metadata = JSON.parse(tokenURI);
-          //     console.log(metadata);
+          const data = await myNFT.getTokenData(i.toNumber());
 
-          //     const ethValue = ethers.utils.formatEther(i.price);
+          const price = ethers.utils.formatEther(data[3]);
 
-          //     let item = {
-          //         tokenId: i.tokenId.toNumber(),
-          //         name: metadata.name,
-          //         seller: i.seller,
-          //         owner: i.owner,
-          //         image: metadata.image,
-          //         price : ethValue,
-          //         currentlyListed: i.currentlyListed,
-          //         // isAuctionActive: isAuctionActive // New attribute that shows if the NFT is on auction
-          //     }
+          const isOnSale = await myNftMarket.isTokenOnSale(i.toNumber());
+          const isOnAuction = await myNftMarket.isTokenOnAuction(i.toNumber());
 
-          //     return item;
-          // }));
+          console.log(data[0], isOnSale, isOnAuction)
+          let type = "none";
 
-        // console.table(items);
-        // updateData(items);
+          if(isOnSale) {
+            type = "sale";
+          } else if(isOnAuction) {
+              type = "auction";
+          }
 
-        } catch (error) {
-            console.log(error);
-        }
+          const item = {
+            tokenId: i.toNumber(),
+            name: data[0],
+            description: data[1],
+            image: data[2],
+            price: price,
+            type: type
+          }
+
+          return item;
+
+        }));
+
+
+      // updateData(Sales)
+      updateData(Sales)
+
+      } catch (error) {
+          console.log(error);
+      }
     }
     
 
@@ -192,7 +202,6 @@ export default function MarketPlace() {
         <div className={filtersVisible ? 'w-4/5  ml-2' : 'w-full'}>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">               
              {data.map((value, index) => {
-                console.table(value)
                   return(
                     <div key={index}>
                         <NFT_CARD_MARKETPLACE 

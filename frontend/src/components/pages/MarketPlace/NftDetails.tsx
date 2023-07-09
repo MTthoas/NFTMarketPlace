@@ -52,6 +52,7 @@ function NFTDetails() {
           seller: data.seller,
           owner: data.owner,
           image: metadata.image,
+          type: "none",
           price : ethValue,
           currentlyListed: data.currentlyListed
         }

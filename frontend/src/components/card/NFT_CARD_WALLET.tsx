@@ -5,8 +5,8 @@ import { NFT } from '../interface/NFT';
 
 import ListToken from '../pages/Create/ListToken';
 
-const NFT_CARD_WALLET = ({tokenId, seller, owner, price, image, data, setShowModal, setValue, loading, getNftDetails, unlistMethod} 
-    : {tokenId: number, seller: string, owner: string, price: string, image: string, data: NFT, setShowModal: any, setValue: any, loading: any, getNftDetails: any, unlistMethod: any})  => {
+const NFT_CARD_WALLET = ({tokenId, price, image, type, data, setShowModal, setValue, loading, getNftDetails, unlistMethod} 
+    : {tokenId: number, price: string, image: string, type: string, data: NFT, setShowModal: any, setValue: any, loading: any, getNftDetails: any, unlistMethod: any})  => {
 
     // 
     return (
@@ -31,9 +31,9 @@ const NFT_CARD_WALLET = ({tokenId, seller, owner, price, image, data, setShowMod
                     <p> Token Details </p>
                 </button>
 
-                {data.currentlyListed == false ? 
+                {data.type == "none" ? 
                     loading == false ? 
-                    <button   onClick={() => {
+                    <button onClick={() => {
                         setShowModal(true) 
                         setValue(data)
                     }} disabled={loading} className="text-xs  border border-gray-300 rounded-md py-2 mt-5 hover:bg-neutral hover:text-white w-full "> Lister sur le market 
