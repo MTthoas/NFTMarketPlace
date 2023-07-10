@@ -1,6 +1,6 @@
 {
   "MyNFT": {
-    "address": "0x584463A26fe4Eda2fd12f7d5f6c44c4FaeEADf6F",
+    "address": "0x3980Fd739531d12104A59F8E4B723e8f15c6D461",
     "abi": [
       {
         "type": "constructor",
@@ -596,7 +596,7 @@
     ]
   },
   "NFTMarket": {
-    "address": "0x96Af3185889D8F37320524fb1b983e0f27409275",
+    "address": "0xa5B0c1EB5fc1355f220626314e68b7f6a848E57A",
     "abi": [
       {
         "type": "constructor",

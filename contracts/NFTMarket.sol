@@ -69,17 +69,22 @@ contract NFTMarket {
 
     function getMyNFTs(address owner) public view returns (uint256[] memory) {
         uint256 totalTokens = nft.tokenCounter();
-        uint256[] memory tokenIds = new uint256[](totalTokens);
+        uint256[] memory tempTokenIds = new uint256[](totalTokens);
         uint256 counter = 0;
         for (uint256 i = 0; i < totalTokens; i++) {
             if (nft.ownerOf(i) == owner) {
-                tokenIds[counter] = i;
+                tempTokenIds[counter] = i;
                 counter++;
             }
         }
+        
+        uint256[] memory tokenIds = new uint256[](counter);
+        for (uint256 i = 0; i < counter; i++) {
+            tokenIds[i] = tempTokenIds[i];
+        }
+        
         return tokenIds;
     }
-
 
     function getAllSales() public view returns (uint256[] memory) {
         uint256 saleCount = EnumerableSet.length(saleTokens); // get length of saleTokens
