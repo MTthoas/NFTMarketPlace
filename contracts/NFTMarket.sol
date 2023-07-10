@@ -3,15 +3,19 @@ pragma solidity ^0.8.0;
 
 import "./MyNFT.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol"; 
+
 
 contract NFTMarket {
     enum SaleType { None, FixedPrice, Auction }
+    EnumerableSet.UintSet private saleTokens; // track sale token
 
     struct Sale {
         address seller;
         SaleType saleType;
         uint256 price;
         uint256 auctionEndTime;
+        uint256 salesEndTime;
         address highestBidder;
         uint256 highestBid;
     }
@@ -25,16 +29,21 @@ contract NFTMarket {
 
     function setSale(uint256 tokenId, SaleType saleType, uint256 price) public {
         require(nft.ownerOf(tokenId) == msg.sender, "NFTMarket: Token not owned by sender");
-        Sale memory sale = Sale(msg.sender, saleType, price, 0, address(0), 0);
+        require(nft.getApproved(tokenId) == address(this), "NFTMarket: Market contract not approved");
+
+        Sale memory sale = Sale(msg.sender, saleType, price, 0, block.timestamp + 1 days, address(0), 0);
         if (saleType == SaleType.Auction) {
             sale.auctionEndTime = block.timestamp + 1 days; // 1 day auction
         }
         sales[tokenId] = sale;
+        EnumerableSet.add(saleTokens, tokenId); // add token to saleTokens
     }
+
 
     function removeSale(uint256 tokenId) public {
         require(sales[tokenId].seller == msg.sender, "NFTMarket: Not the seller");
         delete sales[tokenId];
+        EnumerableSet.remove(saleTokens, tokenId); // remove token from saleTokens
     }
 
     function isTokenOnSale(uint256 tokenId) public view returns (bool) {
@@ -50,6 +59,11 @@ contract NFTMarket {
     function isTokenOnNone(uint256 tokenId) public view returns (bool) {
         // It checks whether the token is on none
         return sales[tokenId].saleType == SaleType.None;
+    }
+
+    function getAllData(uint256 tokenId) public view returns (Sale memory) {
+        // It returns all the data of the token
+        return sales[tokenId];
     }
 
 
@@ -68,18 +82,13 @@ contract NFTMarket {
 
 
     function getAllSales() public view returns (uint256[] memory) {
-        uint256 totalSupply = nft.tokenCounter();
-        uint256[] memory saleIds = new uint256[](totalSupply);
-        uint256 counter = 0;
-        for (uint256 i = 0; i < totalSupply; i++) {
-            if (sales[i].saleType != SaleType.None) {
-                saleIds[counter] = i;
-                counter++;
-            }
+        uint256 saleCount = EnumerableSet.length(saleTokens); // get length of saleTokens
+        uint256[] memory saleIds = new uint256[](saleCount);
+        for (uint256 i = 0; i < saleCount; i++) {
+            saleIds[i] = EnumerableSet.at(saleTokens, i); // get sale token id at index i
         }
         return saleIds;
     }
-
 
     function getSalesByOwner(address owner) public view returns (uint256[] memory) {
         uint256 totalSupply = nft.tokenCounter();
@@ -102,10 +111,19 @@ contract NFTMarket {
         sales[tokenId].highestBid = msg.value;
     }
 
-    function buy(uint256 tokenId) public payable {
+    function buy(uint256 tokenId, uint256 price) public payable {
         require(sales[tokenId].saleType == SaleType.FixedPrice, "NFTMarket: Sale is not a fixed price sale");
-        require(msg.value == sales[tokenId].price, "NFTMarket: Price is not correct");
+        require(price == sales[tokenId].price, "NFTMarket: Price is not correct");
+
+        // Transfer the token to the buyer
         nft.transferFrom(sales[tokenId].seller, msg.sender, tokenId);
+        
+        // Transfer the payment to the seller
+        payable(sales[tokenId].seller).transfer(msg.value);
+
+        // Remove the token from sale
         delete sales[tokenId];
+        EnumerableSet.remove(saleTokens, tokenId); // remove token from saleTokens
     }
+
 }

@@ -36,6 +36,11 @@ export default function MarketPlace() {
         setAdress(accounts[0])
 
     }
+
+    function getCurrentTimestampInSeconds () {
+      return Math.floor(Date.now() / 1000)
+    }
+
   
     async function getAllNFTs() {
 
@@ -55,6 +60,9 @@ export default function MarketPlace() {
 
           const data = await myNFT.getTokenData(i.toNumber());
 
+          const getAllData = await myNftMarket.getAllData(i.toNumber());
+          console.log(getAllData)
+
           const price = ethers.utils.formatEther(data[3]);
 
           const isOnSale = await myNftMarket.isTokenOnSale(i.toNumber());
@@ -62,20 +70,35 @@ export default function MarketPlace() {
 
           console.log(data[0], isOnSale, isOnAuction)
           let type = "none";
+          let listEndTime = 0;
+          let remainingMilliseconds = 0;
 
           if(isOnSale) {
             type = "sale";
+            listEndTime = getAllData.salesEndTime.toNumber();
           } else if(isOnAuction) {
               type = "auction";
+              listEndTime = getAllData.auctionEndTime.toNumber();
           }
+      
+          const remainingSeconds = listEndTime - getCurrentTimestampInSeconds();
+          
+          if (remainingSeconds > 0) {
+              remainingMilliseconds = remainingSeconds * 1000;
+          }
+
+          
+          console.log("List End Time: ", remainingMilliseconds)
 
           const item = {
             tokenId: i.toNumber(),
             name: data[0],
             description: data[1],
             image: data[2],
-            price: price,
-            type: type
+            price: price, 
+            owner: data[4],
+            type: type.toString(),
+            listEndTime : remainingMilliseconds
           }
 
           return item;
@@ -84,7 +107,11 @@ export default function MarketPlace() {
 
 
       // updateData(Sales)
+
+      console.table(Sales)
+
       updateData(Sales)
+      
 
       } catch (error) {
           console.log(error);
@@ -200,25 +227,27 @@ export default function MarketPlace() {
 
         {/* NFTs */}
         <div className={filtersVisible ? 'w-4/5  ml-2' : 'w-full'}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">               
-             {data.map((value, index) => {
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 xl:gap-52 gap-32">               
+              {data.map((value, index) => {
                   return(
-                    <div key={index}>
-                        <NFT_CARD_MARKETPLACE 
-                            key={index}
-                            tokenId={value.tokenId}
-                            seller={value.seller}
-                            owner={value.owner}
-                            price={value.price}
-                            image={value.image}
-                            data={value}
-                        />
-                    </div>
-                    
-                )
-            })}
-            </div>
+                      <div key={index}>
+                          <NFT_CARD_MARKETPLACE 
+                              key={index}
+                              tokenId={value.tokenId}
+                              // seller={value.seller}
+                              owner={value.owner}
+                              price={value.price}
+                              image={value.image}
+                              type={value.type}
+                              data={value}
+                          />
+                      </div>
+                      
+                  )
+              })}
+          </div>
         </div>
+
       </div>
     </div>
     );

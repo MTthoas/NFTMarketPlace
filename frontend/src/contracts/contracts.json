@@ -1,6 +1,6 @@
 {
   "MyNFT": {
-    "address": "0xC87b5DF17fa097085d6e4E1d710306D535E77039",
+    "address": "0x584463A26fe4Eda2fd12f7d5f6c44c4FaeEADf6F",
     "abi": [
       {
         "type": "constructor",
@@ -286,6 +286,24 @@
       },
       {
         "type": "function",
+        "name": "getOwnerAddress",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "address"
+          }
+        ]
+      },
+      {
+        "type": "function",
         "name": "getTokenAttributes",
         "constant": true,
         "stateMutability": "view",
@@ -336,6 +354,9 @@
           },
           {
             "type": "uint256"
+          },
+          {
+            "type": "address"
           }
         ]
       },
@@ -575,7 +596,7 @@
     ]
   },
   "NFTMarket": {
-    "address": "0xBA04548D07CcE40093C42eEe2A86B7C9C41C79F9",
+    "address": "0x96Af3185889D8F37320524fb1b983e0f27409275",
     "abi": [
       {
         "type": "constructor",
@@ -611,9 +632,61 @@
           {
             "type": "uint256",
             "name": "tokenId"
+          },
+          {
+            "type": "uint256",
+            "name": "price"
           }
         ],
         "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "getAllData",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "tuple",
+            "components": [
+              {
+                "type": "address",
+                "name": "seller"
+              },
+              {
+                "type": "uint8",
+                "name": "saleType"
+              },
+              {
+                "type": "uint256",
+                "name": "price"
+              },
+              {
+                "type": "uint256",
+                "name": "auctionEndTime"
+              },
+              {
+                "type": "uint256",
+                "name": "salesEndTime"
+              },
+              {
+                "type": "address",
+                "name": "highestBidder"
+              },
+              {
+                "type": "uint256",
+                "name": "highestBid"
+              }
+            ]
+          }
+        ]
       },
       {
         "type": "function",
@@ -771,6 +844,10 @@
           {
             "type": "uint256",
             "name": "auctionEndTime"
+          },
+          {
+            "type": "uint256",
+            "name": "salesEndTime"
           },
           {
             "type": "address",

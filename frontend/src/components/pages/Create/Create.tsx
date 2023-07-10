@@ -132,7 +132,7 @@ function Create() {
           <div className="mb-6">
             <h1 className="font-bold text-2xl md:text-3xl">Create New NFT</h1>
             <h3 className="font-semibold mt-2 text-slate-600">
-              Single edition on Etherum
+              Single edition on Ethereum
             </h3>
           </div>
 

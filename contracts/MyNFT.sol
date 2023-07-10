@@ -38,13 +38,22 @@ contract MyNFT is ERC721, Ownable {
         tokenCounter++;
     }
 
-    function getTokenData(uint256 tokenId) public view returns (string memory, string memory, string memory, uint256) {
+    function getTokenData(uint256 tokenId) public view returns (string memory, string memory, string memory, uint256, address) {
         require(tokenId < tokenCounter, "Token ID does not exist");  // Add this line
-        return (allNFTs[tokenId].name, allNFTs[tokenId].description, allNFTs[tokenId].image, allNFTs[tokenId].price);
+        
+        address ownerAddress = getOwnerAddress(tokenId);
+
+        return (allNFTs[tokenId].name, allNFTs[tokenId].description, allNFTs[tokenId].image, allNFTs[tokenId].price, ownerAddress);
     }
 
     function getTokenAttributes(uint256 tokenId) public view returns (Attribute[] memory) {
         require(tokenId < tokenCounter, "Token ID does not exist");  // And this line
         return allAttributes[tokenId];
     }
+
+    function getOwnerAddress(uint256 tokenId) public view returns (address) {
+        require(tokenId < tokenCounter, "Token ID does not exist");  // And this line
+        return ownerOf(tokenId);
+    }
+
 }

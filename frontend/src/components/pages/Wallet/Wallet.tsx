@@ -108,6 +108,8 @@ function Wallet() {
             
             const methodNumber = method === "Fixed price" ? 1 : method === "Timed auction" ? 2 : 0;
 
+            await NFTContract.approve(Contracts.NFTMarket.address, tokenId);
+        
             await nftMarketContract.setSale(tokenId, methodNumber, priceInWei);
 
         } catch (error) {
