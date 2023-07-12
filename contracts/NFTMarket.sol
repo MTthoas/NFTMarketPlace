@@ -25,6 +25,7 @@ contract NFTMarket {
     struct Bid {
         address bidder;
         uint256 amount;
+        uint256 timestamp;
     }
 
     MyNFT public nft;
@@ -39,18 +40,16 @@ contract NFTMarket {
         require(nft.ownerOf(tokenId) == msg.sender, "NFTMarket: Token not owned by sender");
         require(nft.getApproved(tokenId) == address(this), "NFTMarket: Market contract not approved");
 
-        Sale memory sale = Sale(msg.sender, saleType, price, 0, block.timestamp + 1 days, address(0), 0);
         if (saleType == SaleType.Auction) {
-            sale.auctionEndTime = block.timestamp + 1 days; // 1 day auction
-            sale.highestBidder = msg.sender;
-            sale.highestBid = price;
-
-            // Enregistrez l'enchère de l'utilisateur
-
-            bids[tokenId].push(Bid(msg.sender, price));
+            Sale memory sale = Sale(msg.sender, saleType, price, block.timestamp + 1 days, 0, msg.sender, price);
+            bids[tokenId].push(Bid(msg.sender, price, block.timestamp));
+            sales[tokenId] = sale;
+            EnumerableSet.add(saleTokens, tokenId); // add token to saleTokens
+        }else{
+            Sale memory sale = Sale(msg.sender, saleType, price, 0, block.timestamp + 1 days, address(0), 0);
+            sales[tokenId] = sale;
+            EnumerableSet.add(saleTokens, tokenId); // add token to saleTokens
         }
-        sales[tokenId] = sale;
-        EnumerableSet.add(saleTokens, tokenId); // add token to saleTokens
     }
 
 
@@ -140,7 +139,7 @@ contract NFTMarket {
         // Au lieu de faire un transfert ici, vous pouvez mettre en place un mécanisme pour retirer la part du site plus tard.
 
         // Enregistrez l'enchère de l'utilisateur
-        bids[tokenId].push(Bid(msg.sender, bidAmount - siteShare));
+        bids[tokenId].push(Bid(msg.sender, bidAmount - siteShare, block.timestamp));
 
         sales[tokenId].highestBidder = msg.sender;
         sales[tokenId].highestBid = bidAmount - siteShare; // Soustraction du pourcentage du montant total
