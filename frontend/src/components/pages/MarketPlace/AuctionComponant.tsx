@@ -5,6 +5,7 @@ import Bid from '../../modal/Bid'
 
 export default function AuctionComponant({ 
     nft,
+    highestBid,
     showLoading,
     setShowLoading,
     setShowModalSucces,
@@ -33,7 +34,7 @@ export default function AuctionComponant({
 
             <div className='border-gray-300 border h-24 w-full rounded-lg flex-col px-3 pt-3'>
                 <p className="font-semibold text-sm text-gray-600" > Minimum Bid </p>
-                <p className='text-xl font-semibold'> {nft?.price} ETH </p>
+                <p className='text-xl font-semibold'> {highestBid} ETH </p>
                 <div className="stat-title mt-1 font-medium text-xs">$ {(ethPrice * nft?.price).toFixed(3)} </div>
             </div>
         

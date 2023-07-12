@@ -1,11 +1,14 @@
 import React, {useState} from 'react'
 import { useAccount, useBalance } from "wagmi";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+
 
 export default function Bid({
     setShowModalBid,
     setTransactionHash,
     ethPrice,
-    nft
+    nft,
+    bid
 }: any) {
 
     const { address } = useAccount();
@@ -13,6 +16,16 @@ export default function Bid({
 
     const [tokenPrice, setTokenPrice] = useState<string>("");
     const [tokenExpiration, setTokenExpiration] = useState<string>("");
+    const [enableNone, setEnableNone] = useState(true);
+
+
+    
+    const [time, setTime] = useState('');
+
+    const handleChange = (event: any) => {
+      setTime(event.target.value as string);
+    };
+
     
 
     const formatAddress = (address: any) => {
@@ -78,20 +91,28 @@ export default function Bid({
                 value={tokenPrice}
                 onChange={(e) => setTokenPrice(e.target.value)}
                 placeholder="Price in ETH"
-                className="border border-gray-400 px-4 py-2 rounded-xl transition-colors"
+                className="border border-gray-300 px-4 py-2 rounded-md transition-colors"
                 />
             </div>
 
             <div className="grid mb-4 mx-4">
                 <label className="mb-1 font-bold text-base">Bid expiration</label>
-                <input
-                type="number"
-                step="0.000001"
-                value={tokenExpiration}
-                onChange={(e) => setTokenExpiration(e.target.value)}
-                placeholder="Bid expiration"
-                className="border border-gray-400 px-4 py-2 rounded-xl transition-colors"
-                />
+                  <FormControl fullWidth size="small">
+                  <Select
+                    labelId="time-select-label"
+                    id="time-select"
+                    value={time}
+                    onChange={handleChange}
+                  >
+                    <MenuItem value={"30 minutes"}>30 minutes</MenuItem>
+                    <MenuItem value={"1 heure"}>1 heure</MenuItem>
+                    <MenuItem value={"2 heures"}>2 heures</MenuItem>
+                    <MenuItem value={"2 heures"}>6 heures</MenuItem>
+                    <MenuItem value={"1 jour"}>1 journée</MenuItem>
+                    {enableNone && <MenuItem value={"none"}>Aucune</MenuItem>}
+                    {/* Ajoutez ici d'autres options si nécessaire */}
+                  </Select>
+                </FormControl>
             </div>
 
             <div className='flex justify-between mx-5 text-sm text-gray-500 mt-3'>
@@ -111,7 +132,7 @@ export default function Bid({
                 <p className="text-black"> {(Number(tokenPrice) + (1/100)).toFixed(5)} ETH </p>
             </div>
 
-            <button className="bg-neutral mx-4 mt-3 mb-7 py-2 rounded-lg text-white"> 
+            <button onClick={() => { bid((Number(tokenPrice) + (1/100)).toFixed(5)) }} className="bg-neutral mx-4 mt-3 mb-7 py-2 rounded-lg text-white"> 
                 Place Bid
             </button>
 

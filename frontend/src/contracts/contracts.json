@@ -1,6 +1,6 @@
 {
   "MyNFT": {
-    "address": "0x3980Fd739531d12104A59F8E4B723e8f15c6D461",
+    "address": "0x6F4a3cDd3b489390f750D03Ce749F5c43Fd5A3a1",
     "abi": [
       {
         "type": "constructor",
@@ -596,7 +596,7 @@
     ]
   },
   "NFTMarket": {
-    "address": "0xa5B0c1EB5fc1355f220626314e68b7f6a848E57A",
+    "address": "0x65297eA4A23662B2660904C9677c42eCd9431Ae6",
     "abi": [
       {
         "type": "constructor",
@@ -618,9 +618,38 @@
           {
             "type": "uint256",
             "name": "tokenId"
+          },
+          {
+            "type": "uint256",
+            "name": "bidAmount"
           }
         ],
         "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "bids",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256"
+          },
+          {
+            "type": "uint256"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "address",
+            "name": "bidder"
+          },
+          {
+            "type": "uint256",
+            "name": "amount"
+          }
+        ]
       },
       {
         "type": "function",
@@ -636,6 +665,19 @@
           {
             "type": "uint256",
             "name": "price"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "endAuction",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
           }
         ],
         "outputs": []

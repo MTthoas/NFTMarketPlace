@@ -137,7 +137,7 @@ function Create() {
           </div>
 
           {/* Form */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             {/* Left */}
             <div className="col-span-1 md:col-span-2 flex flex-col justify-center">
               {/* Address */}

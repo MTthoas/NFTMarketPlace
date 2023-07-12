@@ -36,6 +36,8 @@ function NFTDetails() {
     const [ transactionHash, setTransactionHash ] = useState("")
     const [ showModalBid, setShowModalBid ] = useState(false)
 
+    const [ highestBid, setHighestBid ] = useState<any>([]);
+
 
     const provider = new ethers.providers.Web3Provider((window as any).ethereum);
     const signer = provider.getSigner();
@@ -92,9 +94,29 @@ function NFTDetails() {
         }
 
         setNft(item)
+        setHighestBid(ethers.utils.formatEther(transactionSales.highestBid),)
 
         console.table(item)
     }
+
+    const fetchHighestBid = async () => {
+
+        const transactionSales = await myNftMarket.getAllData(id);
+
+        const isOnSale = await myNftMarket.isTokenOnSale(id);
+
+        let type = "none";
+        let listEndTime = 0;
+        let remainingMilliseconds = 0;
+
+        const item = {
+            HighestBid: ethers.utils.formatEther(transactionSales.highestBid),
+        }
+
+        setHighestBid(item)
+
+    }
+
 
     
     const getEthPrice = async () => {
@@ -109,6 +131,54 @@ function NFTDetails() {
         setEthPrice(ethPrice)
 
     }
+
+    const bid = async (amount: any) => {
+
+        try {
+            // your code for bidding here
+        
+        // Vérifiez que le jeton est en vente aux enchères
+        const isOnAuction = await myNftMarket.isTokenOnAuction(nft.tokenId);
+        if (!isOnAuction) {
+            console.error("Le jeton n'est pas en vente aux enchères");
+            return;
+        }else{
+            console.log("Le jeton est en vente aux enchères");
+        }
+
+        // Obtenez les informations sur la vente
+        const saleData = await myNftMarket.getAllData(nft.tokenId);
+
+        // Vérifiez que l'enchère n'est pas terminée
+        if (saleData.auctionEndTime <= Math.floor(Date.now() / 1000)) {
+            console.error("L'enchère est terminée");
+            return;
+        }
+
+        // Vérifiez que l'offre est suffisamment élevée
+        const priceWei = ethers.utils.parseEther("0.1");
+        if (priceWei.lte(saleData.highestBid)) {
+            console.error("L'offre n'est pas assez élevée");
+            return;
+        }
+
+        console.log( "Price Wei: ", priceWei.toString() );
+
+        // Soumettez l'offre
+        const transaction = await myNftMarket.bid(nft.tokenId, priceWei, { value: priceWei });
+
+        console.log("Transaction Hash: ", transaction.hash);
+        await transaction.wait();
+
+        console.log("Transaction Mined");
+
+    } catch (error) {
+        console.error(error);
+      }
+        
+
+    }
+
         
     useEffect(() => {
         getNftFromId()
@@ -144,7 +214,7 @@ function NFTDetails() {
                                     
                                     <h1 className="text-2xl font-medium text-neutral mb-5">Description</h1>
 
-                                    <p className="text-gray-500 text-base font-medium"> The MUTANT APE YACHT CLUB is a collection of up to 20,000 Mutant Apes that can only be created by exposing an existing Bored Ape to a vial of MUTANT SERUM or by minting a Mutant Ape in the public sale.  </p>
+                                    <p className="text-gray-500 text-base font-medium pr-10"> The MUTANT APE YACHT CLUB is a collection of up to 20,000 Mutant Apes that can only be created by exposing an existing Bored Ape to a vial of MUTANT SERUM or by minting a Mutant Ape in the public sale.  </p>
 
                                 </div>
 
@@ -308,6 +378,7 @@ function NFTDetails() {
 
                                     <AuctionComponant
                                         nft={nft}
+                                        highestBid={highestBid}
                                         setShowLoading={setShowLoading}
                                         setShowModalSucces={setShowModalSucces}
                                         setTransactionHash={setTransactionHash}
@@ -365,8 +436,9 @@ function NFTDetails() {
                         <Bid
                             setShowModalBid={setShowModalBid}
                             setTransactionHash={setTransactionHash}
-                            ethPrice={ethPrice}
+                            ethPrice={highestBid}
                             nft={nft}
+                            bid={bid}
                         />
                     ) : null}
 
