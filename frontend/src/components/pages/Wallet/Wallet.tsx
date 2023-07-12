@@ -204,24 +204,6 @@ function Wallet() {
     }
   };
 
-//   const getNftDetails = async (tokenId: any) => {
-//     try {
-//       const provider = new ethers.providers.Web3Provider(window.ethereum);
-//       const signer = provider.getSigner();
-//       const contract = new ethers.Contract(
-//         MarketPlaceJSON.address,
-//         MarketPlaceJSON.abi,
-//         signer
-//       );
-
-//       const tokenDetails = await contract.getNFTDetails(tokenId);
-
-//       console.log(tokenDetails);
-//     } catch (error) {
-//       console.error(error);
-//     }
-//   };
-
   const UnlistOnMarketPlace = async (tokenId: any) => {
     try {
       setLoading((prev) => ({ ...prev, [tokenId]: true }));

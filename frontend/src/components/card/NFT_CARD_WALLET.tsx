@@ -12,7 +12,7 @@ const NFT_CARD_WALLET = ({
   loading,
   setShowModal,
   setValue,
-  unlistMethod,
+  unlistMethod
 }: {
   tokenId: number;
   owner: string;
@@ -95,7 +95,7 @@ const NFT_CARD_WALLET = ({
                 ) : (
                   <>
                     <p className="font-semibold text-xs text-slate-500">
-                      Minimum Bid
+                      Highest Bid
                     </p>
                     <p className="font-semibold text-sm pt-2">6.19 wEth</p>
                   </>
