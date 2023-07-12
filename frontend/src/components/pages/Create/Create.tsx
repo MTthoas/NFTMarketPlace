@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useAccount } from "wagmi";
 import { ethers } from "ethers";
-import MarketPlace from "../../../contracts/marketplace.json";
 
 import Contracts from "../../../contracts/contracts.json";
 
@@ -52,27 +51,26 @@ function Create() {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
-  
   const createNewNFT = async () => {
     setErrorMessage(null);
     setSuccessMessage(null);
     setLoading(true);
-  
+
     if (!file) {
       setLoading(false);
       setErrorMessage("Please upload an image.");
       return;
     }
-  
+
     if (!tokenName || !tokenPrice) {
       setLoading(false);
       setErrorMessage("Please fill in all the requested fields.");
       return;
     }
-  
+
     const formData = new FormData();
     formData.append("file", file);
-  
+
     try {
       const res = await axios.post(
         "https://api.pinata.cloud/pinning/pinFileToIPFS",
@@ -86,7 +84,7 @@ function Create() {
           },
         }
       );
-  
+
       if (res.data.IpfsHash) {
         const attributes = [
           {
@@ -98,12 +96,18 @@ function Create() {
             value: "Mocha",
           },
         ];
-  
+
         const priceInWei = ethers.utils.parseEther(tokenPrice);
-  
-        const transaction = await contract.createNFT(tokenName, tokenDescription, res.data.IpfsHash, priceInWei, attributes);
+
+        const transaction = await contract.createNFT(
+          tokenName,
+          tokenDescription,
+          res.data.IpfsHash,
+          priceInWei,
+          attributes
+        );
         await transaction.wait();
-  
+
         setSuccessMessage("NFT created successfully");
       }
     } catch (error: any) {
@@ -114,7 +118,6 @@ function Create() {
       setLoading(false);
     }
   };
-  
 
   const resetForm = () => {
     setFile(null);
@@ -257,7 +260,8 @@ function Create() {
                 </div>
                 <div className="grid mb-4">
                   <label className="mb-1 font-bold text-base">
-                    Description <span className="text-xs text-slate-600">(Optional)</span>
+                    Description{" "}
+                    <span className="text-xs text-slate-600">(Optional)</span>
                   </label>
                   <textarea
                     value={tokenDescription}
@@ -318,7 +322,7 @@ function Create() {
                     {preview ? (
                       <div className="flex flex-col p-1.5">
                         <img
-                          className="w-full rounded-xl"
+                          className="w-full h-[200px] object-cover rounded-xl"
                           src={preview.toString()}
                           alt="Preview"
                         />
