@@ -7,16 +7,24 @@ import { Link } from 'react-router-dom';
 import { NFT } from '../interface/NFT';
 
 import Contracts from '../../contracts/contracts.json';
+import { set } from 'date-fns';
+
+const provider = new ethers.providers.Web3Provider((window as any).ethereum);
+const signer = provider.getSigner();
+
+let myNftMarket = new ethers.Contract(Contracts.NFTMarket.address, Contracts.NFTMarket.abi, signer);
+let myNFT = new ethers.Contract(Contracts.MyNFT.address, Contracts.MyNFT.abi, signer);
 
 
 const NFT_CARD_MARKETPLACE = ({tokenId, owner, price, image, type, data} : {tokenId: number, owner: string, price: string, image: string, type:any, data: NFT})  => {
 
     const [dataLogs, setData] = useState(data);
     const [key, setKey] = useState(Date.now());
+    const [metaData, setMetaData] = useState<any>([]);
 
     const formatAddress = (address: string) => {
         return `${address.slice(0, 6)}...${address.slice(-4)}`;
-      };
+    };
     
     const LimitString = (str: string, limit: number) => {
 
@@ -26,6 +34,38 @@ const NFT_CARD_MARKETPLACE = ({tokenId, owner, price, image, type, data} : {toke
             return str;
         }
     }
+
+    const getMetaDataOfNft = async () => {
+
+        const transactionSales = await myNftMarket.getAllData(tokenId);
+        
+        const isOnSale = await myNftMarket.isTokenOnSale(tokenId);
+        const isOnAuction = await myNftMarket.isTokenOnAuction(tokenId);
+
+        let type = "none";
+        let listEndTime = 0;
+        let remainingMilliseconds = 0;
+
+        if(isOnSale) {
+            type = "sale";
+            listEndTime = transactionSales.salesEndTime.toNumber();
+        } else if(isOnAuction) {
+            type = "auction";
+            listEndTime = transactionSales.auctionEndTime.toNumber();
+        }
+
+        console.log("Highest bid : " + ethers.utils.formatEther(transactionSales.highestBid))
+
+        let item = {
+            tokenId: tokenId,
+            highestBid: ethers.utils.formatEther(transactionSales.highestBid),
+        }
+        setMetaData(item);
+    }
+
+    useEffect(() => {
+        getMetaDataOfNft();
+    }, [])
 
 
     return (
@@ -91,7 +131,7 @@ const NFT_CARD_MARKETPLACE = ({tokenId, owner, price, image, type, data} : {toke
                                     Minimum Bid
                                 </p>
                                 <p className="font-semibold text-sm pt-2">
-                                    6.19 wEth
+                                 { metaData.highestBid } wEth
                                 </p>
                             </>
                             }

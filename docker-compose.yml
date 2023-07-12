@@ -10,7 +10,7 @@ services:
     depends_on:
       - mongodb
     environment:
-      MONGODB_URI: mongodb://root:rootpassword@mongodb:27017/artxDb
+      MONGODB_URI: mongodb://root:rootpassword@mongodb:27017/mydb
   mongodb:
     image: mongo
     environment:

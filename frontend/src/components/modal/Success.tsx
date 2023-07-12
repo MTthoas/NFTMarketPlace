@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import './Success.css'
+import './stylesheets/Success.css'
 export interface SuccessProps {
     setShowModalSucces: any,
     transaction : any

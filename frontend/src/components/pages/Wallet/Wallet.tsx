@@ -12,7 +12,40 @@ import ListToken from '../Create/ListToken';
 import { BigNumber } from "ethers";
 
 
-
+function convertDurationToSeconds(durationText : any) {
+    let durationInSeconds;
+    switch (durationText) {
+        case "1 minutes":
+            durationInSeconds = (60);
+        break;
+        case "5 minutes":
+            durationInSeconds = (5 * 60);
+        break;
+        case "15 minutes":
+            durationInSeconds = (30 * 60)/2;
+        break;
+        case "30 minutes":
+            durationInSeconds = 30 * 60;
+            break;
+        case "1 heure":
+            durationInSeconds = 1 * 60 * 60;
+            break;
+        case "2 heures":
+            durationInSeconds = 2 * 60 * 60;
+            break;
+        case "6 heures":
+            durationInSeconds = 6 * 60 * 60;
+            break;
+        case "1 jour":
+            durationInSeconds = 24 * 60 * 60;
+            break;
+        default:
+            durationInSeconds = 0; // Si aucune option n'est sélectionnée ou pour une entrée non valide
+            break;
+    }
+    return durationInSeconds;
+  }
+  
 
 function Wallet() {
 
@@ -91,6 +124,12 @@ function Wallet() {
     const ListOnMarketPlace = async (tokenId : any, method: any, price: string, time: any) => {
         
         try {
+
+            console.log(time)
+
+            const durationInSeconds = convertDurationToSeconds(time);
+
+            console.log(convertDurationToSeconds(time) + " seconds")
     
             setLoading(prev => ({ ...prev, [tokenId]: true }));
             console.log("List")
@@ -107,11 +146,11 @@ function Wallet() {
             const priceInWei = ethers.utils.parseEther(price);
             
             const methodNumber = method === "Fixed price" ? 1 : method === "Timed auction" ? 2 : 0;
-    
+
             const approveTx = await NFTContract.approve(Contracts.NFTMarket.address, tokenId);
             await approveTx.wait();
         
-            await nftMarketContract.setSale(tokenId, methodNumber, priceInWei);
+            await nftMarketContract.setSale(tokenId, methodNumber, priceInWei, durationInSeconds );
     
         } catch (error) {
             console.error("Transaction was rejected: ", error);
@@ -228,10 +267,10 @@ function Wallet() {
 
                 {showModal ? (
                      <ListToken 
-                     setShowModal={setShowModal} 
-                     value={value}
-                      unlistMethod={UnlistOnMarketPlace} 
-                      listMethod={ListOnMarketPlace}/>
+                        setShowModal={setShowModal} 
+                        value={value}
+                        unlistMethod={UnlistOnMarketPlace} 
+                        listMethod={ListOnMarketPlace}/>
                 ) : null}
 
 
