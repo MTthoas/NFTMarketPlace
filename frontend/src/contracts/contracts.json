@@ -1,6 +1,6 @@
 {
   "MyNFT": {
-    "address": "0x6F4a3cDd3b489390f750D03Ce749F5c43Fd5A3a1",
+    "address": "0xF989024d61d20084EBcc68AE1400642eB82f5a0d",
     "abi": [
       {
         "type": "constructor",
@@ -596,7 +596,7 @@
     ]
   },
   "NFTMarket": {
-    "address": "0x65297eA4A23662B2660904C9677c42eCd9431Ae6",
+    "address": "0x9e65F6171E0F1D03aD3C9f79aA170E85265d37BC",
     "abi": [
       {
         "type": "constructor",
@@ -648,6 +648,10 @@
           {
             "type": "uint256",
             "name": "amount"
+          },
+          {
+            "type": "uint256",
+            "name": "timestamp"
           }
         ]
       },
@@ -740,6 +744,38 @@
         "outputs": [
           {
             "type": "uint256[]"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getBidData",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "tuple[]",
+            "components": [
+              {
+                "type": "address",
+                "name": "bidder"
+              },
+              {
+                "type": "uint256",
+                "name": "amount"
+              },
+              {
+                "type": "uint256",
+                "name": "timestamp"
+              }
+            ]
           }
         ]
       },

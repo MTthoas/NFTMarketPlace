@@ -129,10 +129,10 @@ export default function Bid({
 
             <div className='flex justify-between mx-5 my-2 text-sm text-gray-500'>
                 <p> Total Price </p>
-                <p className="text-black"> {(Number(tokenPrice) + (1/100)).toFixed(5)} ETH </p>
+                <p className="text-black"> {(Number(tokenPrice) + ((1/100) * (Number(tokenPrice)))).toFixed(5)} ETH </p>
             </div>
 
-            <button onClick={() => { bid((Number(tokenPrice) + (1/100)).toFixed(5)) }} className="bg-neutral mx-4 mt-3 mb-7 py-2 rounded-lg text-white"> 
+            <button onClick={() => { bid((Number(tokenPrice) + ((1/100) * (Number(tokenPrice)))).toFixed(5)) }} className="bg-neutral mx-4 mt-3 mb-7 py-2 rounded-lg text-white"> 
                 Place Bid
             </button>
 

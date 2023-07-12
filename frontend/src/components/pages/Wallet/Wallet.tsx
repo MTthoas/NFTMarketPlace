@@ -88,32 +88,31 @@ function Wallet() {
 
     }
 
-    const ListOnMarketPlace = async (tokenId : any, method: any, price: any, time: any) => {
+    const ListOnMarketPlace = async (tokenId : any, method: any, price: string, time: any) => {
         
         try {
-
+    
             setLoading(prev => ({ ...prev, [tokenId]: true }));
             console.log("List")
             localStorage.setItem(`loading-${tokenId}`, 'true'); // save loading state to local storage
     
             console.log("TokenId :" + tokenId)
             console.log("Method :" + method)
-
+    
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
             let NFTContract = new ethers.Contract(Contracts.MyNFT.address, Contracts.MyNFT.abi, signer);
             let nftMarketContract = new ethers.Contract(Contracts.NFTMarket.address, Contracts.NFTMarket.abi, signer);
-
-            const priceInWei = ethers.utils.parseEther(price.toString());
+            
+            const priceInWei = ethers.utils.parseEther(price);
             
             const methodNumber = method === "Fixed price" ? 1 : method === "Timed auction" ? 2 : 0;
-
-            const approve = await NFTContract.approve(Contracts.NFTMarket.address, tokenId);
-
-            approve.wait();
+    
+            const approveTx = await NFTContract.approve(Contracts.NFTMarket.address, tokenId);
+            await approveTx.wait();
         
             await nftMarketContract.setSale(tokenId, methodNumber, priceInWei);
-
+    
         } catch (error) {
             console.error("Transaction was rejected: ", error);
         } finally {
@@ -121,6 +120,8 @@ function Wallet() {
             localStorage.setItem(`loading-${tokenId}`, 'false'); // save loading state to local storage
         }
     };
+    
+    
 
     const getNftDetails = async (tokenId: any) => {
         try {

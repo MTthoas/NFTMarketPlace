@@ -18,11 +18,20 @@ const NFT_CARD_MARKETPLACE = ({tokenId, owner, price, image, type, data} : {toke
         return `${address.slice(0, 6)}...${address.slice(-4)}`;
       };
     
+    const LimitString = (str: string, limit: number) => {
+
+        if(str.length > limit) {
+            return str.slice(0, limit) + "...";
+        } else {
+            return str;
+        }
+    }
+
 
     return (
         <>
         <Link to={`/nft/${tokenId}`}>
-        <div className="h-[358px] w-[200px] border rounded-xl border-gray-400 overflow-hidden">
+        <div className="h-[358px] w-[220px] border rounded-xl border-gray-400 overflow-hidden">
             <div key={key} className="flex flex-col h-full p-1.5">
                 <img
                     className="w-[200px] h-[200px] object-cover rounded-xl"
@@ -31,8 +40,8 @@ const NFT_CARD_MARKETPLACE = ({tokenId, owner, price, image, type, data} : {toke
                 />
                 <div className="mt-4">
                     <div className="mx-3 flex justify-between">
-                        <p className="font-semibold text-lg">
-                            {dataLogs.name}
+                        <p className="font-semibold text-md">
+                        {dataLogs.name ? LimitString(dataLogs.name, 15) : 'Chargement..'}
                         </p>
                         <p className="border border-gray-400 text-xs ml-2 my-auto py-1 px-2 rounded-lg">
                             #{tokenId}
@@ -49,7 +58,7 @@ const NFT_CARD_MARKETPLACE = ({tokenId, owner, price, image, type, data} : {toke
                                 <p className="font-semibold text-sm text-slate-500">
                                     Price
                                 </p>
-                                <p className="font-semibold text-sm pt-1">
+                                <p className="font-semibold text-xs pt-1">
                                     {price} ETH
                                 </p>
                             </>

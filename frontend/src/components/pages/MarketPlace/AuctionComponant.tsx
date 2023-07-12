@@ -15,8 +15,6 @@ export default function AuctionComponant({
     } : any) {
 
 
-        console.log(ethPrice)
-        console.log(nft)
   return (
     <div className="mt-7 items-center justify-between w-full space-y-4 border-t py-4 sm:flex-row sm:space-y-0 border-gray-300 border px-5 rounded-xl ">
 

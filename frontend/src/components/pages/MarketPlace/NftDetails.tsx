@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom';
 // import Breadcrumb from 'components/utils/breadcrumb'
 import { Link } from "react-router-dom";
 import { ethers } from 'ethers';
+import axios from 'axios';
+
 
 import Contracts from '../../../contracts/contracts.json';
 
@@ -18,7 +20,42 @@ import AuctionComponant from './AuctionComponant';
 
 
 import Bid from '../../modal/Bid'
+import { timeStamp } from 'console';
 
+function shortenAddress(address : any, chars = 4) {
+    // Vérifie si l'adresse est valide
+    if (!address) return '';
+    const start = address.substring(0, chars + 2);
+    const end = address.substring(address.length - chars);
+    return `${start}...${end}`;
+}
+
+function formatDateTime(dateTimeString: any) {
+    const dateTime = new Date(dateTimeString);
+    const day = dateTime.getDate();
+    const month = dateTime.getMonth() + 1;
+    const year = dateTime.getFullYear();
+    const hours = dateTime.getHours();
+    const minutes = dateTime.getMinutes();
+  
+    const formattedDate = `${day}/${month}/${year}`;
+    const formattedTime = `${hours}:${minutes}`;
+  
+    return `${formattedDate} ${formattedTime}`;
+}
+
+function formatTimestamp(timestamp : any) {
+const date = new Date(timestamp * 1000); // Convertit le timestamp en millisecondes
+
+const day = date.getDate().toString().padStart(2, '0');
+const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Les mois sont indexés à partir de 0
+const year = date.getFullYear();
+
+const hours = date.getHours().toString().padStart(2, '0');
+const minutes = date.getMinutes().toString().padStart(2, '0');
+
+return `${day}/${month}/${year} ${hours}:${minutes}`;
+} 
 
 function NFTDetails() {
 
@@ -35,6 +72,9 @@ function NFTDetails() {
 
     const [ transactionHash, setTransactionHash ] = useState("")
     const [ showModalBid, setShowModalBid ] = useState(false)
+
+    const [ bids, setBids ] = useState<any>([]);
+    const [ Historical, setHistorical ] = useState<any>([]);
 
     const [ highestBid, setHighestBid ] = useState<any>([]);
 
@@ -54,6 +94,8 @@ function NFTDetails() {
         const transaction = await myNFT.getTokenData(id);
 
         const transactionSales = await myNftMarket.getAllData(id);
+
+        console.table(transactionSales)
         const transactionForMetadata = await myNFT.getTokenAttributes(id);
         
 
@@ -80,8 +122,6 @@ function NFTDetails() {
             remainingMilliseconds = remainingSeconds * 1000;
         }
 
-        console.log("Remaining Time in milliseconds: ", remainingMilliseconds)
-
         let item = {
             tokenId: id,
             name : transaction[0],
@@ -94,14 +134,14 @@ function NFTDetails() {
         }
 
         setNft(item)
-        setHighestBid(ethers.utils.formatEther(transactionSales.highestBid),)
 
-        console.table(item)
+        setHighestBid(ethers.utils.formatEther(transactionSales.highestBid));
     }
 
     const fetchHighestBid = async () => {
 
         const transactionSales = await myNftMarket.getAllData(id);
+
 
         const isOnSale = await myNftMarket.isTokenOnSale(id);
 
@@ -135,10 +175,16 @@ function NFTDetails() {
     const bid = async (amount: any) => {
 
         try {
-            // your code for bidding here
-        
+
+        const signerAddress = await signer.getAddress();
         // Vérifiez que le jeton est en vente aux enchères
         const isOnAuction = await myNftMarket.isTokenOnAuction(nft.tokenId);
+
+        if (nft.owner == signerAddress) {
+            console.error("Vous ne pouvez pas enchérir sur votre propre jeton");
+            return;
+        }
+
         if (!isOnAuction) {
             console.error("Le jeton n'est pas en vente aux enchères");
             return;
@@ -155,8 +201,12 @@ function NFTDetails() {
             return;
         }
 
+        // vérifiez que le bidder n'est pas le propriétaire du jeton
+
+
+
         // Vérifiez que l'offre est suffisamment élevée
-        const priceWei = ethers.utils.parseEther("0.1");
+        const priceWei = ethers.utils.parseEther(amount);
         if (priceWei.lte(saleData.highestBid)) {
             console.error("L'offre n'est pas assez élevée");
             return;
@@ -167,10 +217,26 @@ function NFTDetails() {
         // Soumettez l'offre
         const transaction = await myNftMarket.bid(nft.tokenId, priceWei, { value: priceWei });
 
-        console.log("Transaction Hash: ", transaction.hash);
         await transaction.wait();
 
         console.log("Transaction Mined");
+
+        const transactionData = {
+            from: signerAddress, // L'adresse de l'expéditeur
+            to: nft.owner, // L'adresse du destinataire
+            amount: amount, // Le montant de l'offre
+            tokenId: nft.tokenId // L'ID du jeton
+          };
+          
+          try {
+            const response = await axios.post('http://localhost:8080/transaction', transactionData);
+            console.log('New transaction created: ', response.data);
+            setHistorical([...response.data])
+            getAllBidsFromToken()
+          } catch (error) {
+            console.error('Error creating transaction: ', error);
+          }
+
 
     } catch (error) {
         console.error(error);
@@ -179,10 +245,36 @@ function NFTDetails() {
 
     }
 
+    const getAllBidsFromToken = async () => {
+
+        const signerAddress = await signer.getAddress();
+        // Vérifiez que le jeton est en vente aux enchères
+        const getBidData = await myNftMarket.getBidData(id);
+
+        setBids([...getBidData]);
+
+    }
+
+    const getAllHistoryFromToken = async () => {
+
+        try {
+            const response = await axios.get('http://localhost:8080/transactions');
+            console.log('All Transactions', response.data);
+            setHistorical([...response.data])
+          } catch (error) {
+            console.error('Error getting transactions', error);
+          }
+
+    }
+
+
+
         
     useEffect(() => {
         getNftFromId()
         getEthPrice()
+        getAllBidsFromToken()
+        getAllHistoryFromToken()
     }, []);
 
 
@@ -222,44 +314,30 @@ function NFTDetails() {
 
                                     <h1 className="text-2xl font-medium text-neutral mt-7 mb-7">Latest bids</h1>
                                     <div className="overflow-x-auto">
-                                    <table className="table w-128">
+                                    <table className="table w-120">
                                         {/* head */}
                                         <tbody className=''>
-                                        {/* row 1 */}
-                                        <tr>
-                                            <td className='font-bold'>0xa837...79aa</td>
-                                            <td className="text-sm">11 days ago • Expires 2 days ago</td>
-                                            <td className="flex flex-col items-end">
-                                                <p className='font-bold text-sm'>56 ETH</p>
-                                                <p className='font-normal text-sm'>$41340</p>
-                                            </td>
-                                        </tr>
-                                        {/* row 2 */}
-                                        <tr>
-                                            <td className='font-bold'>0xa467...79cb</td>
-                                            <td className="text-sm">23 weeks ago • Expires 11 weeks ago</td>
-                                            <td className="flex flex-col items-end">
-                                                <p className='font-bold text-sm'>31 ETH</p>
-                                                <p className='font-normal text-sm'>$11134</p>
-                                            </td>
-                                        </tr>
-                                        {/* row 3 */}
-                                        <tr>
-                                            <td className='font-bold'>0xa163...25dc</td>
-                                            <td className="text-sm">2 weeks ago • Expires 2 weeks ago</td>
-                                            <td className="flex flex-col items-end">
-                                                <p className='font-bold text-sm'>17 ETH</p>
-                                                <p className='font-normal text-sm'>$4134</p>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td className='font-bold'>0xa163...44bd</td>
-                                            <td className="text-sm">2 weeks ago • Expires 2 weeks ago</td>
-                                            <td className="flex flex-col items-end">
-                                                <p className='font-bold text-sm'>17 ETH</p>
-                                                <p className='font-normal text-sm'>$4134</p>
-                                            </td>
-                                        </tr>
+
+                                        {
+                                            bids
+                                            .slice()
+                                            .reverse()
+                                            .map((bid: any, i: any) => {
+                              
+                                                return (
+                                                <tr key={i}>
+                                                    <td className='font-bold'>{shortenAddress(bid.bidder)}</td>
+                                                    <td className="text-sm">{formatTimestamp(bid.timestamp)} • </td>
+                                                    <td className="flex flex-col items-end">
+                                                    <p className='font-bold text-sm'>{ethers.utils.formatEther(bid.amount)} ETH</p>
+                                                    <p className='font-normal text-sm'>{(parseFloat(ethers.utils.formatEther(bid.amount)) * ethPrice).toFixed(3)} $</p>
+                                                    </td>
+                                                </tr>
+                                                );
+                                            })
+                                        }
+
+
                                         </tbody>
                                     </table>
                                     </div>
@@ -270,44 +348,27 @@ function NFTDetails() {
 
                                     <h1 className="text-2xl font-medium text-neutral mt-7 mb-7">Historical</h1>
                                     <div className="overflow-x-auto">
-                                    <table className="table w-128">
+                                    <table className="table w-120">
                                         {/* head */}
                                         <tbody className=''>
                                         {/* row 1 */}
-                                        <tr>
-                                            <td className='font-bold'>0xa837...79aa</td>
-                                            <td className="text-sm">11 days ago • Expires 2 days ago</td>
-                                            <td className="flex flex-col items-end">
-                                                <p className='font-bold text-sm'>56 ETH</p>
-                                                <p className='font-normal text-sm'>$41340</p>
-                                            </td>
-                                        </tr>
-                                        {/* row 2 */}
-                                        <tr>
-                                            <td className='font-bold'>0xa467...79cb</td>
-                                            <td className="text-sm">23 weeks ago • Expires 11 weeks ago</td>
-                                            <td className="flex flex-col items-end">
-                                                <p className='font-bold text-sm'>31 ETH</p>
-                                                <p className='font-normal text-sm'>$11134</p>
-                                            </td>
-                                        </tr>
-                                        {/* row 3 */}
-                                        <tr>
-                                            <td className='font-bold'>0xa163...25dc</td>
-                                            <td className="text-sm">2 weeks ago • Expires 2 weeks ago</td>
-                                            <td className="flex flex-col items-end">
-                                                <p className='font-bold text-sm'>17 ETH</p>
-                                                <p className='font-normal text-sm'>$4134</p>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td className='font-bold'>0xa163...44bd</td>
-                                            <td className="text-sm">2 weeks ago • Expires 2 weeks ago</td>
-                                            <td className="flex flex-col items-end">
-                                                <p className='font-bold text-sm'>17 ETH</p>
-                                                <p className='font-normal text-sm'>$4134</p>
-                                            </td>
-                                        </tr>
+
+                                        {
+                                            Historical.map((transaction: any, i: any) => {
+
+                                                return (
+                                                <tr key={i}>
+                                                    <td className='font-bold'>{shortenAddress(transaction.from)}</td>
+                                                    <td className="text-md">{formatDateTime(transaction.timestamp)} • </td>
+                                                    <td className="flex flex-col items-end">
+                                                        <p className='font-bold text-sm'>{transaction.amount} ETH</p>
+                                                        <p className='font-normal text-sm'>{(parseFloat(transaction.amount) * ethPrice).toFixed(3)} $</p>
+                                                    </td>
+                                                </tr>
+                                                );
+
+                                            })
+                                        }
                                         </tbody>
                                     </table>
                                     </div>
