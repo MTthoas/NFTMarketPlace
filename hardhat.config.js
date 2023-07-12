@@ -17,19 +17,7 @@ module.exports = {
     version: "0.8.9",
   },
   networks: {
-    hardhat: {
-      chainId: 1337
-    },
-    polygon_mumbai: {
-      url: "https://rpc-mumbai.maticvigil.com",
-      accounts: [process.env.PRIVATE_KEY_ACCOUNT_1],
-   },
-    goerli: {
-      url: process.env.GOERLI_URL,
-      accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-    },
-    sepholia: {
+    sepolia: {
       url: process.env.SEPHOLIA_URL,
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
@@ -37,11 +25,6 @@ module.exports = {
   },
   gasReporter: {
     enabled: !!process.env.REPORT_GAS,
-  },
-  etherscan: {
-    apiKey: {
-      polygonMumbai: process.env.POLYGONSCAN_API_KEY
-    }
   },
   mocha: {
     timeout: 40000

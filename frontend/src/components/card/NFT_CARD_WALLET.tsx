@@ -5,7 +5,8 @@ import { NFT } from '../interface/NFT';
 
 import ListToken from '../pages/Create/ListToken';
 
-const NFT_CARD_WALLET = ({tokenId, seller, owner, price, image, data, setShowModal, setValue, loading} : {tokenId: number, seller: string, owner: string, price: string, image: string, data: NFT, setShowModal: any, setValue: any, loading: any})  => {
+const NFT_CARD_WALLET = ({tokenId, price, image, type, data, setShowModal, setValue, loading, getNftDetails, unlistMethod} 
+    : {tokenId: number, price: string, image: string, type: string, data: NFT, setShowModal: any, setValue: any, loading: any, getNftDetails: any, unlistMethod: any})  => {
 
     // 
     return (
@@ -26,9 +27,13 @@ const NFT_CARD_WALLET = ({tokenId, seller, owner, price, image, data, setShowMod
 
                 <p className="text-xs pt-1"> {data.currentlyListed === true ? "Disponible dans la marketPlace" : "" }</p>
 
-                {data.currentlyListed == false ? 
+                <button className="bg-gray-300" onClick={() => getNftDetails(tokenId)}>
+                    <p> Token Details </p>
+                </button>
+
+                {data.type == "none" ? 
                     loading == false ? 
-                    <button   onClick={() => {
+                    <button onClick={() => {
                         setShowModal(true) 
                         setValue(data)
                     }} disabled={loading} className="text-xs  border border-gray-300 rounded-md py-2 mt-5 hover:bg-neutral hover:text-white w-full "> Lister sur le market 
@@ -45,7 +50,7 @@ const NFT_CARD_WALLET = ({tokenId, seller, owner, price, image, data, setShowMod
                     </button>
                 : data.currentlyListed == true ?
                     loading == false ?
-                    <button className="text-xs  border border-gray-300 rounded-md py-2 mt-1 mb-1 hover:bg-neutral hover:text-white w-full"> Ne plus lister sur le market
+                    <button onClick={() => unlistMethod(tokenId)} className="text-xs  border border-gray-300 rounded-md py-2 mt-1 mb-1 hover:bg-neutral hover:text-white w-full"> Ne plus lister sur le market
                     </button>
                     : <button className="text-xs border border-gray-300 rounded-md py-2 mt-1  w-full">
                         <div role="status">

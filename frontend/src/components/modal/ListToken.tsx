@@ -82,7 +82,7 @@ const ListToken = (props: ListTokenProps) => {
                     <h2>Fixed price</h2>
                   </div>
                 </div>
-                <div onClick={() => handleMethodChange('auction')} className={`w-1/2 h-40 border NonTransition hover:border-3 hover:scale-105 transform transition duration-0 cursor-pointer border-gray-300 hover:border-gray-600 rounded-xl flex justify-center text-center ${method === 'auction' ? 'bg-neutral' : ''}`}>
+                <div onClick={() => handleMethodChange('Timed auction')} className={`w-1/2 h-40 border NonTransition hover:border-3 hover:scale-105 transform transition duration-0 cursor-pointer border-gray-300 hover:border-gray-600 rounded-xl flex justify-center text-center ${method === 'auction' ? 'bg-neutral' : ''}`}>
                   <div className={`flex flex-col justify-center font-bold  ${method === 'auction' ? 'text-white' : ''}`}>
                     <div className="flex justify-center mb-2">
                       <svg

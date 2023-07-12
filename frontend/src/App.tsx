@@ -14,8 +14,6 @@ import { useState } from 'react';
 
 const App = () => {
 
-  const [account, setAccount] = useState<any | null>(null);
-
   return (
     <div>
       <Router>

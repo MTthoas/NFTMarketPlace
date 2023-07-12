@@ -1,10 +1,17 @@
 import React, { useState, useEffect }  from 'react';
 import { ethers } from 'ethers';
 import MarketPlaceJSON from '../../../contracts/marketplace.json';
+
+import Contracts from '../../../contracts/contracts.json';
+
 import { NFT } from '../../interface/NFT';
 import NFT_CARD_WALLET from '../../card/NFT_CARD_WALLET';
 
 import ListToken from '../Create/ListToken';
+
+import { BigNumber } from "ethers";
+
+
 
 
 function Wallet() {
@@ -24,8 +31,9 @@ function Wallet() {
         try {
 
             const provider = new ethers.providers.Web3Provider(window.ethereum);
-            
-            let contract = new ethers.Contract(MarketPlaceJSON.address, MarketPlaceJSON.abi, provider);
+
+            let NFTContract = new ethers.Contract(Contracts.NFTMarket.address, Contracts.NFTMarket.abi, provider);
+            let myNftMarket = new ethers.Contract(Contracts.MyNFT.address, Contracts.MyNFT.abi, provider);
 
            // Get adress of user
 
@@ -34,30 +42,43 @@ function Wallet() {
 
             // GetAllMyNfts with the user adress in parameter
 
-            let transaction = await contract.getMyNFTs(account);
+            let transaction = await NFTContract.getMyNFTs(account);
 
-                const items = await Promise.all(transaction.map(async (i: any) => {
-                const tokenURI = await contract.tokenURI(i.tokenId);
+            // let nftData = await myNftMarket.getTokenData(0);
 
-                const metadata = JSON.parse(tokenURI);
-                console.log(metadata);
-                const ethValue = ethers.utils.formatEther(i.price);
+            //  console.log(nftData)
 
-                console.log(ethValue)
+            const items = await Promise.all(transaction.map(async(tokenId : BigNumber) => {
+                console.log(tokenId.toNumber())
+                const data = await myNftMarket.getTokenData(tokenId.toNumber());
+                const price = ethers.utils.formatEther(data[3]);
 
-                let item = {
-                    tokenId: i.tokenId.toNumber(),
-                    name: metadata.name,
-                    seller: i.seller,
-                    owner: i.owner,
-                    image: metadata.image,
-                    price : ethValue,
-                    currentlyListed: i.currentlyListed
+                const isOnSale = await NFTContract.isTokenOnSale(tokenId);
+                const isOnAuction = await NFTContract.isTokenOnAuction(tokenId);
+
+                let type = "none";
+                
+                if(isOnSale) {
+                    type = "sale";
+                } else if(isOnAuction) {
+                    type = "auction";
                 }
+
+                console.log("Type : " + type)
+
+                const item = {
+                    tokenId: tokenId.toNumber(),
+                    name: data[0],
+                    description: data[1],
+                    image: data[2],
+                    price: price,
+                    type: type 
+                }
+
+                console.dir(item)
                 return item;
             }));
 
-            console.table(items);
             updateData(items);
 
                     
@@ -67,40 +88,30 @@ function Wallet() {
 
     }
 
-    const ListOnMarketPlace = async (tokenId : any, method: any, price: any, time: any) => {
+    const ListOnMarketPlace = async (tokenId : any, method: any, price: string, time: any) => {
+        
         try {
+    
             setLoading(prev => ({ ...prev, [tokenId]: true }));
             console.log("List")
             localStorage.setItem(`loading-${tokenId}`, 'true'); // save loading state to local storage
     
+            console.log("TokenId :" + tokenId)
+            console.log("Method :" + method)
+    
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
-            const contract = new ethers.Contract(MarketPlaceJSON.address, MarketPlaceJSON.abi, signer);
+            let NFTContract = new ethers.Contract(Contracts.MyNFT.address, Contracts.MyNFT.abi, signer);
+            let nftMarketContract = new ethers.Contract(Contracts.NFTMarket.address, Contracts.NFTMarket.abi, signer);
+            
+            const priceInWei = ethers.utils.parseEther(price);
+            
+            const methodNumber = method === "Fixed price" ? 1 : method === "Timed auction" ? 2 : 0;
     
-            // Convert the price to wei (if necessary)
-            const priceWei = ethers.utils.parseEther("0.1");
-    
-            console.log("Token ID: ", tokenId);
-    
-            let transaction;
-            if (method === 'Auction') {
-                const duration = time * 60; // Convert time in minutes to seconds
-                transaction = await contract.startAuction(tokenId, priceWei, duration)
-            } else {
-                transaction = await contract.listTokenForSale(tokenId, priceWei);
-            }
-    
-            const receipt = await transaction.wait();
-    
-            if (receipt.status === 0) {
-                throw new Error('Transaction failed');
-            }
+            const approveTx = await NFTContract.approve(Contracts.NFTMarket.address, tokenId);
+            await approveTx.wait();
         
-            console.log("Transaction Done");
-    
-            setData({
-                ...data,
-            });
+            await nftMarketContract.setSale(tokenId, methodNumber, priceInWei);
     
         } catch (error) {
             console.error("Transaction was rejected: ", error);
@@ -109,6 +120,24 @@ function Wallet() {
             localStorage.setItem(`loading-${tokenId}`, 'false'); // save loading state to local storage
         }
     };
+    
+    
+
+    const getNftDetails = async (tokenId: any) => {
+        try {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
+            const contract = new ethers.Contract(MarketPlaceJSON.address, MarketPlaceJSON.abi, signer);
+
+            const tokenDetails = await contract.getNFTDetails(tokenId);
+
+            console.log(tokenDetails);
+
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     
 
     const UnlistOnMarketPlace = async (tokenId : any) => {
@@ -157,8 +186,8 @@ function Wallet() {
 
     const setInfos = async() => {
         
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        setAdress(accounts[0])
+        // const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        // setAdress(accounts[0])
 
     }
 
@@ -181,14 +210,15 @@ function Wallet() {
                             <NFT_CARD_WALLET 
                                 key={index}
                                 tokenId={value.tokenId}
-                                seller={value.seller}
-                                owner={value.owner}
                                 price={value.price}
                                 image={value.image}
+                                type={value.type}
                                 data={value}
                                 setShowModal={setShowModal}
                                 setValue={setValue}
                                 loading = {loading[value.tokenId] || false}
+                                getNftDetails={getNftDetails}
+                                unlistMethod={UnlistOnMarketPlace}
                             />
                         </div>
                         

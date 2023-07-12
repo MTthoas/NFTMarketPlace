@@ -18,15 +18,14 @@ const startApp = async () => {
     const { chains, publicClient, webSocketPublicClient } = configureChains(
       [
         mainnet,
-        sepolia,
-        ...(process.env.REACT_APP_ENABLE_TESTNETS === 'true' ? [goerli] : []),
+        sepolia
       ],
       [publicProvider()]
     );
 
     const { connectors } = getDefaultWallets({
-      appName: 'RainbowKit demo',
-      projectId: 'YOUR_PROJECT_ID',
+      appName: 'ArtxX',
+      projectId: '77ae7eaab14ef71d0e24d1003b8e81d5',
       chains,
     });
 
