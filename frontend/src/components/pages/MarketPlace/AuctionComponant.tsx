@@ -11,12 +11,12 @@ export default function AuctionComponant({
     setShowModalSucces,
     setTransactionHash,
     setShowModalBid,
-    ethPrice
+    ethPrice,
     } : any) {
 
 
   return (
-    <div className="mt-7 items-center justify-between w-full space-y-4 border-t py-4 sm:flex-row sm:space-y-0 border-gray-300 border px-5 rounded-xl ">
+    <div className="mt-7 items-center justify-between w-full space-y-4 border-t py-4 sm:flex-row sm:space-y-0 border-gray-300 border px-5 rounded-xl">
 
         <div className="w-full flex gap-x-3 gap-y-6 mb-4">
 
@@ -40,7 +40,7 @@ export default function AuctionComponant({
 
         <button onClick={() => {
             setShowModalBid(true)
-        }} className="w-full bg-neutral py-2 rounded-md text-white">
+        }} className="w-full bg-neutral py-2 mb-2 rounded-md text-white">
             Place a bid
         </button>
 

@@ -31,22 +31,24 @@ contract NFTMarket {
     MyNFT public nft;
     mapping(uint256 => Sale) public sales;
     mapping(uint256 => Bid[]) public bids;
+    mapping(address => uint256) public pendingReturns;
+
 
     constructor(address _nft) {
         nft = MyNFT(_nft);
     }
 
-    function setSale(uint256 tokenId, SaleType saleType, uint256 price) public {
+    function setSale(uint256 tokenId, SaleType saleType, uint256 price, uint256 timeInSeconds) public {
         require(nft.ownerOf(tokenId) == msg.sender, "NFTMarket: Token not owned by sender");
         require(nft.getApproved(tokenId) == address(this), "NFTMarket: Market contract not approved");
 
         if (saleType == SaleType.Auction) {
-            Sale memory sale = Sale(msg.sender, saleType, price, block.timestamp + 1 days, 0, msg.sender, price);
+            Sale memory sale = Sale(msg.sender, saleType, price, block.timestamp + timeInSeconds, 0, msg.sender, price);
             bids[tokenId].push(Bid(msg.sender, price, block.timestamp));
             sales[tokenId] = sale;
             EnumerableSet.add(saleTokens, tokenId); // add token to saleTokens
         }else{
-            Sale memory sale = Sale(msg.sender, saleType, price, 0, block.timestamp + 1 days, address(0), 0);
+            Sale memory sale = Sale(msg.sender, saleType, price, 0, block.timestamp + timeInSeconds, address(0), 0);
             sales[tokenId] = sale;
             EnumerableSet.add(saleTokens, tokenId); // add token to saleTokens
         }
@@ -132,44 +134,57 @@ contract NFTMarket {
         require(bidAmount > sales[tokenId].highestBid, "NFTMarket: Bid is not high enough");
         require(msg.value == bidAmount, "NFTMarket: Sent value does not match bid amount");
 
-        uint256 siteShare = bidAmount / 100; // 1% du montant
-
-        // Stockez la part du site dans une variable d'état du contrat
-        // payable(address(this)).transfer(siteShare); // Transfert du pourcentage à l'adresse du contrat
-        // Au lieu de faire un transfert ici, vous pouvez mettre en place un mécanisme pour retirer la part du site plus tard.
-
-        // Enregistrez l'enchère de l'utilisateur
-        bids[tokenId].push(Bid(msg.sender, bidAmount - siteShare, block.timestamp));
-
-        sales[tokenId].highestBidder = msg.sender;
-        sales[tokenId].highestBid = bidAmount - siteShare; // Soustraction du pourcentage du montant total
-    }
-
-    
-    function endAuction(uint256 tokenId) public {
-        require(sales[tokenId].saleType == SaleType.Auction, "NFTMarket: Sale is not an auction");
-        require(block.timestamp >= sales[tokenId].auctionEndTime, "NFTMarket: Auction has not ended yet");
-
-        // Remboursez tous les enchérisseurs sauf le gagnant
-        for (uint i = 0; i < bids[tokenId].length; i++) {
-            if (bids[tokenId][i].bidder != sales[tokenId].highestBidder) {
-                // Effectuez un remboursement
-                payable(bids[tokenId][i].bidder).transfer(bids[tokenId][i].amount);
-            }
+        // If there was a previous bid, increase the pending returns of the previous highest bidder
+        if (sales[tokenId].highestBidder != address(0)) {
+            pendingReturns[sales[tokenId].highestBidder] += sales[tokenId].highestBid;
         }
 
-        // Transférez le NFT au gagnant
-        nft.transferFrom(sales[tokenId].seller, sales[tokenId].highestBidder, tokenId);
+        // Record the user's bid
+        bids[tokenId].push(Bid(msg.sender, bidAmount, block.timestamp));
 
-        // Transférez le paiement au vendeur
-        payable(sales[tokenId].seller).transfer(sales[tokenId].highestBid);
-
-        // Réinitialisez l'état de la vente pour ce NFT
-        sales[tokenId] = Sale(address(0), SaleType.None, 0, 0, 0, address(0), 0);
-
-        // Supprimez les enchères
-        delete bids[tokenId];
+        sales[tokenId].highestBidder = msg.sender;
+        sales[tokenId].highestBid = bidAmount; 
     }
+
+
+    function withdraw() public returns (bool) {
+        uint256 amount = pendingReturns[msg.sender];
+        if (amount > 0) {
+            // Note: It's important to zero pendingReturns[msg.sender] before
+            // sending to prevent re-entrancy attacks!
+            pendingReturns[msg.sender] = 0;
+
+            if (!payable(msg.sender).send(amount)) {
+                // No need to throw; Let's just reset the pending returns
+                pendingReturns[msg.sender] = amount;
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    function endAuction(uint256 tokenId) public {
+        require(isAuctionEnded(tokenId), "NFTMarket: The auction is not ended");
+        
+        Sale memory sale = sales[tokenId];
+
+        // Transfer the token to the highest bidder
+        nft.safeTransferFrom(sale.seller, sale.highestBidder, tokenId);
+
+        // If there was a bid, add the amount to the pending returns of the seller
+        if (sale.highestBidder != address(0)) {
+            pendingReturns[sale.seller] += sale.highestBid;
+        }
+
+        // Remove the token from sale
+        delete sales[tokenId];
+        EnumerableSet.remove(saleTokens, tokenId); // remove token from saleTokens
+    }
+
+
+
+
 
 
     function buy(uint256 tokenId, uint256 price) public payable {
@@ -187,5 +202,10 @@ contract NFTMarket {
         delete sales[tokenId];
         EnumerableSet.remove(saleTokens, tokenId); // remove token from saleTokens
     }
+
+    function isAuctionEnded(uint256 tokenId) public view returns (bool) {
+        return sales[tokenId].saleType == SaleType.Auction && block.timestamp >= sales[tokenId].auctionEndTime;
+    }
+
 
 }

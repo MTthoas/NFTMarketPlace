@@ -8,7 +8,7 @@ import axios from 'axios';
 
 import Contracts from '../../../contracts/contracts.json';
 
-import './Nft.css'
+import './stylesheets/Nft.css'
 
 import Loading from '../../modal/Loading';
 import Success from '../../modal/Success';
@@ -117,6 +117,8 @@ function NFTDetails() {
         }
 
         const remainingSeconds = listEndTime - getCurrentTimestampInSeconds();
+
+        console.log(remainingSeconds + " seconds remaining of the auction " + id)
         
         if (remainingSeconds > 0) {
             remainingMilliseconds = remainingSeconds * 1000;
@@ -267,8 +269,6 @@ function NFTDetails() {
 
     }
 
-
-
         
     useEffect(() => {
         getNftFromId()
@@ -305,6 +305,7 @@ function NFTDetails() {
                                 <div className="h-full w-full mt-7 pr-10">
                                     
                                     <h1 className="text-2xl font-medium text-neutral mb-5">Description</h1>
+
 
                                     <p className="text-gray-500 text-base font-medium pr-10"> The MUTANT APE YACHT CLUB is a collection of up to 20,000 Mutant Apes that can only be created by exposing an existing Bored Ape to a vial of MUTANT SERUM or by minting a Mutant Ape in the public sale.  </p>
 

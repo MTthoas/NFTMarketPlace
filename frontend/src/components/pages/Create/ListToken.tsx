@@ -31,6 +31,16 @@ const ListToken = (props: ListTokenProps) => {
     setEnableNone(method === 'Fixed price');
   }
 
+  const ITEM_HEIGHT = 48;
+  const ITEM_PADDING_TOP = 8;
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        width: 250,
+      },
+    },
+  };
 
   return (
     <div>
@@ -153,11 +163,17 @@ const ListToken = (props: ListTokenProps) => {
                   id="time-select"
                   value={time}
                   onChange={handleChange}
+                  MenuProps={MenuProps}
+                  
+                  
                 >
+                  <MenuItem value={"1 minutes"}>1 minutes</MenuItem>
+                  <MenuItem value={"5 minutes"}>5 minutes</MenuItem>
+                  <MenuItem value={"15 minutes"}>15 minutes</MenuItem>
                   <MenuItem value={"30 minutes"}>30 minutes</MenuItem>
                   <MenuItem value={"1 heure"}>1 heure</MenuItem>
                   <MenuItem value={"2 heures"}>2 heures</MenuItem>
-                  <MenuItem value={"2 heures"}>6 heures</MenuItem>
+                  <MenuItem value={"6 heures"}>6 heures</MenuItem>
                   <MenuItem value={"1 jour"}>1 journée</MenuItem>
                   {enableNone && <MenuItem value={"none"}>Aucune</MenuItem>}
                   {/* Ajoutez ici d'autres options si nécessaire */}

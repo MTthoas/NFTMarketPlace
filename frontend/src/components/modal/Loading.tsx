@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import './Loading.css'
+import './stylesheets/Loading.css'
 export interface LoadingProps {
     setShowLoading: any,
     transaction : any

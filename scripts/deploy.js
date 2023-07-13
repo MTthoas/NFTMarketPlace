@@ -36,8 +36,12 @@ async function main() {
 
     // Write contract data to file
     const path = './frontend/src/contracts/contracts.json';
+    const path2 = './backend/src/contracts/contracts.json';
+
     fs.writeFileSync(path, JSON.stringify(data, null, 2));
+    fs.writeFileSync(path2, JSON.stringify(data, null, 2));
     console.log(`Successfully wrote contract addresses and ABIs to ${path}`);
+    console.log(`Successfully wrote contract addresses and ABIs to ${path2}`);
 }
 
 main()

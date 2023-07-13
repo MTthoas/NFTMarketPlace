@@ -74,6 +74,40 @@ const filters = [
     ],
   },
 ];
+function convertDurationToSeconds(durationText : any) {
+    let durationInSeconds;
+    switch (durationText) {
+        case "1 minutes":
+            durationInSeconds = (60);
+        break;
+        case "5 minutes":
+            durationInSeconds = (5 * 60);
+        break;
+        case "15 minutes":
+            durationInSeconds = (30 * 60)/2;
+        break;
+        case "30 minutes":
+            durationInSeconds = 30 * 60;
+            break;
+        case "1 heure":
+            durationInSeconds = 1 * 60 * 60;
+            break;
+        case "2 heures":
+            durationInSeconds = 2 * 60 * 60;
+            break;
+        case "6 heures":
+            durationInSeconds = 6 * 60 * 60;
+            break;
+        case "1 jour":
+            durationInSeconds = 24 * 60 * 60;
+            break;
+        default:
+            durationInSeconds = 0; // Si aucune option n'est sélectionnée ou pour une entrée non valide
+            break;
+    }
+    return durationInSeconds;
+  }
+  
 
 function Wallet() {
   const [data, updateData] = useState<NFT[]>([]);
@@ -164,6 +198,9 @@ function Wallet() {
     time: any
   ) => {
     try {
+        
+        const timeConverted = convertDurationToSeconds(time);
+
       setLoading((prev) => ({ ...prev, [tokenId]: true }));
       console.log("List");
       localStorage.setItem(`loading-${tokenId}`, "true"); // save loading state to local storage
@@ -195,7 +232,12 @@ function Wallet() {
       );
       await approveTx.wait();
 
-      await nftMarketContract.setSale(tokenId, methodNumber, priceInWei);
+
+      const sale = await nftMarketContract.setSale(tokenId, methodNumber, priceInWei, timeConverted);
+      const receipt = await sale.wait();
+
+      
+
     } catch (error) {
       console.error("Transaction was rejected: ", error);
     } finally {

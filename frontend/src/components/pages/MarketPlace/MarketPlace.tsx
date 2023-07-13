@@ -199,6 +199,7 @@ export default function MarketPlace() {
             const transaction = await contract.executeSale(nft.tokenId, { value: priceWei });
     
             await transaction.wait();  // Attendez que la transaction soit minée
+            
     
             console.log('NFT acheté avec succès !');
         } catch (error) {
