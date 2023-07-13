@@ -1,5 +1,6 @@
 import React from "react";
 import Countdown from "react-countdown";
+import { useAccount } from "wagmi";
 
 import Bid from "../../modal/Bid";
 
@@ -13,6 +14,8 @@ export default function AuctionComponant({
   setShowModalBid,
   ethPrice,
 }: any) {
+  const { address } = useAccount();
+
   return (
     <div className="mt-7 items-center justify-between w-full space-y-4 border-t py-4 sm:flex-row sm:space-y-0 border-gray-300 border px-5 rounded-xl">
       <div className="w-full flex gap-x-3 gap-y-6 mb-4">
@@ -39,14 +42,52 @@ export default function AuctionComponant({
         </div>
       </div>
 
-      <button
-        onClick={() => {
-          setShowModalBid(true);
-        }}
-        className="w-full bg-neutral py-2 mb-2 rounded-md text-white"
-      >
-        Place a bid
-      </button>
+      {/* BUTTONS */}
+      <div className="w-full">
+        {nft.owner !== address ? (
+          <button
+            onClick={() => {
+              setShowModalBid(true);
+            }}
+            className="w-full bg-neutral py-2 mb-2 rounded-xl text-white"
+          >
+            Place a bid
+          </button>
+        ) : (
+          <button
+            //onClick={() => {showModalEndAuction(true);}}
+            className="w-full bg-neutral py-2 mb-2 rounded-xl text-white"
+          >
+            End Auction
+          </button>
+        )}
+      </div>
+
+      <div className="w-full">
+        {nft.owner !== address ? null : (
+          <button
+            //onClick={() => {showModalCancelAunction(true);}}
+            className="w-full bg-neutral py-2 mb-2 rounded-xl text-white"
+          >
+            Cancel Auction
+          </button>
+        )}
+      </div>
+
+      <div className="flex justify-center">
+        <div className="border-b-2 border-gray-300 w-2/3"></div>
+      </div>
+
+      <div className="w-full pt-2">
+        {nft.owner !== address ? null : (
+          <button
+            //onClick={() => {showModalBurn(true);}}
+            className="w-full bg-red-600 py-2 mb-2 rounded-xl text-white"
+          >
+            Brun NFT
+          </button>
+        )}
+      </div>
     </div>
   );
 }

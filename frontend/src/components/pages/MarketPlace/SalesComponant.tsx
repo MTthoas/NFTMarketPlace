@@ -13,14 +13,9 @@ export default function SalesComponant({
   showModalBuyNow,
   showModalOffer,
 }: any) {
-
   const { address } = useAccount();
 
-  console.log("Address", address)
-  console.log(" nft.owner ", nft.owner)
-
   const buyNFT = async (TokenId: any, price: any) => {
-
     try {
       // convert price to uint256 price
 
@@ -70,10 +65,10 @@ export default function SalesComponant({
 
       <div className="w-full">
         {nft.owner !== address ? (
-          showLoading ? ( 
+          showLoading ? (
             <button
               type="button"
-              className="bg-transparent w-full mt-3 mr-3 text-text-info font-semibold  py-2 px-4 border border-info rounded-xl"
+              className="bg-transparent w-full mt-3 mr-3 text-text-info font-semibold  py-2 px-4 border rounded-xl"
             >
               <svg
                 aria-hidden="true"
@@ -99,32 +94,53 @@ export default function SalesComponant({
                 showModalBuyNow(true);
               }}
               type="button"
-              className="bg-transparent w-full mt-3 mr-3 text-text-info font-semibold  py-2 px-4 border border-info rounded-xl"
+              className="bg-transparent w-full mt-3 mr-3 text-text-info font-semibold  py-2 px-4 border rounded-xl"
             >
               Buy now for {nft?.price} ETH
             </button>
           )
         ) : (
           <button
+            //onClick={() => showModalCancelSale(true)}
             type="button"
-            className="bg-transparent w-full mt-3 mr-3 text-text-info font-semibold  py-2 px-4 border border-info rounded-xl"
+            className="bg-neutral w-full mt-3 mr-3 text-white font-semibold py-2 px-4 rounded-xl"
           >
-            You are the owner
+            Cancel sale
           </button>
         )}
       </div>
 
       <div className="w-full">
-        <button
-          onClick = {() => showModalOffer(true) }
-          type="button"
-          className="bg-neutral w-full mt-3 mr-3 text-white font-semibold  py-2 px-4 border border-info rounded-xl"
-        >
-          Make an offer
-        </button>
+        {nft.owner !== address ? (
+          <button
+            onClick={() => showModalOffer(true)}
+            type="button"
+            className="bg-neutral w-full mt-3 mr-3 text-white font-semibold py-2 px-4 border rounded-xl"
+          >
+            Make an offer
+          </button>
+        ) : null}
       </div>
 
-      <div className="w-full flex flex-row items-center justify-center  space-x-2 pt-5">
+      {nft.owner !== address ? null : (
+        <div className="flex justify-center pt-2">
+          <div className="border-b-2 border-gray-300 w-2/3"></div>
+        </div>
+      )}
+
+      <div className="w-full">
+        {nft.owner !== address ? null : (
+          <button
+            //onClick={() => showModalBurn(true)}
+            type="button"
+            className="bg-red-600 w-full mt-3 mr-3 text-white font-semibold py-2 px-4 border rounded-xl"
+          >
+            Burn NFT
+          </button>
+        )}
+      </div>
+
+      <div className="w-full flex flex-row items-center justify-center space-x-2 pt-5">
         <p className="text-gray-600 text-sm"> Sale ends in </p>
         {nft && nft.listEndTime ? (
           <Countdown date={Date.now() + nft.listEndTime} />
