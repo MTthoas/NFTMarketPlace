@@ -1,6 +1,6 @@
 {
   "MyNFT": {
-    "address": "0x4EB297BDE794fA439483156e155f31111e6363d8",
+    "address": "0x9bee254932479C12E24D26EC2C42E7Fc20C2173B",
     "abi": [
       {
         "type": "constructor",
@@ -226,6 +226,32 @@
             "type": "uint256"
           }
         ]
+      },
+      {
+        "type": "function",
+        "name": "burn",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "burnNFT",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": []
       },
       {
         "type": "function",
@@ -596,7 +622,7 @@
     ]
   },
   "NFTMarket": {
-    "address": "0x12DB950b04C2E4356867B5Ad68b04C3D66E6db19",
+    "address": "0xE427D111094Abe7212B898739742DBf0943b9B5E",
     "abi": [
       {
         "type": "constructor",
@@ -607,6 +633,23 @@
             "name": "_nft"
           }
         ]
+      },
+      {
+        "type": "function",
+        "name": "acceptOffer",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          },
+          {
+            "type": "uint256",
+            "name": "offerIndex"
+          }
+        ],
+        "outputs": []
       },
       {
         "type": "function",
@@ -676,6 +719,19 @@
       {
         "type": "function",
         "name": "endAuction",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "endSales",
         "constant": false,
         "payable": false,
         "inputs": [
@@ -799,6 +855,56 @@
       },
       {
         "type": "function",
+        "name": "getOfferCount",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getOffers",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "tuple[]",
+            "components": [
+              {
+                "type": "address",
+                "name": "buyer"
+              },
+              {
+                "type": "uint256",
+                "name": "amount"
+              },
+              {
+                "type": "uint256",
+                "name": "timestamp"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "function",
         "name": "getSalesByOwner",
         "constant": true,
         "stateMutability": "view",
@@ -818,6 +924,24 @@
       {
         "type": "function",
         "name": "isAuctionEnded",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "bool"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "isSalesEnded",
         "constant": true,
         "stateMutability": "view",
         "payable": false,
@@ -889,6 +1013,24 @@
       },
       {
         "type": "function",
+        "name": "makeOffer",
+        "constant": false,
+        "stateMutability": "payable",
+        "payable": true,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          },
+          {
+            "type": "uint256",
+            "name": "offerAmount"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
         "name": "nft",
         "constant": true,
         "stateMutability": "view",
@@ -897,6 +1039,35 @@
         "outputs": [
           {
             "type": "address"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "offers",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256"
+          },
+          {
+            "type": "uint256"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "address",
+            "name": "buyer"
+          },
+          {
+            "type": "uint256",
+            "name": "amount"
+          },
+          {
+            "type": "uint256",
+            "name": "timestamp"
           }
         ]
       },
@@ -916,6 +1087,19 @@
             "type": "uint256"
           }
         ]
+      },
+      {
+        "type": "function",
+        "name": "removeAuction",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": []
       },
       {
         "type": "function",

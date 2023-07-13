@@ -6,7 +6,9 @@ export default function SalesComponant( {nft, showLoading,
     setShowLoading, 
     setShowModalSucces, 
     setTransactionHash, 
-    ethPrice
+    ethPrice,
+    showModalBuyNow,
+    showModalOffer,
 }: any ) {
   
     const buyNFT = async (TokenId : any, price: any) => {
@@ -76,7 +78,7 @@ export default function SalesComponant( {nft, showLoading,
                     </button>
 
 
-                :   <button onClick={() => { buyNFT(nft.tokenId, nft.price) }} type="button" className="bg-transparent w-full mt-3 mr-3 text-text-info font-semibold  py-2 px-4 border border-info rounded-xl">
+                :   <button onClick={() => { showModalBuyNow(true) }} type="button" className="bg-transparent w-full mt-3 mr-3 text-text-info font-semibold  py-2 px-4 border border-info rounded-xl">
                         Buy now for {nft?.price} ETH
                     </button>
 
@@ -87,7 +89,7 @@ export default function SalesComponant( {nft, showLoading,
         </div>
 
         <div className="w-full">
-            <button type="button" className="bg-neutral w-full mt-3 mr-3 text-white font-semibold  py-2 px-4 border border-info rounded-xl">
+            <button onClick={() => { showModalOffer(true) }} type="button" className="bg-neutral w-full mt-3 mr-3 text-white font-semibold  py-2 px-4 border border-info rounded-xl">
                 Make an offer
             </button>
         </div>

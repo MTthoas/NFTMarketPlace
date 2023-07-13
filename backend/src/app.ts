@@ -52,6 +52,29 @@ cron.schedule('* * * * *', async () => {
           } catch (error) {
             console.error("Failed to end auction for token ID: " + tokenId, error)
           }
+      }else{
+
+        if(await contract.isSalesEnded(tokenId)){
+
+          console.log("sales management...")
+
+          const wallet = new ethers.Wallet(process.env.PRIVATE_KEY_ACCOUNT, provider);
+          const contractWithSigner = contract.connect(wallet);
+          
+          try{
+
+            const tx = await contractWithSigner.endSales(tokenId);
+            console.log("Waiting for transaction to be mined...");
+            const receipt = await tx.wait();
+            console.log("Transaction Mined:", receipt);
+
+          }catch (error) {
+
+            console.error("Failed to end sale for token ID: " + tokenId, error)
+            
+          }
+
+        }
       }
   }
 });

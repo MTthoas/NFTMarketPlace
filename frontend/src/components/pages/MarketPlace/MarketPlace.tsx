@@ -122,7 +122,9 @@ export default function MarketPlace() {
           const getAllData = await myNftMarket.getAllData(i.toNumber());
           console.log(getAllData)
 
-          const price = ethers.utils.formatEther(data[3]);
+          const price = ethers.utils.formatEther(getAllData.price);
+
+          console.log("Price: ", price)
 
           const isOnSale = await myNftMarket.isTokenOnSale(i.toNumber());
           const isOnAuction = await myNftMarket.isTokenOnAuction(i.toNumber());

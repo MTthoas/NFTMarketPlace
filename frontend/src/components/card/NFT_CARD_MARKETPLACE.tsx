@@ -98,7 +98,7 @@ const NFT_CARD_MARKETPLACE = ({tokenId, owner, price, image, type, data} : {toke
                                 <p className="font-semibold text-sm text-slate-500">
                                     Price
                                 </p>
-                                <p className="font-semibold text-xs pt-1">
+                                <p className="font-semibold text-sm pt-1">
                                     {price} ETH
                                 </p>
                             </>

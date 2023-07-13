@@ -59,6 +59,8 @@ const NFT_CARD_WALLET = ({
   const getMetaDataOfNft = async () => {
 
     const transactionSales = await myNftMarket.getAllData(tokenId);
+
+    console.table(transactionSales)
     
     const isOnSale = await myNftMarket.isTokenOnSale(tokenId);
     const isOnAuction = await myNftMarket.isTokenOnAuction(tokenId);
@@ -102,7 +104,7 @@ const NFT_CARD_WALLET = ({
 
   return (
     <>
-      <div className="h-auto max-h-[393px] w-[220px] border rounded-xl border-gray-400 overflow-hidden">
+      <div className="h-auto max-h-[393px] w-[210px] border rounded-xl border-gray-400 overflow-hidden">
         <Link to={`/nft/${tokenId}`}>
           <div key={key} className="flex flex-col p-1.5">
             <img

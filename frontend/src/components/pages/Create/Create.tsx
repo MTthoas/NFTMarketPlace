@@ -62,7 +62,7 @@ function Create() {
       return;
     }
 
-    if (!tokenName || !tokenPrice) {
+    if (!tokenName) {
       setLoading(false);
       setErrorMessage("Please fill in all the requested fields.");
       return;
@@ -97,7 +97,7 @@ function Create() {
           },
         ];
 
-        const priceInWei = ethers.utils.parseEther(tokenPrice);
+        const priceInWei = ethers.utils.parseEther("0");
 
         const transaction = await contract.createNFT(
           tokenName,
@@ -248,17 +248,6 @@ function Create() {
                   />
                 </div>
                 <div className="grid mb-4">
-                  <label className="mb-1 font-bold text-base">Price</label>
-                  <input
-                    type="number"
-                    step="0.000001"
-                    value={tokenPrice}
-                    onChange={(e) => setTokenPrice(e.target.value)}
-                    placeholder="Price in ETH"
-                    className="border-2 hover:border-gray-400 border-transparent px-4 py-2 rounded-xl transition-colors"
-                  />
-                </div>
-                <div className="grid mb-4">
                   <label className="mb-1 font-bold text-base">
                     Description{" "}
                     <span className="text-xs text-slate-600">(Optional)</span>
@@ -274,10 +263,10 @@ function Create() {
                 <button
                   onClick={() => !loading && createNewNFT()}
                   disabled={loading !== false}
-                  className={`mt-6 bg-black text-white font-semibold py-3 px-12 rounded-xl ${
+                  className={`mt-6 bg-black text-white w-full font-semibold py-3 px-12 rounded-xl ${
                     loading
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-gray-900"
+                      ? "opacity-50 cursor-not-allowed w-full"
+                      : "hover:bg-gray-900 w-full"
                   }`}
                 >
                   {loading && !errorMessage && !successMessage ? (
@@ -344,7 +333,7 @@ function Create() {
                                 Price
                               </p>
                               <p className="font-semibold">
-                                {tokenPrice || "Not for sell"}
+                                {"0.00 ETH"}
                               </p>
                             </div>
                             <div className="col-span-1 w-full">

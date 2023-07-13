@@ -20,6 +20,11 @@ import AuctionComponant from './AuctionComponant';
 
 
 import Bid from '../../modal/Bid'
+import BuyNow_Modal from '../../modal/BuyNow_Modal';
+import MakeOffer_Modal from '../../modal/MakeOffer_Modal';
+
+import { ToastContainer, toast } from 'react-toastify';
+
 import { timeStamp } from 'console';
 
 function shortenAddress(address : any, chars = 4) {
@@ -71,13 +76,23 @@ function NFTDetails() {
     const [ethPrice, setEthPrice] = useState(0);
 
     const [ transactionHash, setTransactionHash ] = useState("")
+
+    
+
+
     const [ showModalBid, setShowModalBid ] = useState(false)
+    const [ showModalBuyNow, setShowModalBuyNow ] = useState(false)
+    const [ showModalOffer, setShowModalOffer ] = useState(false)
+
 
     const [ bids, setBids ] = useState<any>([]);
+    const [ offers, setOffers ] = useState<any>([]);
+
+
     const [ Historical, setHistorical ] = useState<any>([]);
 
-    const [ highestBid, setHighestBid ] = useState<any>([]);
 
+    const [ highestBid, setHighestBid ] = useState<any>([]);
 
     const provider = new ethers.providers.Web3Provider((window as any).ethereum);
     const signer = provider.getSigner();
@@ -95,7 +110,6 @@ function NFTDetails() {
 
         const transactionSales = await myNftMarket.getAllData(id);
 
-        console.table(transactionSales)
         const transactionForMetadata = await myNFT.getTokenAttributes(id);
         
 
@@ -118,8 +132,7 @@ function NFTDetails() {
 
         const remainingSeconds = listEndTime - getCurrentTimestampInSeconds();
 
-        console.log(remainingSeconds + " seconds remaining of the auction " + id)
-        
+
         if (remainingSeconds > 0) {
             remainingMilliseconds = remainingSeconds * 1000;
         }
@@ -140,24 +153,24 @@ function NFTDetails() {
         setHighestBid(ethers.utils.formatEther(transactionSales.highestBid));
     }
 
-    const fetchHighestBid = async () => {
+    // const fetchHighestBid = async () => {
 
-        const transactionSales = await myNftMarket.getAllData(id);
+    //     const transactionSales = await myNftMarket.getAllData(id);
 
 
-        const isOnSale = await myNftMarket.isTokenOnSale(id);
+    //     const isOnSale = await myNftMarket.isTokenOnSale(id);
 
-        let type = "none";
-        let listEndTime = 0;
-        let remainingMilliseconds = 0;
+    //     let type = "none";
+    //     let listEndTime = 0;
+    //     let remainingMilliseconds = 0;
 
-        const item = {
-            HighestBid: ethers.utils.formatEther(transactionSales.highestBid),
-        }
+    //     const item = {
+    //         HighestBid: ethers.utils.formatEther(transactionSales.highestBid),
+    //     }
 
-        setHighestBid(item)
+    //     setHighestBid(item)
 
-    }
+    // }
 
 
     
@@ -203,18 +216,12 @@ function NFTDetails() {
             return;
         }
 
-        // vérifiez que le bidder n'est pas le propriétaire du jeton
-
-
-
         // Vérifiez que l'offre est suffisamment élevée
         const priceWei = ethers.utils.parseEther(amount);
         if (priceWei.lte(saleData.highestBid)) {
             console.error("L'offre n'est pas assez élevée");
             return;
         }
-
-        console.log( "Price Wei: ", priceWei.toString() );
 
         // Soumettez l'offre
         const transaction = await myNftMarket.bid(nft.tokenId, priceWei, { value: priceWei });
@@ -232,7 +239,6 @@ function NFTDetails() {
           
           try {
             const response = await axios.post('http://localhost:8080/transaction', transactionData);
-            console.log('New transaction created: ', response.data);
             setHistorical([...response.data])
             getAllBidsFromToken()
           } catch (error) {
@@ -261,11 +267,91 @@ function NFTDetails() {
 
         try {
             const response = await axios.get('http://localhost:8080/transactions');
-            console.log('All Transactions', response.data);
             setHistorical([...response.data])
           } catch (error) {
             console.error('Error getting transactions', error);
           }
+
+    }
+
+    const getAllOffers = async () => {
+
+        const signerAddress = await signer.getAddress();
+
+        const isOnSale = await myNftMarket.isTokenOnSale(id);
+
+        if (!isOnSale) {
+            return;
+        }
+
+        const getOffersData = await myNftMarket.getOffers(id);
+
+
+        const Offers = await Promise.all(getOffersData.map(async (i: any, index:any) => {
+
+            const price = ethers.utils.formatEther(i.amount);
+
+            const item = {
+                index: index,
+                buyer: i.buyer,
+                timestamp: i.timestamp,
+                amount: i.amount,
+            }
+
+            return item;
+        }));
+
+        console.log(Offers)
+        setOffers([...Offers]);
+    }
+
+
+    const makeAnOffer = async(offerPrice: any) => {
+
+        try {
+
+            const signerAddress = await signer.getAddress();
+
+            const isOnSale = await myNftMarket.isTokenOnSale(id);
+
+            if (nft.owner == signerAddress) {
+                console.error("Vous ne pouvez pas enchérir sur votre propre jeton");
+                return;
+            }
+
+            if (!isOnSale) {
+                console.error("Le jeton n'est pas en vente");
+                return;
+            }
+
+            const priceWei = ethers.utils.parseEther(String(offerPrice));
+
+            const transaction = await myNftMarket.makeOffer(id, priceWei, { value: priceWei });
+
+            await transaction.wait();
+            
+            setShowModalOffer(false);
+
+            toast.success('Sir, your offer has been save', {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+
+            getAllOffers()
+
+            console.log("makeAnOffer :" , offerPrice)
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
 
     }
 
@@ -275,6 +361,7 @@ function NFTDetails() {
         getEthPrice()
         getAllBidsFromToken()
         getAllHistoryFromToken()
+        getAllOffers()
     }, []);
 
 
@@ -311,11 +398,12 @@ function NFTDetails() {
 
                                 </div>
 
+                                { nft.type === "auction" ? 
                                 <div className=" h-full w-full">
 
                                     <h1 className="text-2xl font-medium text-neutral mt-7 mb-7">Latest bids</h1>
                                     <div className="overflow-x-auto">
-                                    <table className="table w-120">
+                                    <table className="table w-140">
                                         {/* head */}
                                         <tbody className=''>
 
@@ -339,17 +427,53 @@ function NFTDetails() {
                                         }
 
 
+
                                         </tbody>
                                     </table>
                                     </div>
 
                                 </div>
 
+                                :  
+                                <div className=" h-full w-full">
+
+                                    <h1 className="text-2xl font-medium text-neutral mt-7 mb-7"> List of offers </h1>
+                                    <div className="overflow-x-auto">
+                                    <table className="table w-132">
+                                        {/* head */}
+                                        <tbody className=''>
+
+                                        {
+                                            offers
+                                            .slice()
+                                            .reverse()
+                                            .map((offer: any, i: any) => {
+                                                return (
+                                                <tr key={i}>  
+                                                    <td className='font-bold'> {shortenAddress(offer.buyer)} </td>
+                                                    <td className="text-sm">{formatTimestamp(offer.timestamp)} </td>
+                                                    <td className="flex flex-col items-end">
+                                                        <p className='font-bold text-sm'>{ethers.utils.formatEther(offer.amount)} ETH</p>
+                                                        <p className='font-normal text-sm'>{(parseFloat(ethers.utils.formatEther(offer.amount)) * ethPrice).toFixed(3)} $</p>
+                                                    </td> 
+                                                </tr>
+                                                );
+                                            })
+                                        }
+
+
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div> }
+
                                 <div className=" h-full w-full">
 
                                     <h1 className="text-2xl font-medium text-neutral mt-7 mb-7">Historical</h1>
                                     <div className="overflow-x-auto">
-                                    <table className="table w-120">
+                                    <table className="table w-132">
                                         {/* head */}
                                         <tbody className=''>
                                         {/* row 1 */}
@@ -429,11 +553,13 @@ function NFTDetails() {
                                 { nft.type === "sale" ? 
 
                                     <SalesComponant 
-                                    nft={nft}
-                                    setShowLoading={setShowLoading}
-                                    setShowModalSucces={setShowModalSucces}
-                                    setTransactionHash={setTransactionHash}
-                                    ethPrice={ethPrice}
+                                        nft={nft}
+                                        setShowLoading={setShowLoading}
+                                        setShowModalSucces={setShowModalSucces}
+                                        setTransactionHash={setTransactionHash}
+                                        ethPrice={ethPrice}
+                                        showModalBuyNow={setShowModalBuyNow}
+                                        showModalOffer={setShowModalOffer}
                                     />
 
                                 :   
@@ -503,6 +629,25 @@ function NFTDetails() {
                             bid={bid}
                         />
                     ) : null}
+
+                    {showModalOffer ? (
+                        <MakeOffer_Modal
+                        showModal={setShowModalOffer}
+                        nft={nft}
+                        highestBid={highestBid}
+                        makeAnOffer={makeAnOffer}
+                        />
+                    ) : null
+                    }
+
+                    {showModalBuyNow ? (
+                        <BuyNow_Modal
+                        showModal={setShowModalBuyNow}
+                        nft={nft}
+                        />
+                    ) : null
+                    }
+
 
 
                     

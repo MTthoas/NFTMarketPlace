@@ -155,7 +155,9 @@ function Wallet() {
         transaction.map(async (tokenId: BigNumber) => {
           console.log(tokenId.toNumber());
           const data = await myNftMarket.getTokenData(tokenId.toNumber());
-          const price = ethers.utils.formatEther(data[3]);
+
+          const getAllData = await NFTContract.getAllData(tokenId.toNumber());
+          const price = ethers.utils.formatEther(getAllData.price);
 
           const isOnSale = await NFTContract.isTokenOnSale(tokenId);
           const isOnAuction = await NFTContract.isTokenOnAuction(tokenId);
@@ -254,26 +256,52 @@ function Wallet() {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
 
-      const contract = new ethers.Contract(
-        MarketPlaceJSON.address,
-        MarketPlaceJSON.abi,
-        signer
+      let NFTContract = new ethers.Contract(
+        Contracts.NFTMarket.address,
+        Contracts.NFTMarket.abi,
+        provider
+      );
+      let myNftMarket = new ethers.Contract(
+        Contracts.MyNFT.address,
+        Contracts.MyNFT.abi,
+        provider
       );
 
-      const transaction = await contract.unlistTokenForSale(tokenId);
+      const isOnSale = await NFTContract.isTokenOnSale(tokenId);
+      const isOnAuction = await NFTContract.isTokenOnAuction(tokenId);
 
-      const receipt = await transaction.wait();
+      let type = "none";
 
-      if (receipt.status === 0) {
-        throw new Error("Transaction failed");
-        localStorage.setItem(`loading-${tokenId}`, "false"); // save loading state to local storage
+      if (isOnSale) {
+        type = "sale";
+
+        const transaction = await NFTContract.removeSale(tokenId);
+
+        const receipt = await transaction.wait();
+
+        if (receipt.status === 0) {
+          localStorage.setItem(`loading-${tokenId}`, "false"); // save loading state to local storage
+          throw new Error("Transaction failed");
+        }
+
+        console.log("Transaction Done");
+
+      } else if (isOnAuction) {
+        type = "auction";
+
+        const transaction = await NFTContract.removeAuction(tokenId);
+
+        const receipt = await transaction.wait();
+
+        if (receipt.status === 0) {
+          localStorage.setItem(`loading-${tokenId}`, "false"); // save loading state to local storage
+          throw new Error("Transaction failed");
+        }
+
+        console.log("Transaction Done");
+
       }
 
-      console.log("Transaction Done");
-
-      setData({
-        ...data,
-      });
     } catch (error) {
       console.error("Transaction was rejected: ", error);
 
