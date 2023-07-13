@@ -4,7 +4,7 @@ import "react-modern-drawer/dist/index.css";
 import useDarkSide from "hook/useDarkSide.jsx";
 import "./App.css";
 
-import NftCardGrid from "./nftCarGrid/nftCardGrid";
+import NftCardGrid from "./nftCardGrid/nftCardGrid";
 import NftTopCollection from "./nfttopCollection/nftTopCollection";
 
 function App() {

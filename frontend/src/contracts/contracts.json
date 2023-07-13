@@ -1,0 +1,1014 @@
+{
+  "MyNFT": {
+    "address": "0x4EB297BDE794fA439483156e155f31111e6363d8",
+    "abi": [
+      {
+        "type": "constructor",
+        "payable": false,
+        "inputs": []
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "Approval",
+        "inputs": [
+          {
+            "type": "address",
+            "name": "owner",
+            "indexed": true
+          },
+          {
+            "type": "address",
+            "name": "approved",
+            "indexed": true
+          },
+          {
+            "type": "uint256",
+            "name": "tokenId",
+            "indexed": true
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "ApprovalForAll",
+        "inputs": [
+          {
+            "type": "address",
+            "name": "owner",
+            "indexed": true
+          },
+          {
+            "type": "address",
+            "name": "operator",
+            "indexed": true
+          },
+          {
+            "type": "bool",
+            "name": "approved",
+            "indexed": false
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "NFTCreated",
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId",
+            "indexed": true
+          },
+          {
+            "type": "string",
+            "name": "name",
+            "indexed": false
+          },
+          {
+            "type": "string",
+            "name": "description",
+            "indexed": false
+          },
+          {
+            "type": "string",
+            "name": "image",
+            "indexed": false
+          },
+          {
+            "type": "uint256",
+            "name": "price",
+            "indexed": false
+          },
+          {
+            "type": "tuple[]",
+            "name": "attributes",
+            "indexed": false,
+            "components": [
+              {
+                "type": "string",
+                "name": "trait_type"
+              },
+              {
+                "type": "string",
+                "name": "value"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "OwnershipTransferred",
+        "inputs": [
+          {
+            "type": "address",
+            "name": "previousOwner",
+            "indexed": true
+          },
+          {
+            "type": "address",
+            "name": "newOwner",
+            "indexed": true
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "Transfer",
+        "inputs": [
+          {
+            "type": "address",
+            "name": "from",
+            "indexed": true
+          },
+          {
+            "type": "address",
+            "name": "to",
+            "indexed": true
+          },
+          {
+            "type": "uint256",
+            "name": "tokenId",
+            "indexed": true
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "allAttributes",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256"
+          },
+          {
+            "type": "uint256"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "string",
+            "name": "trait_type"
+          },
+          {
+            "type": "string",
+            "name": "value"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "allNFTs",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "string",
+            "name": "name"
+          },
+          {
+            "type": "string",
+            "name": "description"
+          },
+          {
+            "type": "string",
+            "name": "image"
+          },
+          {
+            "type": "uint256",
+            "name": "price"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "approve",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "to"
+          },
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "balanceOf",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "owner"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "createNFT",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "string",
+            "name": "name"
+          },
+          {
+            "type": "string",
+            "name": "description"
+          },
+          {
+            "type": "string",
+            "name": "image"
+          },
+          {
+            "type": "uint256",
+            "name": "price"
+          },
+          {
+            "type": "tuple[]",
+            "name": "attributes",
+            "components": [
+              {
+                "type": "string",
+                "name": "trait_type"
+              },
+              {
+                "type": "string",
+                "name": "value"
+              }
+            ]
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "getApproved",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "address"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getOwnerAddress",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "address"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getTokenAttributes",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "tuple[]",
+            "components": [
+              {
+                "type": "string",
+                "name": "trait_type"
+              },
+              {
+                "type": "string",
+                "name": "value"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getTokenData",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "uint256"
+          },
+          {
+            "type": "address"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "isApprovedForAll",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "owner"
+          },
+          {
+            "type": "address",
+            "name": "operator"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "bool"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "name",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "owner",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "address"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "ownerOf",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "address"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "renounceOwnership",
+        "constant": false,
+        "payable": false,
+        "inputs": [],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "safeTransferFrom",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "from"
+          },
+          {
+            "type": "address",
+            "name": "to"
+          },
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "safeTransferFrom",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "from"
+          },
+          {
+            "type": "address",
+            "name": "to"
+          },
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          },
+          {
+            "type": "bytes",
+            "name": "data"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "setApprovalForAll",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "operator"
+          },
+          {
+            "type": "bool",
+            "name": "approved"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "supportsInterface",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "bytes4",
+            "name": "interfaceId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "bool"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "symbol",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "tokenCounter",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "tokenURI",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "transferFrom",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "from"
+          },
+          {
+            "type": "address",
+            "name": "to"
+          },
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "transferOwnership",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "newOwner"
+          }
+        ],
+        "outputs": []
+      }
+    ]
+  },
+  "NFTMarket": {
+    "address": "0x12DB950b04C2E4356867B5Ad68b04C3D66E6db19",
+    "abi": [
+      {
+        "type": "constructor",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "_nft"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "bid",
+        "constant": false,
+        "stateMutability": "payable",
+        "payable": true,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          },
+          {
+            "type": "uint256",
+            "name": "bidAmount"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "bids",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256"
+          },
+          {
+            "type": "uint256"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "address",
+            "name": "bidder"
+          },
+          {
+            "type": "uint256",
+            "name": "amount"
+          },
+          {
+            "type": "uint256",
+            "name": "timestamp"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "buy",
+        "constant": false,
+        "stateMutability": "payable",
+        "payable": true,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          },
+          {
+            "type": "uint256",
+            "name": "price"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "endAuction",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "getAllData",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "tuple",
+            "components": [
+              {
+                "type": "address",
+                "name": "seller"
+              },
+              {
+                "type": "uint8",
+                "name": "saleType"
+              },
+              {
+                "type": "uint256",
+                "name": "price"
+              },
+              {
+                "type": "uint256",
+                "name": "auctionEndTime"
+              },
+              {
+                "type": "uint256",
+                "name": "salesEndTime"
+              },
+              {
+                "type": "address",
+                "name": "highestBidder"
+              },
+              {
+                "type": "uint256",
+                "name": "highestBid"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getAllSales",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "uint256[]"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getBidData",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "tuple[]",
+            "components": [
+              {
+                "type": "address",
+                "name": "bidder"
+              },
+              {
+                "type": "uint256",
+                "name": "amount"
+              },
+              {
+                "type": "uint256",
+                "name": "timestamp"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getMyNFTs",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "owner"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "uint256[]"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getSalesByOwner",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "owner"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "uint256[]"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "isAuctionEnded",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "bool"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "isTokenOnAuction",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "bool"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "isTokenOnNone",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "bool"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "isTokenOnSale",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "bool"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "nft",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "address"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "pendingReturns",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "removeSale",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "sales",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "address",
+            "name": "seller"
+          },
+          {
+            "type": "uint8",
+            "name": "saleType"
+          },
+          {
+            "type": "uint256",
+            "name": "price"
+          },
+          {
+            "type": "uint256",
+            "name": "auctionEndTime"
+          },
+          {
+            "type": "uint256",
+            "name": "salesEndTime"
+          },
+          {
+            "type": "address",
+            "name": "highestBidder"
+          },
+          {
+            "type": "uint256",
+            "name": "highestBid"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "setSale",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          },
+          {
+            "type": "uint8",
+            "name": "saleType"
+          },
+          {
+            "type": "uint256",
+            "name": "price"
+          },
+          {
+            "type": "uint256",
+            "name": "timeInSeconds"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "withdraw",
+        "constant": false,
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "bool"
+          }
+        ]
+      }
+    ]
+  }
+}
