@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { NFT } from "../interface/NFT";
 import { Link } from "react-router-dom";
+import { ethers } from 'ethers';
+
+import Contracts from '../../contracts/contracts.json';
+
+const provider = new ethers.providers.Web3Provider((window as any).ethereum);
+const signer = provider.getSigner();
+
+let myNftMarket = new ethers.Contract(Contracts.NFTMarket.address, Contracts.NFTMarket.abi, signer);
+let myNFT = new ethers.Contract(Contracts.MyNFT.address, Contracts.MyNFT.abi, signer);
+
 
 const NFT_CARD_WALLET = ({
   tokenId,
@@ -27,6 +37,7 @@ const NFT_CARD_WALLET = ({
 }) => {
   const [dataLogs, setData] = useState(data);
   const [key, setKey] = useState(Date.now());
+  const [metaData, setMetaData] = useState<any>([]);
 
   const formatAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
@@ -39,6 +50,55 @@ const NFT_CARD_WALLET = ({
       return str;
     }
   };
+
+  function getCurrentTimestampInSeconds () {
+    return Math.floor(Date.now() / 1000)
+  }
+
+
+  const getMetaDataOfNft = async () => {
+
+    const transactionSales = await myNftMarket.getAllData(tokenId);
+    
+    const isOnSale = await myNftMarket.isTokenOnSale(tokenId);
+    const isOnAuction = await myNftMarket.isTokenOnAuction(tokenId);
+
+    let type = "none";
+    let listEndTime = 0;
+    let remainingMilliseconds = 0;
+
+    if(isOnSale) {
+        type = "sale";
+        listEndTime = transactionSales.salesEndTime.toNumber();
+    } else if(isOnAuction) {
+        type = "auction";
+        listEndTime = transactionSales.auctionEndTime.toNumber();
+    }
+
+    const remainingSeconds = listEndTime - getCurrentTimestampInSeconds();
+
+    console.log(remainingSeconds + " seconds remaining of the auction " + tokenId)
+        
+    if (remainingSeconds > 0) {
+        remainingMilliseconds = remainingSeconds * 1000;
+    }
+
+    console.log("Highest bid : " + ethers.utils.formatEther(transactionSales.highestBid))
+
+    let item = {
+        tokenId: tokenId,
+        highestBid: ethers.utils.formatEther(transactionSales.highestBid),
+        listEndTime: remainingMilliseconds,
+    }
+
+    setMetaData(item);
+}
+
+    useEffect(() => {
+        getMetaDataOfNft();
+    }
+    , [tokenId]);
+
 
   return (
     <>
@@ -79,7 +139,7 @@ const NFT_CARD_WALLET = ({
                     <p className="font-semibold text-sm text-slate-500">
                       Time left
                     </p>
-                    <p className="font-semibold text-sm pt-1">25 days</p>
+                    <p className="font-semibold text-sm pt-1">{metaData.listEndTime}</p>
                   </>
                 )}
               </div>
@@ -97,7 +157,7 @@ const NFT_CARD_WALLET = ({
                     <p className="font-semibold text-xs text-slate-500">
                       Highest Bid
                     </p>
-                    <p className="font-semibold text-sm pt-2">6.19 wEth</p>
+                    <p className="font-semibold text-sm pt-2">{metaData.highestBid} wEth</p>
                   </>
                 )}
               </div>
