@@ -12,6 +12,7 @@ export default function SalesComponant({
   ethPrice,
   showModalBuyNow,
   showModalOffer,
+  burnNft,
 }: any) {
   const { address } = useAccount();
 
@@ -104,7 +105,7 @@ export default function SalesComponant({
               <div className="border-b-2 border-gray-300 w-2/3"></div>
             </div>
             <button
-              //onClick={() => showModalBurn(true)}
+              onClick={() => burnNft()}
               type="button"
               className="bg-red-600 w-full mt-3 mr-3 text-white font-semibold py-2 px-4 border rounded-xl"
             >

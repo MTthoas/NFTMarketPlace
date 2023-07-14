@@ -153,6 +153,15 @@ function Wallet() {
 
       const items = await Promise.all(
         transaction.map(async (tokenId: BigNumber) => {
+
+          let tokenExists = await myNftMarket.exists(tokenId.toNumber());
+          
+          if (tokenExists) {
+              // Faites quelque chose avec le token
+          } else {
+              console.log("Le token avec l'ID " + tokenId.toNumber() + " n'existe pas.");
+          }
+
           console.log(tokenId.toNumber());
           const data = await myNftMarket.getTokenData(tokenId.toNumber());
 

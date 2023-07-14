@@ -1,7 +1,7 @@
 #block {
     top: 10rem; /* adjust this value to set the position where you want the element to be fixed */
   }
-
+/* 
   .offer {
     position: relative;
   }
@@ -29,5 +29,5 @@
   
   .offer:hover button {
     opacity: 1;
-  }
+  } */
   

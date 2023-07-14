@@ -152,20 +152,20 @@ contract NFTMarket {
         uint256[] memory tempTokenIds = new uint256[](totalTokens);
         uint256 counter = 0;
         for (uint256 i = 0; i < totalTokens; i++) {
-            if (nft.ownerOf(i) == owner) {
+            // check if token exists
+            if (nft.exists(i) && nft.ownerOf(i) == owner) {
                 tempTokenIds[counter] = i;
                 counter++;
             }
         }
-        
+
         uint256[] memory tokenIds = new uint256[](counter);
         for (uint256 i = 0; i < counter; i++) {
             tokenIds[i] = tempTokenIds[i];
         }
-        
+
         return tokenIds;
     }
-
 
 
     function getAllSales() public view returns (uint256[] memory) {
@@ -247,7 +247,7 @@ contract NFTMarket {
     }
 
     function endSales(uint256 tokenId) public {
-        require(sales[tokenId].seller == msg.sender, "NFTMarket: Not the seller");
+        require(isSalesEnded(tokenId), "NFTMarket: The sale is not ended");
         require(sales[tokenId].saleType == SaleType.FixedPrice, "NFTMarket: Sale is not a fixed price sale");
 
         // Transfer the token to the seller
@@ -283,6 +283,20 @@ contract NFTMarket {
     function isSalesEnded(uint256 tokenId) public view returns (bool) {
         return sales[tokenId].saleType == SaleType.FixedPrice && block.timestamp >= sales[tokenId].salesEndTime;
     }
+
+    function burn(uint256 tokenId) public {
+        require(nft.ownerOf(tokenId) == msg.sender, "NFTMarket: Token not owned by sender");
+
+        // Destroy the NFT
+        nft.burnNFT(tokenId);
+
+        // Remove the token from sale
+        if (EnumerableSet.contains(saleTokens, tokenId)) {
+            delete sales[tokenId];
+            EnumerableSet.remove(saleTokens, tokenId); // remove token from saleTokens
+        }
+    }
+
 
 
 }
