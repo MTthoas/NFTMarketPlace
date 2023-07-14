@@ -44,49 +44,55 @@ export default function AuctionComponant({
 
       {/* BUTTONS */}
       <div className="w-full">
-        {nft.owner !== address ? (
-          <button
-            onClick={() => {
-              setShowModalBid(true);
-            }}
-            className="w-full bg-neutral py-2 mb-2 rounded-xl text-white"
-          >
-            Place a bid
-          </button>
+        {nft.owner === address ? (
+          <>
+            {nft.type === "auction" && (
+              <>
+                <button
+                  //onClick={() => {showModalEndAuction(true);}}
+                  className="w-full bg-neutral py-2 mb-2 rounded-xl text-white"
+                >
+                  End Auction
+                </button>
+                <button
+                  //onClick={() => {showModalCancelAunction(true);}}
+                  className="w-full bg-neutral py-2 mb-2 rounded-xl text-white"
+                >
+                  Cancel Auction
+                </button>
+                {/* Divider */}
+                <div className="flex justify-center">
+                  <div className="border-b-2 border-gray-300 w-2/3"></div>
+                </div>
+              </>
+            )}
+            {/* En vrai si tu veux pas te casser la tête à vérifier si le nft est sur le marché ou non avant de le burn
+            tu peux juste mettre le bouton burn dans le else du if (nft.type === "auction") comme ca il apparaitra que
+            si le nft n'est pas sur le marché (oubli pas de rajouter le divider avec)
+            */}
+            <div className="w-full pt-2">
+              <button
+                //onClick={() => {showModalBurn(true);}}
+                className="w-full bg-red-600 py-2 mb-2 rounded-xl text-white"
+              >
+                Burn NFT
+              </button>
+            </div>
+          </>
         ) : (
-          <button
-            //onClick={() => {showModalEndAuction(true);}}
-            className="w-full bg-neutral py-2 mb-2 rounded-xl text-white"
-          >
-            End Auction
-          </button>
+          nft.type === "auction" && (
+            <button
+              onClick={() => {
+                setShowModalBid(true);
+              }}
+              className="w-full bg-neutral py-2 mb-2 rounded-xl text-white"
+            >
+              Place a bid
+            </button>
+          )
         )}
-      </div>
 
-      <div className="w-full">
-        {nft.owner !== address ? null : (
-          <button
-            //onClick={() => {showModalCancelAunction(true);}}
-            className="w-full bg-neutral py-2 mb-2 rounded-xl text-white"
-          >
-            Cancel Auction
-          </button>
-        )}
-      </div>
-
-      <div className="flex justify-center">
-        <div className="border-b-2 border-gray-300 w-2/3"></div>
-      </div>
-
-      <div className="w-full pt-2">
-        {nft.owner !== address ? null : (
-          <button
-            //onClick={() => {showModalBurn(true);}}
-            className="w-full bg-red-600 py-2 mb-2 rounded-xl text-white"
-          >
-            Brun NFT
-          </button>
-        )}
+        {/* On pourrait rajouter un bouton lister sur le marcher mais flemme en vrai. Ca rajoute du travail on plus le temps. */}
       </div>
     </div>
   );

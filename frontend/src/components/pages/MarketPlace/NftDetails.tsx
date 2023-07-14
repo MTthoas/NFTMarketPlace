@@ -28,6 +28,8 @@ import { ToastContainer, toast } from "react-toastify";
 
 import { timeStamp } from "console";
 
+import "./stylesheets/Nft.css";
+
 function shortenAddress(address: any, chars = 4) {
   // Vérifie si l'adresse est valide
   if (!address) return "";
@@ -418,53 +420,7 @@ function NFTDetails() {
                         </table>
                       </div>
                     </div>
-                  ) : (
-                    <div className=" h-full w-full">
-                      <h3 className="text-2xl font-medium text-neutral mt-7 mb-7">
-                        {" "}
-                        List of offers{" "}
-                      </h3>
-                      <div className="overflow-x-auto">
-                        <table className="table w-132">
-                          {/* head */}
-                          <tbody className="">
-                            {offers
-                              .slice()
-                              .reverse()
-                              .map((offer: any, i: any) => {
-                                return (
-                                  <tr key={i}>
-                                    <td className="font-bold">
-                                      {" "}
-                                      {shortenAddress(offer.buyer)}{" "}
-                                    </td>
-                                    <td className="text-sm">
-                                      {formatTimestamp(offer.timestamp)}{" "}
-                                    </td>
-                                    <td className="flex flex-col items-end">
-                                      <p className="font-bold text-sm">
-                                        {ethers.utils.formatEther(offer.amount)}{" "}
-                                        ETH
-                                      </p>
-                                      <p className="font-normal text-sm">
-                                        {(
-                                          parseFloat(
-                                            ethers.utils.formatEther(
-                                              offer.amount
-                                            )
-                                          ) * ethPrice
-                                        ).toFixed(3)}{" "}
-                                        $
-                                      </p>
-                                    </td>
-                                  </tr>
-                                );
-                              })}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  )}
+                  ) : null}
 
                   <div className=" h-full w-full">
                     <h3 className="text-2xl font-medium text-neutral mt-7 mb-7">
@@ -615,6 +571,54 @@ function NFTDetails() {
                       ethPrice={ethPrice}
                       setShowModalBid={setShowModalBid}
                     />
+                  )}
+
+                  {nft.owner === address && nft.type === "sale" && (
+                    <div className=" h-full w-full">
+                      <h3 className="text-2xl font-medium text-neutral mt-7 mb-7">
+                        List of offers
+                      </h3>
+                      <div className="overflow-x-auto">
+                        <table className="table w-132">
+                          <tbody className="">
+                            {offers
+                              .slice()
+                              .reverse()
+                              .map((offer: any, i: any) => {
+                                return (
+                                  <tr key={i} className="offer">
+                                    <td className="font-bold">
+                                      {shortenAddress(offer.buyer)}
+                                    </td>
+                                    <td className="text-sm">
+                                      {formatTimestamp(offer.timestamp)}
+                                    </td>
+                                    <td className="flex flex-col items-end">
+                                      <p className="font-bold text-sm">
+                                        {ethers.utils.formatEther(offer.amount)}{" "}
+                                        ETH
+                                      </p>
+                                      <p className="font-normal text-sm">
+                                        {(
+                                          parseFloat(
+                                            ethers.utils.formatEther(
+                                              offer.amount
+                                            )
+                                          ) * ethPrice
+                                        ).toFixed(3)}{" "}
+                                        $
+                                      </p>
+                                      <button className="offer-button text-neutral font-semibold p-2">
+                                        Accept Offer
+                                      </button>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>
