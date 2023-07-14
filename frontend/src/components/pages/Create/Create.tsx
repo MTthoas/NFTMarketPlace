@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAccount } from "wagmi";
 import { ethers } from "ethers";
 
@@ -24,9 +24,19 @@ function Create() {
   const [tokenName, setTokenName] = useState<string>("");
   const [tokenDescription, setTokenDescription] = useState<string>("");
   const [tokenPrice, setTokenPrice] = useState<string>("");
+  const [network, setNetwork] = useState<string>("");
 
   const JWT =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJjN2U5ZjAyYy04MzAzLTRjOGYtOWIwZC0xMzQ1YWI5MDlmMjIiLCJlbWFpbCI6Im1hbHRoYXphcjIyN0BnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJpZCI6IkZSQTEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX0seyJpZCI6Ik5ZQzEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX1dLCJ2ZXJzaW9uIjoxfSwibWZhX2VuYWJsZWQiOmZhbHNlLCJzdGF0dXMiOiJBQ1RJVkUifSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiZGM0MTUyYzk5YThhYTI0ZmEzMjIiLCJzY29wZWRLZXlTZWNyZXQiOiJhZmZlYzRiZDQ2ZGE1NjUzZWMyMWE3ZGU4Nzc0OGZlNThlNzVmYTI4MWI0YjczZjBmYzVjMzcxYjIxYmEzOGFjIiwiaWF0IjoxNjg2MjYwNTI2fQ.GwwGHhM8E6ZN_YnMtJIqIB8KVArhxFmc-0Uq5h5it88";
+
+    useEffect(() => {
+      const getNetwork = async () => {
+        const network = await provider.getNetwork();
+        setNetwork(network.name);
+      };
+  
+      getNetwork();
+    }, []);
 
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -140,9 +150,9 @@ function Create() {
           </div>
 
           {/* Form */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 ">
             {/* Left */}
-            <div className="col-span-1 md:col-span-2 flex flex-col justify-center">
+            <div className="col-span-1 md:col-span-2 flex flex-col justify-center " >
               {/* Address */}
               <div className="mb-8 flex flex-row place-items-center border border-gray-400 p-4 rounded-xl border-solid">
                 <div>
@@ -166,13 +176,13 @@ function Create() {
                     </div>
                   </div>
                   <div>
-                    <p className="text-sm font-medium">Ethereum</p>
+                    <p className="text-sm font-medium">{network}</p>
                   </div>
                 </div>
               </div>
 
               {/* Upload file */}
-              <div className="mb-8">
+              <div className="mb-8 hover:cursor-pointer">
                 <p className="mb-2 font-bold text-lg">Upload file</p>
                 <div className="place-items-center grid border border-gray-400 px-16 py-10 rounded-xl border-dashed relative">
                   {preview ? (
@@ -223,13 +233,13 @@ function Create() {
                         type="file"
                         accept="image/*"
                         onChange={onFileChange}
-                        className="block w-full text-sm text-slate-500
-                  file:mr-4 file:py-2 file:px-4
-                  file:rounded-full file:border-0
-                  file:text-sm file:font-semibold
-                  file:bg-black-50 file:text-black-700
-                  hover:file:bg-black-100"
-                      />
+                        className="block w-full text-sm hover:cursor-pointer  text-slate-500
+                          file:mr-4 file:py-2 file:px-4
+                          file:rounded-full file:border-0
+                          file:text-sm file:font-semibold
+                          file:bg-black-50 file:text-black-700
+                          hover:file:bg-black-100"
+                        />
                     </div>
                   )}
                 </div>
@@ -270,7 +280,7 @@ function Create() {
                   }`}
                 >
                   {loading && !errorMessage && !successMessage ? (
-                    <div role="status">
+                    <div role="status ">
                       <svg
                         aria-hidden="true"
                         className="w-5 h-5 mx-auto flex justify-start text-gray-200 animate-spin dark:text-gray-600 fill-white"
