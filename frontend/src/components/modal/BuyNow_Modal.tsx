@@ -5,7 +5,8 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 export default function BuyNow_Modal({
     showModal,
     nft,
-    highestBid
+    highestBid,
+    buyNFT,
 }: any) {
 
     const { address } = useAccount();
@@ -91,7 +92,10 @@ export default function BuyNow_Modal({
               <p className="text-black"> {(Number(nft.price) + ((1/100) * (Number(nft.price)))).toFixed(5)} ETH </p>
           </div>
 
-          <button className="bg-neutral mx-4 mt-3 mb-7 py-2 rounded-lg text-white"> 
+          <button onClick={() => {
+              showModal(false)
+              buyNFT(nft.tokenId, (Number(nft.price) + ((1/100) * (Number(nft.price)))) )
+            }} className="bg-neutral mx-4 mt-3 mb-7 py-2 rounded-lg text-white"> 
               Buy now for {(Number(nft.price) + ((1/100) * (Number(nft.price)))).toFixed(5)} ETH
           </button>
 

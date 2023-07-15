@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import UserModel, { User } from '../model/user';
 import TransactionModel, { Transaction } from '../model/transaction';
+import CollectionModel, { Collection } from '../model/collection';
+
 
 export default class MarketPlaceController {
 
@@ -16,6 +18,56 @@ static createUser = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     res.status(500).send('Error creating user.');
+  }
+};
+
+static getAllCollections = async (req: Request, res: Response) => {
+  try {
+    const collections: Collection[] = await CollectionModel.find({});
+
+    res.json(collections);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error getting collections.');
+  }
+};
+
+static deleteAllCollections = async (req: Request, res: Response) => {
+  try {
+      await CollectionModel.deleteMany({});  // Deletes all collections
+
+      res.status(200).send('All collections deleted successfully.');
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('Error deleting collections.');
+  }
+};
+
+
+
+static addNftToCollection = async (req: Request, res: Response) => {
+  try {
+    const collectionName: string = req.body.collectionName;
+    const tokenId: string = req.body.tokenId;
+
+    let collection = await CollectionModel.findOne({ name: collectionName });
+
+    if (!collection) {
+      // If collection does not exist, create a new one
+      collection = new CollectionModel({ name: collectionName, nfts: [] });
+      await collection.save();
+    }
+
+    // Add the NFT to the collection and save
+    if (!collection.nfts.includes(tokenId)) {
+      collection.nfts.push(tokenId);
+      await collection.save();
+    }
+
+    res.json(collection);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error adding NFT to collection.');
   }
 };
 

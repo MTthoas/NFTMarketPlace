@@ -26,6 +26,8 @@ function Create() {
   const [tokenPrice, setTokenPrice] = useState<string>("");
   const [network, setNetwork] = useState<string>("");
 
+  const [collection, setCollection] = useState<string>("");
+
   const JWT =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJjN2U5ZjAyYy04MzAzLTRjOGYtOWIwZC0xMzQ1YWI5MDlmMjIiLCJlbWFpbCI6Im1hbHRoYXphcjIyN0BnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJpZCI6IkZSQTEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX0seyJpZCI6Ik5ZQzEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX1dLCJ2ZXJzaW9uIjoxfSwibWZhX2VuYWJsZWQiOmZhbHNlLCJzdGF0dXMiOiJBQ1RJVkUifSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiZGM0MTUyYzk5YThhYTI0ZmEzMjIiLCJzY29wZWRLZXlTZWNyZXQiOiJhZmZlYzRiZDQ2ZGE1NjUzZWMyMWE3ZGU4Nzc0OGZlNThlNzVmYTI4MWI0YjczZjBmYzVjMzcxYjIxYmEzOGFjIiwiaWF0IjoxNjg2MjYwNTI2fQ.GwwGHhM8E6ZN_YnMtJIqIB8KVArhxFmc-0Uq5h5it88";
 
@@ -100,11 +102,8 @@ function Create() {
           {
             trait_type: "Breed",
             value: "Maltipoo",
-          },
-          {
-            trait_type: "Eye color",
-            value: "Mocha",
-          },
+            collection: collection,
+          }
         ];
 
         const priceInWei = ethers.utils.parseEther("0");
@@ -118,7 +117,19 @@ function Create() {
         );
         await transaction.wait();
 
-        setSuccessMessage("NFT created successfully");
+        const tokenId  = await contract.tokenCounter() - 1;
+
+        const bodyRequest = {
+          tokenId: tokenId,
+          collectionName: collection,
+        }
+
+        const response = await axios.post("http://localhost:8080/collection", bodyRequest);
+        console.log(response);
+
+        console.log(`Newly created NFT ID: ${tokenId}`);
+      
+        setSuccessMessage(`NFT created successfully with ID: ${tokenId}`);
       }
     } catch (error: any) {
       setErrorMessage("An error occurred while creating the NFT.");
@@ -257,6 +268,19 @@ function Create() {
                     className="border-2 hover:border-gray-400 border-transparent px-4 py-2 rounded-xl transition-colors"
                   />
                 </div>
+
+                <div className="grid mb-4">
+                  <label className="mb-1 font-bold text-base">
+                    Collection{" "}
+                  </label>
+                  <input
+                    value={collection}
+                    onChange={(e) => setCollection(e.target.value)}
+                    placeholder="NFT Collection"
+                    className="border-2 hover:border-gray-400 border-transparent px-4 py-2 rounded-xl transition-colors"
+                  />
+                </div>
+
                 <div className="grid mb-4">
                   <label className="mb-1 font-bold text-base">
                     Description{" "}

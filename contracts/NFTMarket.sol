@@ -42,6 +42,7 @@ contract NFTMarket {
 
     constructor(address _nft) {
         nft = MyNFT(_nft);
+        marketOwner = msg.sender; 
     }
 
     function setSale(uint256 tokenId, SaleType saleType, uint256 price, uint256 timeInSeconds) public {
@@ -52,11 +53,11 @@ contract NFTMarket {
             Sale memory sale = Sale(msg.sender, saleType, price, block.timestamp + timeInSeconds, 0, msg.sender, price);
             bids[tokenId].push(Bid(msg.sender, price, block.timestamp));
             sales[tokenId] = sale;
-            EnumerableSet.add(saleTokens, tokenId); // add token to saleTokens
+            EnumerableSet.add(saleTokens, tokenId); 
         }else{
             Sale memory sale = Sale(msg.sender, saleType, price, 0, block.timestamp + timeInSeconds, address(0), 0);
             sales[tokenId] = sale;
-            EnumerableSet.add(saleTokens, tokenId); // add token to saleTokens
+            EnumerableSet.add(saleTokens, tokenId); 
         }
     }
 
@@ -248,7 +249,6 @@ contract NFTMarket {
 
     function endSales(uint256 tokenId) public {
         require(isSalesEnded(tokenId), "NFTMarket: The sale is not ended");
-        require(sales[tokenId].saleType == SaleType.FixedPrice, "NFTMarket: Sale is not a fixed price sale");
 
         // Transfer the token to the seller
         nft.safeTransferFrom(sales[tokenId].seller, msg.sender, tokenId);
@@ -259,22 +259,31 @@ contract NFTMarket {
     }
 
 
-
-    function buy(uint256 tokenId, uint256 price) public payable {
-
+    function buy(uint256 tokenId) public payable {
         require(sales[tokenId].saleType == SaleType.FixedPrice, "NFTMarket: Sale is not a fixed price sale");
-        require(price == sales[tokenId].price, "NFTMarket: Price is not correct");
+
+        uint256 totalCost = sales[tokenId].price + (sales[tokenId].price / 100);
+        
+        require(msg.value == totalCost, "NFTMarket: Sent value does not match with the total cost");
 
         // Transfer the token to the buyer
         nft.transferFrom(sales[tokenId].seller, msg.sender, tokenId);
         
+        // Calculate the market fee
+        uint256 marketFee = msg.value / 100;
+
         // Transfer the payment to the seller
-        payable(sales[tokenId].seller).transfer(msg.value);
+        payable(sales[tokenId].seller).transfer(msg.value - marketFee);
+
+        // Transfer the market fee to the market owner
+        payable(marketOwner).transfer(marketFee);
 
         // Remove the token from sale
         delete sales[tokenId];
         EnumerableSet.remove(saleTokens, tokenId); // remove token from saleTokens
     }
+
+
 
     function isAuctionEnded(uint256 tokenId) public view returns (bool) {
         return sales[tokenId].saleType == SaleType.Auction && block.timestamp >= sales[tokenId].auctionEndTime;

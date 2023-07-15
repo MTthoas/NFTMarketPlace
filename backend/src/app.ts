@@ -95,6 +95,11 @@ app.delete('/transactions/deleteAll', MarketPlaceController.deleteAllTransaction
 app.get('/user/:address', MarketPlaceController.getUserData);
 app.get('/users', MarketPlaceController.getAllUsers);
 
+app.post('/collection', MarketPlaceController.createUser);
+app.get('/collections', MarketPlaceController.getAllCollections);
+app.delete('/collections', MarketPlaceController.deleteAllCollections);
+
+
 
 mongoose
   .connect(process.env.MONGODB_URI as string, {
