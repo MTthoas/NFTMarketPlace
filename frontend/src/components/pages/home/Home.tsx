@@ -22,7 +22,7 @@ function Home() {
 
   async function getAllCollections() {
     const getAllCollections = await axios.get(
-      `http://localhost:3030/collections`
+      `http://54.37.68.74:3030/collections`
     );
 
     const collections = getAllCollections.data;

@@ -33,18 +33,17 @@ function Create() {
   useEffect(() => {
     const getCollections = async () => {
       try {
-        const response = await axios.get('http://localhost:3030/collections');
+        const response = await axios.get("http://54.37.68.74:3030/collections");
         console.log(response.data);
         setCollections(response.data);
       } catch (error) {
         console.error(error);
       }
     };
-    
+
     getCollections();
   }, []);
 
-  
   const JWT =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJjN2U5ZjAyYy04MzAzLTRjOGYtOWIwZC0xMzQ1YWI5MDlmMjIiLCJlbWFpbCI6Im1hbHRoYXphcjIyN0BnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJpZCI6IkZSQTEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX0seyJpZCI6Ik5ZQzEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX1dLCJ2ZXJzaW9uIjoxfSwibWZhX2VuYWJsZWQiOmZhbHNlLCJzdGF0dXMiOiJBQ1RJVkUifSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiZGM0MTUyYzk5YThhYTI0ZmEzMjIiLCJzY29wZWRLZXlTZWNyZXQiOiJhZmZlYzRiZDQ2ZGE1NjUzZWMyMWE3ZGU4Nzc0OGZlNThlNzVmYTI4MWI0YjczZjBmYzVjMzcxYjIxYmEzOGFjIiwiaWF0IjoxNjg2MjYwNTI2fQ.GwwGHhM8E6ZN_YnMtJIqIB8KVArhxFmc-0Uq5h5it88";
 
@@ -142,7 +141,7 @@ function Create() {
         };
 
         const response = await axios.post(
-          "http://localhost:3030/collection",
+          "http://54.37.68.74:3030/collection",
           bodyRequest
         );
         console.log(response);
@@ -290,14 +289,26 @@ function Create() {
                 </div>
 
                 <div className="grid mb-2">
-                <div className="mb-4">
-                  <label htmlFor="collection" className="font-bold mb-1 block">Collection</label>
-                  <input list="collections" name="collection" id="collection" onChange={(e) => setCollection(e.target.value)} className="border rounded-xl border-transparent rounded p-2 w-full"/>
-                  <datalist id="collections">
-                    {collections.map((collectionGet : any, index) => <option key={index} value={collectionGet.name}/>)}
-                  </datalist>
-                </div>
-
+                  <div className="mb-4">
+                    <label
+                      htmlFor="collection"
+                      className="font-bold mb-1 block"
+                    >
+                      Collection
+                    </label>
+                    <input
+                      list="collections"
+                      name="collection"
+                      id="collection"
+                      onChange={(e) => setCollection(e.target.value)}
+                      className="border rounded-xl border-transparent rounded p-2 w-full"
+                    />
+                    <datalist id="collections">
+                      {collections.map((collectionGet: any, index) => (
+                        <option key={index} value={collectionGet.name} />
+                      ))}
+                    </datalist>
+                  </div>
                 </div>
 
                 <div className="grid mb-4">

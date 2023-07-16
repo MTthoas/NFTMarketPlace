@@ -119,5 +119,5 @@ mongoose
   });
 
   app.listen(port, () => {
-    console.log(`App listening at http://localhost:${port}`);
+    console.log(`App listening at http://54.37.68.74:${port}`);
   });
