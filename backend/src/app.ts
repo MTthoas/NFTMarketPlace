@@ -25,6 +25,7 @@ const alchemyProviderUrl = process.env.SEPHOLIA_URL;
 const provider = new ethers.providers.JsonRpcProvider(alchemyProviderUrl);
 
 const contract = new ethers.Contract(data.NFTMarket.address, data.NFTMarket.abi, provider);
+const myNFT = new ethers.Contract(data.MyNFT.address, data.MyNFT.abi, provider);
 
 cron.schedule('* * * * *', async () => {
   console.log('Running a job every minute');
@@ -63,7 +64,11 @@ cron.schedule('* * * * *', async () => {
           
           try{
 
-            const tx = await contractWithSigner.returnUnsoldToken(tokenId);
+            const transaction = await myNFT.getTokenData(tokenId);
+
+            const owner = transaction[4];
+
+            const tx = await contractWithSigner.returnUnsoldToken(tokenId, owner);
             console.log("Waiting for transaction to be mined...");
             const receipt = await tx.wait();
             console.log("Transaction Mined:", receipt);
