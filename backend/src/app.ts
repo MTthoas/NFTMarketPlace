@@ -11,7 +11,6 @@ import { ethers } from 'ethers';
 import fs from 'fs';
 require('dotenv').config();
 
-
 const app = express();
 const port = 3030;
 
