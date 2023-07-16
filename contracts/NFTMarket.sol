@@ -247,18 +247,31 @@ contract NFTMarket {
         EnumerableSet.remove(saleTokens, tokenId); // remove token from saleTokens
     }
 
-    function returnUnsoldToken(uint256 tokenId, address tokenOwner) public {
-        require(sales[tokenId].seller == tokenOwner, "NFTMarket: Not the token owner");
-        require(sales[tokenId].salesEndTime < block.timestamp, "NFTMarket: The sale is not ended");
-        require(sales[tokenId].highestBidder == address(0), "NFTMarket: There was a highest bidder");
+    function endSales(uint256 tokenId, address tokenOwner) public {
+        require(isSalesEnded(tokenId), "NFTMarket: The sale is not ended");
 
-        // Transfer the token back to the owner
-        nft.safeTransferFrom(address(this), tokenOwner, tokenId);
+        Sale memory sale = sales[tokenId];
+
+        // Transfer the token to the seller
+        nft.safeTransferFrom(sale.seller, tokenOwner, tokenId);
 
         // Remove the token from sale
         delete sales[tokenId];
         EnumerableSet.remove(saleTokens, tokenId); // remove token from saleTokens
     }
+
+    // function returnUnsoldToken(uint256 tokenId) public {
+    //     require(sales[tokenId].seller == msg.sender, "NFTMarket: Not the seller");
+    //     require(sales[tokenId].salesEndTime < block.timestamp, "NFTMarket: The sale is not ended");
+    //     require(sales[tokenId].highestBidder == address(0), "NFTMarket: There was a highest bidder");
+
+    //     // Transfer the token back to the seller
+    //     nft.safeTransferFrom(address(this), sales[tokenId].seller, tokenId);
+
+    //     // Remove the token from sale
+    //     delete sales[tokenId];
+    //     EnumerableSet.remove(saleTokens, tokenId); // remove token from saleTokens
+    // }
 
 
 

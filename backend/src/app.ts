@@ -37,8 +37,6 @@ cron.schedule('* * * * *', async () => {
       if (await contract.isAuctionEnded(tokenId)) {
 
           console.log("auction management...")
-          // The auction has ended, so call the endAuction function
-          // You will need to replace 'YOUR_PRIVATE_KEY' with your actual private key
 
           const wallet = new ethers.Wallet(process.env.PRIVATE_KEY_ACCOUNT, provider);
           const contractWithSigner = contract.connect(wallet);
@@ -68,7 +66,9 @@ cron.schedule('* * * * *', async () => {
 
             const owner = transaction[4];
 
-            const tx = await contractWithSigner.returnUnsoldToken(tokenId, owner);
+            console.log(owner)
+
+            const tx = await contractWithSigner.endSales(tokenId, owner);
             console.log("Waiting for transaction to be mined...");
             const receipt = await tx.wait();
             console.log("Transaction Mined:", receipt);

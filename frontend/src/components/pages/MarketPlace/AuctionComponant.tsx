@@ -97,7 +97,7 @@ export default function AuctionComponant({
                 </button>
               ) : (
                 <div>
-                  { isLoadingListing ? 
+                  { isLoadingListing && nft.type === "sales" ? 
                     <button className="w-full bg-neutral py-2 mb-2 rounded-xl text-white">
                     <svg
                       aria-hidden="true"
