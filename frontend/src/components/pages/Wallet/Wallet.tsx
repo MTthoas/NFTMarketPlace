@@ -287,12 +287,12 @@ function Wallet() {
       let NFTContract = new ethers.Contract(
         Contracts.NFTMarket.address,
         Contracts.NFTMarket.abi,
-        provider
+        signer
       );
       let myNftMarket = new ethers.Contract(
         Contracts.MyNFT.address,
         Contracts.MyNFT.abi,
-        provider
+        signer
       );
 
       const isOnSale = await NFTContract.isTokenOnSale(tokenId);

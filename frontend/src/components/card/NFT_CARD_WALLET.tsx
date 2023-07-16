@@ -145,7 +145,7 @@ const NFT_CARD_WALLET = ({
             <div className="mt-3 mx-3 flex justify-between">
               <p className="font-semibold text-md">
                 {dataLogs.name
-                  ? LimitString(dataLogs.name, 15)
+                  ? LimitString(dataLogs.name, 12)
                   : "Chargement.."}
               </p>
               <p className="border border-gray-400 text-xs ml-2 my-auto py-1 px-2 rounded-lg">

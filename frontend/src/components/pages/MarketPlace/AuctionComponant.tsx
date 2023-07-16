@@ -53,22 +53,20 @@ export default function AuctionComponant({
           <>
             {nft.type === "auction" && (
               <>
-                <button
+                {/* <button
                   //onClick={() => {showModalEndAuction(true);}}
                   className="w-full bg-neutral py-2 mb-2 rounded-xl text-white"
                 >
                   End Auction
-                </button>
-                <button
+                </button> */}
+                {/* <button
                   //onClick={() => {showModalCancelAunction(true);}}
                   className="w-full bg-neutral py-2 mb-2 rounded-xl text-white"
                 >
                   Cancel Auction
-                </button>
+                </button> */}
                 {/* Divider */}
-                <div className="flex justify-center">
-                  <div className="border-b-2 border-gray-300 w-2/3"></div>
-                </div>
+       
               </>
             )}
             {/* En vrai si tu veux pas te casser la tête à vérifier si le nft est sur le marché ou non avant de le burn

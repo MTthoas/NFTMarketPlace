@@ -126,7 +126,7 @@ const NFT_CARD_MARKETPLACE = ({tokenId, owner, price, image, type, data} : {toke
                 <div className="mt-4">
                     <div className="mx-3 flex justify-between">
                         <p className="font-semibold text-md">
-                        {dataLogs.name ? LimitString(dataLogs.name, 15) : 'Chargement..'}
+                        {dataLogs.name ? LimitString(dataLogs.name, 12) : 'Chargement..'}
                         </p>
                         <p className="border border-gray-400 text-xs ml-2 my-auto py-1 px-2 rounded-lg">
                             #{tokenId}

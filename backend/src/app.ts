@@ -63,7 +63,7 @@ cron.schedule('* * * * *', async () => {
           
           try{
 
-            const tx = await contractWithSigner.endSales(tokenId);
+            const tx = await contractWithSigner.returnUnsoldToken(tokenId);
             console.log("Waiting for transaction to be mined...");
             const receipt = await tx.wait();
             console.log("Transaction Mined:", receipt);
