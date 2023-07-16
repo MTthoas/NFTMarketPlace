@@ -7,13 +7,12 @@ import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 import Contracts from "../../../contracts/contracts.json";
 
-import { NFT } from '../../interface/NFT'
+import { NFT } from "../../interface/NFT";
 import NFT_CARD_MARKETPLACE from "../../card/NFT_CARD_MARKETPLACE";
 import NftTopCollection from "./card/nftTopCollection";
 import { ethers } from "ethers";
 
 function Home() {
-
   const [data, updateData] = useState<NFT[]>([]);
   const [collection, updateCollection] = useState<any>([]);
 
@@ -21,10 +20,10 @@ function Home() {
     return Math.floor(Date.now() / 1000);
   }
 
-  async function getAllCollections(){
-
-
-    const getAllCollections = await axios.get(`http://54.37.68.74:3030/collections`);
+  async function getAllCollections() {
+    const getAllCollections = await axios.get(
+      `http://localhost:3030/collections`
+    );
 
     const collections = getAllCollections.data;
 
@@ -44,7 +43,6 @@ function Home() {
   }
 
   async function getAllNFTs() {
-    
     try {
       console.log("getAllNFTs");
       const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -116,10 +114,9 @@ function Home() {
 
   useEffect(() => {
     getAllNFTs();
-    getAllCollections()
+    getAllCollections();
     // setInfos();
   }, []);
-
 
   return (
     <main className="w-full">
@@ -129,11 +126,11 @@ function Home() {
           aria-hidden="true"
         >
           <div
-            // className="relative left-[calc(50%-11rem)] aspect-[837/678] w-[36.125rem] -translate-x-1/2 rotate-[53deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
-            // style={{
-            //   clipPath:
-            //     "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
-            // }}
+          // className="relative left-[calc(50%-11rem)] aspect-[837/678] w-[36.125rem] -translate-x-1/2 rotate-[53deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
+          // style={{
+          //   clipPath:
+          //     "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
+          // }}
           />
         </div>
         <div className="mx-auto max-w-2xl py-12 sm:py-12 lg:py-24">
@@ -169,56 +166,61 @@ function Home() {
         </div>
 
         <div
-          // className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu  blur-3xl sm:top-[calc(100%-70rem)]"
-          // aria-hidden="true"
+        // className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu  blur-3xl sm:top-[calc(100%-70rem)]"
+        // aria-hidden="true"
         >
           <div
-            // className="relative left-[calc(50%+3rem)] aspect-[1100/900] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#9089fc] to-[#ff80b5] opacity-30 sm:left-[calc(50%+rem)] sm:w-[72.1875rem]"
-            // style={{
-            //   clipPath:
-            //     "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
-            // }}
+          // className="relative left-[calc(50%+3rem)] aspect-[1100/900] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#9089fc] to-[#ff80b5] opacity-30 sm:left-[calc(50%+rem)] sm:w-[72.1875rem]"
+          // style={{
+          //   clipPath:
+          //     "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
+          // }}
           />
         </div>
       </div>
 
       {/* NFT Card Grid */}
       <div className="container mx-auto pl-12 pr-14">
-      <div className="flex mb-6">
-        <span className="orange-bar rounded mr-2 mt-1"></span>
-        <div className='flex justify-between w-full'>
-          <h2 className="text-2xl font-bold text-neutral">Explore New NFTs</h2>
-          <button className=" font-semibold text-black py-1 px-3 border border-neutral rounded-full">View all</button>
+        <div className="flex mb-6">
+          <span className="orange-bar rounded mr-2 mt-1"></span>
+          <div className="flex justify-between w-full">
+            <h2 className="text-2xl font-bold text-neutral">
+              Explore New NFTs
+            </h2>
+            <button className=" font-semibold text-black py-1 px-3 border border-neutral rounded-full">
+              View all
+            </button>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+          {data.map((value, index) => {
+            return (
+              <div key={index}>
+                <NFT_CARD_MARKETPLACE
+                  key={index}
+                  tokenId={value.tokenId}
+                  // seller={value.seller}
+                  owner={value.owner}
+                  price={value.price}
+                  image={value.image}
+                  type={value.type}
+                  data={value}
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
-        
-      {data.map((value, index) => {
-                  return (
-                    <div key={index}>
-                      <NFT_CARD_MARKETPLACE
-                        key={index}
-                        tokenId={value.tokenId}
-                        // seller={value.seller}
-                        owner={value.owner}
-                        price={value.price}
-                        image={value.image}
-                        type={value.type}
-                        data={value}
-                      />
-                    </div>
-                  );
-                })}
-
-      </div>
-    </div>
 
       {/* Text part : Create and Sell Your NFTs */}
       <div className="px-4 py-7 my-20 bg-neutral rounded-sm">
         <h2 className="text-2xl text-center font-semibold text-base-100 pt-5">
           Artx is an NFT marketplace for curated cryptoart.
         </h2>
-        <p className="text-center text-gray-300 pb-7"> We’re building a new art market for artists, collectors, and curators. </p>
+        <p className="text-center text-gray-300 pb-7">
+          {" "}
+          We’re building a new art market for artists, collectors, and curators.{" "}
+        </p>
         <div className="flex flex-col md:flex-row justify-around gap-10 md:gap-20 my-10 ">
           <div className="flex flex-col items-center justify-center h-full">
             <svg
@@ -293,40 +295,45 @@ function Home() {
       </div>
 
       {/* Top Collection */}
-      <div className="container mx-auto pl-12 pr-14" style={{ minHeight: "400px" }}>
+      <div
+        className="container mx-auto pl-12 pr-14"
+        style={{ minHeight: "400px" }}
+      >
         <div className="flex mb-6">
-            <span className="orange-bar rounded mr-2 mt-1"></span>
-            <div className='flex justify-between w-full'>
-                <h2 className="text-2xl font-bold text-neutral">Top Collections</h2>
-                <button className="bg-base-100 font-semibold text-neutral py-1 px-3 border border-neutral rounded-full">View all</button>
-            </div>
+          <span className="orange-bar rounded mr-2 mt-1"></span>
+          <div className="flex justify-between w-full">
+            <h2 className="text-2xl font-bold text-neutral">Top Collections</h2>
+            <button className="bg-base-100 font-semibold text-neutral py-1 px-3 border border-neutral rounded-full">
+              View all
+            </button>
+          </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-8">
-
-            {
-                collection.map((collectionGate : any) => (
-                  <div key={collectionGate.id} className="flex justify-between">
-                  <div className='flex'>
-                      {/* <img src={collection.collectionImage} alt="collection" className="w-16 h-16 rounded" /> */}
-                      <div className="mx-4 py-2">
-                          <h3 className="text-neutral font-semibold text-lg">{collectionGate.name}</h3>
-                          {/* <p className="text-white text-sm">{collection.collectionValue} {collection.collectionChain}</p>  */}
-                      </div>
-                  </div>
-                  <div className='flex items-center mr-2'>
-                      <div className='bg-black bg-opacity-10 rounded-full py-1 px-2'>
-                          <p className="text-neutral text-xs">Items : {(collectionGate.array).length}</p>
-                      </div>
-                  </div>
+          {collection.map((collectionGate: any) => (
+            <div key={collectionGate.id} className="flex justify-between">
+              <div className="flex">
+                {/* <img src={collection.collectionImage} alt="collection" className="w-16 h-16 rounded" /> */}
+                <div className="mx-4 py-2">
+                  <h3 className="text-neutral font-semibold text-lg">
+                    {collectionGate.name}
+                  </h3>
+                  {/* <p className="text-white text-sm">{collection.collectionValue} {collection.collectionChain}</p>  */}
+                </div>
               </div>
-                ))
-            }
-            {/* {collections.slice(0, 8).map((collection) => (
+              <div className="flex items-center mr-2">
+                <div className="bg-black bg-opacity-10 rounded-full py-1 px-2">
+                  <p className="text-neutral text-xs">
+                    Items : {collectionGate.array.length}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+          {/* {collections.slice(0, 8).map((collection) => (
                 <NftTopCollection key={collection.id} collection={collection} />
             ))} */}
         </div>
-    </div>
-
+      </div>
     </main>
   );
 }

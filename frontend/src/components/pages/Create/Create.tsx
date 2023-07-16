@@ -28,17 +28,34 @@ function Create() {
 
   const [collection, setCollection] = useState<string>("");
 
+  const [collections, setCollections] = useState<string[]>([]);
+
+  useEffect(() => {
+    const getCollections = async () => {
+      try {
+        const response = await axios.get('http://localhost:3030/collections');
+        console.log(response.data);
+        setCollections(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    
+    getCollections();
+  }, []);
+
+  
   const JWT =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJjN2U5ZjAyYy04MzAzLTRjOGYtOWIwZC0xMzQ1YWI5MDlmMjIiLCJlbWFpbCI6Im1hbHRoYXphcjIyN0BnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJpZCI6IkZSQTEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX0seyJpZCI6Ik5ZQzEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX1dLCJ2ZXJzaW9uIjoxfSwibWZhX2VuYWJsZWQiOmZhbHNlLCJzdGF0dXMiOiJBQ1RJVkUifSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiZGM0MTUyYzk5YThhYTI0ZmEzMjIiLCJzY29wZWRLZXlTZWNyZXQiOiJhZmZlYzRiZDQ2ZGE1NjUzZWMyMWE3ZGU4Nzc0OGZlNThlNzVmYTI4MWI0YjczZjBmYzVjMzcxYjIxYmEzOGFjIiwiaWF0IjoxNjg2MjYwNTI2fQ.GwwGHhM8E6ZN_YnMtJIqIB8KVArhxFmc-0Uq5h5it88";
 
-    useEffect(() => {
-      const getNetwork = async () => {
-        const network = await provider.getNetwork();
-        setNetwork(network.name);
-      };
-  
-      getNetwork();
-    }, []);
+  useEffect(() => {
+    const getNetwork = async () => {
+      const network = await provider.getNetwork();
+      setNetwork(network.name);
+    };
+
+    getNetwork();
+  }, []);
 
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -103,7 +120,7 @@ function Create() {
             trait_type: "Breed",
             value: "Maltipoo",
             collection: collection,
-          }
+          },
         ];
 
         const priceInWei = ethers.utils.parseEther("0");
@@ -117,18 +134,21 @@ function Create() {
         );
         await transaction.wait();
 
-        const tokenId  = await contract.tokenCounter() - 1;
+        const tokenId = (await contract.tokenCounter()) - 1;
 
         const bodyRequest = {
           tokenId: tokenId,
           collectionName: collection,
-        }
+        };
 
-        const response = await axios.post("http://54.37.68.74:3030/collection", bodyRequest);
+        const response = await axios.post(
+          "http://localhost:3030/collection",
+          bodyRequest
+        );
         console.log(response);
 
         console.log(`Newly created NFT ID: ${tokenId}`);
-      
+
         setSuccessMessage(`NFT created successfully with ID: ${tokenId}`);
       }
     } catch (error: any) {
@@ -163,7 +183,7 @@ function Create() {
           {/* Form */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 ">
             {/* Left */}
-            <div className="col-span-1 md:col-span-2 flex flex-col justify-center " >
+            <div className="col-span-1 md:col-span-2 flex flex-col justify-center ">
               {/* Address */}
               <div className="mb-8 flex flex-row place-items-center border border-gray-400 p-4 rounded-xl border-solid">
                 <div>
@@ -250,7 +270,7 @@ function Create() {
                           file:text-sm file:font-semibold
                           file:bg-black-50 file:text-black-700
                           hover:file:bg-black-100"
-                        />
+                      />
                     </div>
                   )}
                 </div>
@@ -269,16 +289,15 @@ function Create() {
                   />
                 </div>
 
-                <div className="grid mb-4">
-                  <label className="mb-1 font-bold text-base">
-                    Collection{" "}
-                  </label>
-                  <input
-                    value={collection}
-                    onChange={(e) => setCollection(e.target.value)}
-                    placeholder="NFT Collection"
-                    className="border-2 hover:border-gray-400 border-transparent px-4 py-2 rounded-xl transition-colors"
-                  />
+                <div className="grid mb-2">
+                <div className="mb-4">
+                  <label htmlFor="collection" className="font-bold mb-1 block">Collection</label>
+                  <input list="collections" name="collection" id="collection" onChange={(e) => setCollection(e.target.value)} className="border rounded-xl border-transparent rounded p-2 w-full"/>
+                  <datalist id="collections">
+                    {collections.map((collectionGet : any, index) => <option key={index} value={collectionGet.name}/>)}
+                  </datalist>
+                </div>
+
                 </div>
 
                 <div className="grid mb-4">
@@ -366,9 +385,7 @@ function Create() {
                               <p className="font-semibold text-sm text-slate-500">
                                 Price
                               </p>
-                              <p className="font-semibold">
-                                {"0.00 ETH"}
-                              </p>
+                              <p className="font-semibold">{"0.00 ETH"}</p>
                             </div>
                             <div className="col-span-1 w-full">
                               <p className="font-semibold text-sm text-slate-500">

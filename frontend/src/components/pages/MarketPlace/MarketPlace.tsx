@@ -32,11 +32,9 @@ const sortOptions = [
 ];
 
 const subCategories = [
-  { name: "Totes", href: "#" },
-  { name: "Backpacks", href: "#" },
-  { name: "Travel Bags", href: "#" },
-  { name: "Hip Bags", href: "#" },
-  { name: "Laptop Sleeves", href: "#" },
+  { name: "Popular", href: "#" },
+  { name: "New", href: "#" },
+  { name: "Price", href: "#" },
 ];
 
 const filters = [
@@ -62,19 +60,7 @@ const filters = [
       { value: "organization", label: "Organization", checked: false },
       { value: "accessories", label: "Accessories", checked: false },
     ],
-  },
-  {
-    id: "size",
-    name: "Size",
-    options: [
-      { value: "2l", label: "2L", checked: false },
-      { value: "6l", label: "6L", checked: false },
-      { value: "12l", label: "12L", checked: false },
-      { value: "18l", label: "18L", checked: false },
-      { value: "20l", label: "20L", checked: false },
-      { value: "40l", label: "40L", checked: true },
-    ],
-  },
+  }
 ];
 
 export default function MarketPlace() {
@@ -349,7 +335,7 @@ export default function MarketPlace() {
         <main className="container mx-auto pl-12 pr-14">
           <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
             <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-              New Arrivals
+              Market Place 
             </h1>
 
             <div className="flex items-center">

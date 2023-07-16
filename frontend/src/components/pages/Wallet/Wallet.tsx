@@ -30,12 +30,11 @@ const sortOptions = [
 ];
 
 const subCategories = [
-  { name: "Totes", href: "#" },
-  { name: "Backpacks", href: "#" },
-  { name: "Travel Bags", href: "#" },
-  { name: "Hip Bags", href: "#" },
-  { name: "Laptop Sleeves", href: "#" },
+  { name: "Popular", href: "#" },
+  { name: "New", href: "#" },
+  { name: "Price", href: "#" },
 ];
+
 
 const filters = [
   {
@@ -60,19 +59,7 @@ const filters = [
       { value: "organization", label: "Organization", checked: false },
       { value: "accessories", label: "Accessories", checked: false },
     ],
-  },
-  {
-    id: "size",
-    name: "Size",
-    options: [
-      { value: "2l", label: "2L", checked: false },
-      { value: "6l", label: "6L", checked: false },
-      { value: "12l", label: "12L", checked: false },
-      { value: "18l", label: "18L", checked: false },
-      { value: "20l", label: "20L", checked: false },
-      { value: "40l", label: "40L", checked: true },
-    ],
-  },
+  }
 ];
 function convertDurationToSeconds(durationText : any) {
     let durationInSeconds;
@@ -137,6 +124,7 @@ function Wallet() {
   const [showModal, setShowModal] = useState(false);
   const [value, setValue] = useState<NFT>();
   const [dataLogs, setData] = useState(data);
+  const [balance, setBalance] = useState("");
 
   const [loading, setLoading] = useState<Record<string, boolean>>({});
 
@@ -161,6 +149,12 @@ function Wallet() {
         method: "eth_requestAccounts",
       });
       const account = accounts[0];
+      setAdress(account);
+      
+      // Récupérer la balance du compte utilisateur
+      let balance = await provider.getBalance(account);
+      setBalance(ethers.utils.formatEther(balance));
+      
 
       // GetAllMyNfts with the user adress in parameter
 
@@ -482,10 +476,12 @@ function Wallet() {
       </Transition.Root>
 
       <main className="container mx-auto pl-12 pr-14">
-        <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-            My Wallet
-          </h1>
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900 mt-12 mb-3"> My Wallet </h1>
+          <p className="text-medium"> Adress : {adress} </p> 
+          <p className="text-medium"> Balance : {balance.slice(0, 10)} </p>
+
+
+        <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-12">
 
           <div className="flex items-center">
             <Menu as="div" className="relative inline-block text-left">

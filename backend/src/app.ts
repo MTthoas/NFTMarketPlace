@@ -101,10 +101,10 @@ app.get('/user/:address', MarketPlaceController.getUserData);
 app.get('/users', MarketPlaceController.getAllUsers);
 
 app.post('/collection', MarketPlaceController.addNftToCollection);
-app.get('/collections', MarketPlaceController.getAllCollections);
+app.get('/3030', MarketPlaceController.getAllCollections);
 app.delete('/collections', MarketPlaceController.deleteAllCollections);
-
-
+app.delete('/collections/deleteNft', MarketPlaceController.deleteNftFromCollection);
+app.get('/getCollection/:tokenId', MarketPlaceController.getNftCollection);
 
 mongoose
   .connect(process.env.MONGODB_URI as string, {
@@ -118,6 +118,6 @@ mongoose
     console.error(error);
   });
 
-app.listen(port, () => {
-  console.log(`App listening at http://localhost:${port}`);
-});
+  app.listen(port, () => {
+    console.log(`App listening at http://localhost:${port}`);
+  });

@@ -219,6 +219,9 @@ function NFTDetails() {
       remainingMilliseconds = remainingSeconds * 1000;
     }
 
+    const collection = await axios.get('http://localhost:3030/getCollection/' + id)
+
+
     let item = {
       tokenId: id,
       name: transaction[0],
@@ -228,6 +231,7 @@ function NFTDetails() {
       description: transaction[1],
       type: type.toString(),
       listEndTime: remainingMilliseconds,
+      collection : collection.data.name
     };
 
     console.table(item)
@@ -301,7 +305,7 @@ function NFTDetails() {
 
       try {
         const response = await axios.post(
-          "http://54.37.68.74:3030/transaction",
+          "http://localhost:3030/transaction",
           transactionData
         );
         setHistorical([...response.data]);
@@ -324,7 +328,7 @@ function NFTDetails() {
 
   const getAllHistoryFromToken = async () => {
     try {
-      const response = await axios.get("http://54.37.68.74:3030/transactions");
+      const response = await axios.get("http://localhost:3030/transactions");
       console.log("All Transactions", response.data);
       setHistorical([...response.data]);
     } catch (error) {
@@ -384,10 +388,20 @@ function NFTDetails() {
 
       console.log("Transaction Mined");
 
+      const response = await axios.get("http://localhost:3030/getCollection/"+id);
+
+      const bodyToSend = {
+        tokenId: id,
+        collectionName: response.data.name,
+      }
+
+      await axios.delete(`http://localhost:3030/collections/deleteNft`, { data: bodyToSend });
+      
+
       localStorage.removeItem("loadingDelete");
       setIsLoadingDelete(false);
 
-      navigate("/wallet");
+      // navigate("/wallet");
     } catch (error) {
       console.error(error);
       setIsLoadingDelete(false);
@@ -610,7 +624,7 @@ function NFTDetails() {
                     </div>
                   </div>
 
-                  <div className="h-full w-full mt-7">
+                  <div className="h-full w-full mt-5">
                     <h3 className="text-2xl font-medium text-neutral mb-5">
                       Description
                     </h3>
@@ -746,7 +760,7 @@ function NFTDetails() {
                             </clipPath>
                           </defs>
                         </svg>
-                        <p className="font-medium"> View on Etherscan </p>
+                        <a href={`https://sepolia.etherscan.io/token/0xbf4a6df73d91c1ac2634b84d13c4492c969cf7b8?a=`+id} className="font-medium"> View on Etherscan </a>
                         <svg
                           className="w-3 h-3"
                           viewBox="0 0 10 10"
@@ -777,13 +791,12 @@ function NFTDetails() {
 
                   <div className="flex flex-row gap-12">
                     <div className="flex items-center space-x-4 mt-5">
-                      <img
-                        className="w-8 h-8 rounded-full"
-                        src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt=""
-                      />
+                      
                       <div className="font-medium">
-                        <div className="text-gray-500">Owner</div>
+                        <div className="text-gray-500">Collection</div>
+                        <div className="text-sm ">{nft?.collection} - ID : {nft.tokenId}</div>
+                
+                        <div className="text-gray-500 mt-3">Owner</div>
                         <div className="text-sm ">{nft?.owner}</div>
                       </div>
                     </div>

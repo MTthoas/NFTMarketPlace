@@ -32,6 +32,69 @@ static getAllCollections = async (req: Request, res: Response) => {
   }
 };
 
+static getNftCollection = async (req: Request, res: Response) => {
+  try {
+    const tokenId: string = req.params.tokenId;
+
+    // Find the collection which contains the NFT
+    let collection = await CollectionModel.findOne({ nfts: tokenId });
+
+    if (!collection) {
+      // If collection does not exist, send an error response
+      return res.status(404).send('No collection found for this token.');
+    }
+
+    res.json(collection);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error getting collection for NFT.');
+  }
+};
+
+
+static deleteNftFromCollection = async (req: Request, res: Response) => {
+  try {
+    const collectionName: string = req.body.collectionName;
+    const tokenId: string = req.body.tokenId;
+
+    // Find the collection
+    let collection = await CollectionModel.findOne({ name: collectionName });
+
+    if (!collection) {
+      // If collection does not exist, send an error response
+      return res.status(404).send('Collection not found.');
+    }
+
+    // Get the index of the tokenId in the nfts array
+    const index = collection.nfts.indexOf(tokenId);
+
+    // Check if the tokenId exists in the collection
+    if (index !== -1) {
+      // Remove the tokenId from the collection
+      collection.nfts.splice(index, 1);
+
+      // If the collection is empty after removing the NFT, delete the collection
+      if (collection.nfts.length === 0) {
+        await CollectionModel.deleteOne({ _id: collection._id });
+        res.status(200).send('Collection is empty and has been deleted.');
+      } else {
+        // If not, save the collection and send it as response
+        await collection.save();
+        res.json(collection);
+      }
+
+    } else {
+      res.status(404).send('Token ID not found in the collection.');
+    }
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error deleting NFT from collection.');
+  }
+};
+
+
 static deleteAllCollections = async (req: Request, res: Response) => {
   try {
       await CollectionModel.deleteMany({});  // Deletes all collections
