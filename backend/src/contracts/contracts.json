@@ -1,6 +1,6 @@
 {
   "MyNFT": {
-    "address": "0x462A349a697F547765Cd3d7a837BAc67e991F100",
+    "address": "0x69913b3058224cb10714dC24dD7c6Ca227C7ACE6",
     "abi": [
       {
         "type": "constructor",
@@ -640,7 +640,7 @@
     ]
   },
   "NFTMarket": {
-    "address": "0xC17BE13C446f2aD1959b297E44053Cc5a53e711E",
+    "address": "0xBa2Dd760E157f25eA8819c25253E64c931C2A29d",
     "abi": [
       {
         "type": "constructor",
@@ -746,19 +746,6 @@
       {
         "type": "function",
         "name": "endAuction",
-        "constant": false,
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": "tokenId"
-          }
-        ],
-        "outputs": []
-      },
-      {
-        "type": "function",
-        "name": "endSales",
         "constant": false,
         "payable": false,
         "inputs": [
@@ -1150,6 +1137,10 @@
           {
             "type": "uint256",
             "name": "tokenId"
+          },
+          {
+            "type": "address",
+            "name": "tokenOwner"
           }
         ],
         "outputs": []
