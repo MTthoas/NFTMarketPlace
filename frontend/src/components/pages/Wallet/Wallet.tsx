@@ -101,6 +101,25 @@ function convertDurationToSeconds(durationText : any) {
         case "1 jour":
             durationInSeconds = 24 * 60 * 60;
             break;
+        case "2 jours":
+            durationInSeconds = 2 * 24 * 60 * 60;
+            break;
+        case "3 jours":
+            durationInSeconds = 3 * 24 * 60 * 60;
+            break;
+        case "4 jours":
+            durationInSeconds = 4 * 24 * 60 * 60;
+            break;
+        case "5 jours":
+            durationInSeconds = 5 * 24 * 60 * 60;
+            break;
+        case "6 jours":
+            durationInSeconds = 6 * 24 * 60 * 60;
+            break;
+        case "1 semaine":
+            durationInSeconds = 7 * 24 * 60 * 60;
+            break;
+
         default:
             durationInSeconds = 0; // Si aucune option n'est sélectionnée ou pour une entrée non valide
             break;
