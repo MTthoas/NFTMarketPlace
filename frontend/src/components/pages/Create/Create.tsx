@@ -124,7 +124,7 @@ function Create() {
           collectionName: collection,
         }
 
-        const response = await axios.post("http://localhost:8080/collection", bodyRequest);
+        const response = await axios.post("http://54.37.68.74:3030/collection", bodyRequest);
         console.log(response);
 
         console.log(`Newly created NFT ID: ${tokenId}`);

@@ -301,7 +301,7 @@ function NFTDetails() {
 
       try {
         const response = await axios.post(
-          "http://localhost:8080/transaction",
+          "http://54.37.68.74:3030/transaction",
           transactionData
         );
         setHistorical([...response.data]);
@@ -324,7 +324,7 @@ function NFTDetails() {
 
   const getAllHistoryFromToken = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/transactions");
+      const response = await axios.get("http://54.37.68.74:3030/transactions");
       console.log("All Transactions", response.data);
       setHistorical([...response.data]);
     } catch (error) {
