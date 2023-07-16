@@ -19,6 +19,25 @@ let myNFT = new ethers.Contract(
   signer
 );
 
+
+function functionConvetMiliSecondsToTime(millisec : any){
+
+  var seconds = (millisec / 1000).toFixed(0);
+  var minutes = (millisec / (1000 * 60)).toFixed(0);
+  var hours = (millisec / (1000 * 60 * 60)).toFixed(0);
+  var days = (millisec / (1000 * 60 * 60 * 24)).toFixed(0);
+
+  if (parseInt(seconds) < 60) {
+      return seconds + " Sec";
+  } else if (parseInt(minutes) < 60) {
+      return minutes + " Min";
+  } else if (parseInt(hours) < 24) {
+      return hours + " Hrs";
+  } else {
+      return days + " Days"
+  }
+}
+
 const NFT_CARD_WALLET = ({
   tokenId,
   owner,
@@ -151,7 +170,7 @@ const NFT_CARD_WALLET = ({
                       Time left
                     </p>
                     <p className="font-semibold text-sm pt-1">
-                      {metaData.listEndTime}
+                      {functionConvetMiliSecondsToTime(metaData.listEndTime)}
                     </p>
                   </>
                 )}

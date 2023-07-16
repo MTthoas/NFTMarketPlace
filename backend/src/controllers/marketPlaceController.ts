@@ -23,7 +23,7 @@ static createUser = async (req: Request, res: Response) => {
 
 static getAllCollections = async (req: Request, res: Response) => {
   try {
-    const collections: Collection[] = await CollectionModel.find({});
+    let collections = await CollectionModel.find({});
 
     res.json(collections);
   } catch (error) {

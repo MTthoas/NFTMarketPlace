@@ -4,14 +4,125 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import toast, { Toaster } from "react-hot-toast";
 
-import NftCardGrid from "./card/nftCardGrid";
+import axios from "axios";
+import Contracts from "../../../contracts/contracts.json";
+
+import { NFT } from '../../interface/NFT'
+import NFT_CARD_MARKETPLACE from "../../card/NFT_CARD_MARKETPLACE";
 import NftTopCollection from "./card/nftTopCollection";
+import { ethers } from "ethers";
 
 function Home() {
 
+  const [data, updateData] = useState<NFT[]>([]);
+  const [collection, updateCollection] = useState<any>([]);
+
+  function getCurrentTimestampInSeconds() {
+    return Math.floor(Date.now() / 1000);
+  }
+
+  async function getAllCollections(){
+
+
+    const getAllCollections = await axios.get("http://localhost:8080/collections");
+
+    const collections = getAllCollections.data;
+
+    const collectionsData = await Promise.all(
+      collections.map(async (i: any, index: any) => {
+        const item = {
+          id: index,
+          name: i.name,
+          array: i.nfts,
+        };
+        return item;
+      })
+    );
+
+    console.log(collectionsData);
+    updateCollection(collectionsData);
+  }
+
+  async function getAllNFTs() {
+    
+    try {
+      console.log("getAllNFTs");
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+
+      let myNftMarket = new ethers.Contract(
+        Contracts.NFTMarket.address,
+        Contracts.NFTMarket.abi,
+        provider
+      );
+      let myNFT = new ethers.Contract(
+        Contracts.MyNFT.address,
+        Contracts.MyNFT.abi,
+        provider
+      );
+
+      // let transactionAuction = await auctionContract.getAllAuctions();
+      let transactionSales = await myNftMarket.getAllSales();
+      // let transactionAuction = await myNftMarket.getAllAuctions();
+
+      const Sales = await Promise.all(
+        transactionSales.map(async (i: any) => {
+          const data = await myNFT.getTokenData(i.toNumber());
+
+          const getAllData = await myNftMarket.getAllData(i.toNumber());
+
+          const price = ethers.utils.formatEther(getAllData.price);
+
+          const isOnSale = await myNftMarket.isTokenOnSale(i.toNumber());
+          const isOnAuction = await myNftMarket.isTokenOnAuction(i.toNumber());
+
+          let type = "none";
+          let listEndTime = 0;
+          let remainingMilliseconds = 0;
+
+          if (isOnSale) {
+            type = "sale";
+            listEndTime = getAllData.salesEndTime.toNumber();
+          } else if (isOnAuction) {
+            type = "auction";
+            listEndTime = getAllData.auctionEndTime.toNumber();
+          }
+
+          const remainingSeconds = listEndTime - getCurrentTimestampInSeconds();
+
+          if (remainingSeconds > 0) {
+            remainingMilliseconds = remainingSeconds * 1000;
+          }
+
+          const item = {
+            tokenId: i.toNumber(),
+            name: data[0],
+            description: data[1],
+            image: data[2],
+            price: price,
+            owner: data[4],
+            type: type.toString(),
+            listEndTime: remainingMilliseconds,
+          };
+
+          return item;
+        })
+      );
+
+      updateData(Sales);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    getAllNFTs();
+    getAllCollections()
+    // setInfos();
+  }, []);
+
 
   return (
-    <div className="w-full">
+    <main className="w-full">
       <div className="relative isolate px-6 pt-14 lg:px-8">
         <div
           className="absolute inset-x-0 -top-40 -z-10 transform-gpu  blur-3xl sm:-top-80"
@@ -72,9 +183,35 @@ function Home() {
       </div>
 
       {/* NFT Card Grid */}
-      <div className="container flex flex-row px-4 py-7 mt-12 mx-auto">
-        <NftCardGrid />
+      <div className="container mx-auto pl-12 pr-14">
+      <div className="flex mb-6">
+        <span className="orange-bar rounded mr-2 mt-1"></span>
+        <div className='flex justify-between w-full'>
+          <h2 className="text-2xl font-bold text-neutral">Explore New NFTs</h2>
+          <button className=" font-semibold text-black py-1 px-3 border border-neutral rounded-full">View all</button>
+        </div>
       </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+        
+      {data.map((value, index) => {
+                  return (
+                    <div key={index}>
+                      <NFT_CARD_MARKETPLACE
+                        key={index}
+                        tokenId={value.tokenId}
+                        // seller={value.seller}
+                        owner={value.owner}
+                        price={value.price}
+                        image={value.image}
+                        type={value.type}
+                        data={value}
+                      />
+                    </div>
+                  );
+                })}
+
+      </div>
+    </div>
 
       {/* Text part : Create and Sell Your NFTs */}
       <div className="px-4 py-7 my-20 bg-neutral rounded-sm">
@@ -156,10 +293,41 @@ function Home() {
       </div>
 
       {/* Top Collection */}
-      <div className="container flex flex-row px-4 pt-12 pb-24 mx-auto">
-        <NftTopCollection />
-      </div>
+      <div className="container mx-auto pl-12 pr-14" style={{ minHeight: "400px" }}>
+        <div className="flex mb-6">
+            <span className="orange-bar rounded mr-2 mt-1"></span>
+            <div className='flex justify-between w-full'>
+                <h2 className="text-2xl font-bold text-neutral">Top Collections</h2>
+                <button className="bg-base-100 font-semibold text-neutral py-1 px-3 border border-neutral rounded-full">View all</button>
+            </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-8">
+
+            {
+                collection.map((collectionGate : any) => (
+                  <div key={collectionGate.id} className="flex justify-between">
+                  <div className='flex'>
+                      {/* <img src={collection.collectionImage} alt="collection" className="w-16 h-16 rounded" /> */}
+                      <div className="mx-4 py-2">
+                          <h3 className="text-neutral font-semibold text-lg">{collectionGate.name}</h3>
+                          {/* <p className="text-white text-sm">{collection.collectionValue} {collection.collectionChain}</p>  */}
+                      </div>
+                  </div>
+                  <div className='flex items-center mr-2'>
+                      <div className='bg-black bg-opacity-10 rounded-full py-1 px-2'>
+                          <p className="text-neutral text-xs">Items : {(collectionGate.array).length}</p>
+                      </div>
+                  </div>
+              </div>
+                ))
+            }
+            {/* {collections.slice(0, 8).map((collection) => (
+                <NftTopCollection key={collection.id} collection={collection} />
+            ))} */}
+        </div>
     </div>
+
+    </main>
   );
 }
 

@@ -220,8 +220,8 @@ export default function MarketPlace() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   return (
-    <div>
-      <div>
+    <div  style={{ minHeight: "1000px" }}>
+      <div className="">
         {/* Mobile filter dialog */}
         <Transition.Root show={mobileFiltersOpen} as={Fragment}>
           <Dialog
@@ -521,13 +521,6 @@ export default function MarketPlace() {
           </section>
         </main>
 
-        {/* NFTs */}
-        {/* <div className={filtersVisible ? 'w-4/5  ml-2' : 'w-full'}>
-          
-        </div>
-
-      </div>
-    </div> */}
       </div>
     </div>
   );
