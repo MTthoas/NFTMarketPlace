@@ -321,14 +321,50 @@ function NFTDetails() {
   };
 
   const getAllHistoryFromToken = async () => {
+
     try {
-      const response = await axios.get("http://54.37.68.74:3030/transactions");
-      console.log("All Transactions", response.data);
-      setHistorical([...response.data]);
+
+      let currentBlockNumber = await provider.getBlockNumber();
+
+      // Set filter to listen for Transfer events from the token contract
+      let filter = myNFT.filters.Transfer(null, null, id);
+
+      // Get past events
+      let events = await myNFT.queryFilter(filter, 0, currentBlockNumber);
+
+      // Process the events
+      let history = [];
+      for (let event of events) {
+        let block = await provider.getBlock(event.blockNumber);
+
+        // Get transaction
+        let transaction = await provider.getTransaction(event.transactionHash);
+
+        // Get Sale Data
+        let saleData = await myNftMarket.sales(event.args?.tokenId.toString());
+
+        history.push({
+          from: event.args?.from,
+          to: event.args?.to,
+          tokenId: event.args?.tokenId.toString(),
+          transactionHash: event.transactionHash,
+          blockNumber: event.blockNumber,
+          timestamp: new Date(block.timestamp * 1000),  // Convert to milliseconds
+          value: ethers.utils.formatEther(transaction.value),
+          type: saleData.saleType == 0 ? 'None' : saleData.saleType == 1 ? 'FixedPrice' : 'Auction',
+          price: ethers.utils.formatEther(saleData.price),
+        });
+      }
+
+      // You can now set the state with the historical data
+      console.table(history)
+      setHistorical(history);
+    
     } catch (error) {
       console.error("Error getting transactions", error);
     }
-  };
+};
+
 
   const getAllOffers = async () => {
     const signerAddress = await signer.getAddress();
@@ -505,6 +541,22 @@ function NFTDetails() {
     }
   };
 
+  const acceptOffer = async (index: any) => {
+
+    const signerAddress = await signer.getAddress();
+
+    const offer = offers[index];
+
+    const transaction = await myNftMarket.acceptOffer(id, index);
+
+    await transaction.wait();
+
+    console.log("Transaction Done");
+
+    getAllOffers();
+
+  }
+
   const ListOnMarketPlace = async (
     tokenId: any,
     method: any,
@@ -633,8 +685,11 @@ function NFTDetails() {
                       <h3 className="text-2xl font-medium text-neutral mt-7 mb-7">
                         Latest bids
                       </h3>
-                      <div className="overflow-x-auto w-5/6">
-                        <table className="table w-140">
+                      <div
+                      className="overflow-x-auto overflow-y-auto w-5/6"
+                      style={{ maxHeight: "300px" }}
+                      >
+                        <table className="table">
                           {/* head */}
                           <tbody className="">
                             {bids
@@ -643,23 +698,23 @@ function NFTDetails() {
                               .map((bid: any, i: any) => {
                                 return (
                                   <tr key={i}>
-                                    <td className="font-bold">
-                                      {shortenAddress(bid.bidder)}
+                                    <td className="text-sm">
+                                      from : <span className="font-medium"> {shortenAddress(bid.bidder)} </span>
                                     </td>
                                     <td className="text-sm">
-                                      {formatTimestamp(bid.timestamp)} •{" "}
+                                      {formatTimestamp(bid.timestamp)}
                                     </td>
-                                    <td className="flex flex-col items-end">
-                                      <p className="font-bold text-sm">
+                                    <td className="flex items-end gap-x-1">
+                                      <p className="font-bold text-sm ">
                                         {ethers.utils.formatEther(bid.amount)}{" "}
-                                        ETH
+                                        ETH = 
                                       </p>
                                       <p className="font-normal text-sm">
                                         {(
                                           parseFloat(
                                             ethers.utils.formatEther(bid.amount)
                                           ) * ethPrice
-                                        ).toFixed(3)}{" "}
+                                        ).toFixed(2)}{" "}
                                         $
                                       </p>
                                     </td>
@@ -688,23 +743,29 @@ function NFTDetails() {
                           {Historical.map((transaction: any, i: any) => {
                             return (
                               <tr key={i}>
-                                <td className="font-bold">
-                                  {shortenAddress(transaction.from)}
+                                <td className="text-sm">
+                                  from: <span className="font-medium"> {shortenAddress(transaction.from)}</span>
                                 </td>
-                                <td className="text-md">
-                                  {formatDateTime(transaction.timestamp)} •{" "}
+                                <td className="text-xs">
+                                  {formatDateTime(transaction.timestamp)}{" "}
+                                </td>
+                                <td className="text-sm">
+                                  to: <span className="font-medium "> {shortenAddress(transaction.to)}</span>
                                 </td>
                                 <td className="flex flex-col items-end">
-                                  <p className="font-bold text-sm">
-                                    {transaction.amount} ETH
+                                  <p className="font-bold text-xs">
+                                    {transaction.value} ETH
                                   </p>
-                                  <p className="font-normal text-sm">
+                                  <p className="font-normal text-xs">
                                     {(
-                                      parseFloat(transaction.amount) * ethPrice
+                                      parseFloat(transaction.value) * ethPrice
                                     ).toFixed(3)}{" "}
                                     $
                                   </p>
-                                </td>
+                                  </td>
+                                  <td className="text-xs cursor-pointer hover:underline">
+                                    <a href={`https://sepolia.etherscan.io/tx/${transaction.transactionHash}`}> Consult hash</a>
+                                  </td>
                               </tr>
                             );
                           })}
@@ -880,6 +941,7 @@ function NFTDetails() {
                                       </td>
                                       <td className="">
                                         <button
+                                          onClick={() => acceptOffer(i)}
                                           type="button"
                                           className="text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 
                                           font-medium rounded-lg text-sm pr-7 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-neutral 
