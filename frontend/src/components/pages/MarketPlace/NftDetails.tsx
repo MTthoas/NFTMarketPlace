@@ -635,6 +635,77 @@ function NFTDetails() {
     }
   };
 
+  const get5NftsFromSameCollection = async () => {
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+
+    const signer = provider.getSigner();
+
+    let myNftMarket = new ethers.Contract(
+      Contracts.NFTMarket.address,
+      Contracts.NFTMarket.abi,
+      provider
+    );
+
+    let myNFT = new ethers.Contract(
+      Contracts.MyNFT.address,
+      Contracts.MyNFT.abi,
+      provider
+    );
+
+    let transactionSales = await myNftMarket.getAllSales();
+    let getAllNftsFromACollection = await axios.get("")
+
+    const Sales = await Promise.all(
+      transactionSales.map(async (i: any) => {
+        const data = await myNFT.getTokenData(i.toNumber());
+
+        const getAllData = await myNftMarket.getAllData(i.toNumber());
+
+        const price = ethers.utils.formatEther(getAllData.price);
+
+        const isOnSale = await myNftMarket.isTokenOnSale(i.toNumber());
+        const isOnAuction = await myNftMarket.isTokenOnAuction(i.toNumber());
+
+        let type = "none";
+        let listEndTime = 0;
+        let remainingMilliseconds = 0;
+
+        if (isOnSale) {
+          type = "sale";
+          listEndTime = getAllData.salesEndTime.toNumber();
+        } else if (isOnAuction) {
+          type = "auction";
+          listEndTime = getAllData.auctionEndTime.toNumber();
+        }
+
+        const remainingSeconds = listEndTime - getCurrentTimestampInSeconds();
+
+        if (remainingSeconds > 0) {
+          remainingMilliseconds = remainingSeconds * 1000;
+        }
+
+        const item = {
+          tokenId: i.toNumber(),
+          name: data[0],
+          description: data[1],
+          image: data[2],
+          price: price,
+          owner: data[4],
+          type: type.toString(),
+          listEndTime: remainingMilliseconds,
+        };
+
+        return item;
+      })
+    );
+
+
+
+    }
+
+
+
   useEffect(() => {
     getNftFromId();
     getEthPrice();
@@ -698,18 +769,18 @@ function NFTDetails() {
                               .map((bid: any, i: any) => {
                                 return (
                                   <tr key={i}>
-                                    <td className="text-sm">
+                                    <td className="text-xs">
                                       from : <span className="font-medium"> {shortenAddress(bid.bidder)} </span>
                                     </td>
-                                    <td className="text-sm">
+                                    <td className="text-xs">
                                       {formatTimestamp(bid.timestamp)}
                                     </td>
                                     <td className="flex items-end gap-x-1">
-                                      <p className="font-bold text-sm ">
+                                      <p className="font-bold text-xs ">
                                         {ethers.utils.formatEther(bid.amount)}{" "}
                                         ETH = 
                                       </p>
-                                      <p className="font-normal text-sm">
+                                      <p className="font-normal text-xs">
                                         {(
                                           parseFloat(
                                             ethers.utils.formatEther(bid.amount)
@@ -742,31 +813,30 @@ function NFTDetails() {
 
                           {Historical.map((transaction: any, i: any) => {
                             return (
-                              <tr key={i}>
-                                <td className="text-sm">
+                              <Link key={i} to={`https://sepolia.etherscan.io/tx/${transaction.transactionHash}`}>
+                                <tr>
+                                <td className="text-xs">
                                   from: <span className="font-medium"> {shortenAddress(transaction.from)}</span>
                                 </td>
                                 <td className="text-xs">
                                   {formatDateTime(transaction.timestamp)}{" "}
                                 </td>
-                                <td className="text-sm">
+                                <td className="text-xs">
                                   to: <span className="font-medium "> {shortenAddress(transaction.to)}</span>
                                 </td>
-                                <td className="flex flex-col items-end">
+                                <td className="flex">
                                   <p className="font-bold text-xs">
-                                    {transaction.value} ETH
-                                  </p>
-                                  <p className="font-normal text-xs">
-                                    {(
+                                    {transaction.value} ETH <span className="text-xs font-light"> =   {(
                                       parseFloat(transaction.value) * ethPrice
                                     ).toFixed(3)}{" "}
-                                    $
+                                    $ </span>
+                                  </p>
+                                  <p className="font-normal text-xs">
+                                  
                                   </p>
                                   </td>
-                                  <td className="text-xs cursor-pointer hover:underline">
-                                    <a href={`https://sepolia.etherscan.io/tx/${transaction.transactionHash}`}> Consult hash</a>
-                                  </td>
-                              </tr>
+                                  </tr>
+                              </Link>
                             );
                           })}
                         </tbody>

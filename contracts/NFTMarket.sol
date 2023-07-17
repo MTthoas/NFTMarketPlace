@@ -95,7 +95,7 @@ contract NFTMarket {
 
         // Transfer the token to the buyer
         nft.transferFrom(sales[tokenId].seller, offer.buyer, tokenId);
-        
+    
         // Transfer the payment to the seller
         payable(sales[tokenId].seller).transfer(offer.amount);
 

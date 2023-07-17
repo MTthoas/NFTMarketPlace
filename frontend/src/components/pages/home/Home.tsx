@@ -11,10 +11,13 @@ import { NFT } from "../../interface/NFT";
 import NFT_CARD_MARKETPLACE from "../../card/NFT_CARD_MARKETPLACE";
 import NftTopCollection from "./card/nftTopCollection";
 import { ethers } from "ethers";
+import { Link } from "react-router-dom";
+
 
 function Home() {
   const [data, updateData] = useState<NFT[]>([]);
   const [collection, updateCollection] = useState<any>([]);
+  
 
   function getCurrentTimestampInSeconds() {
     return Math.floor(Date.now() / 1000);
@@ -106,7 +109,14 @@ function Home() {
         })
       );
 
-      updateData(Sales);
+      
+      const sortedSales = Sales.sort((a, b) => b.tokenId - a.tokenId);
+
+      // Récupération des 5 derniers NFTs
+      const latestFiveSales = sortedSales.slice(0, 4);
+  
+      updateData(latestFiveSales);
+
     } catch (error) {
       console.log(error);
     }
@@ -119,8 +129,8 @@ function Home() {
   }, []);
 
   return (
-    <main className="w-full">
-      <div className="relative isolate px-6 pt-14 lg:px-8">
+    <main className="w-full hold" >
+      <div className="relative isolate px-6 pt-14 lg:px-8 wave-container ">
         <div
           className="absolute inset-x-0 -top-40 -z-10 transform-gpu  blur-3xl sm:-top-80"
           aria-hidden="true"
@@ -133,7 +143,7 @@ function Home() {
           // }}
           />
         </div>
-        <div className="mx-auto max-w-2xl py-12 sm:py-12 lg:py-24">
+        <div className="mx-auto max-w-2xl py-12 sm:py-12 lg:py-12">
           <div className="hidden sm:mb-8 sm:flex sm:justify-center">
             <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-info ">
               Announcing our next round of funding.{" "}
@@ -164,7 +174,7 @@ function Home() {
             </div>
           </div>
         </div>
-
+        <div className="wave"></div>
         <div
         // className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu  blur-3xl sm:top-[calc(100%-70rem)]"
         // aria-hidden="true"
@@ -182,14 +192,16 @@ function Home() {
       {/* NFT Card Grid */}
       <div className="container mx-auto pl-12 pr-14">
         <div className="flex mb-6">
-          <span className="orange-bar rounded mr-2 mt-1"></span>
+          <span className="orange-bar rounded mr-2 "></span>
           <div className="flex justify-between w-full">
             <h2 className="text-2xl font-bold text-neutral">
               Explore New NFTs
             </h2>
-            <button className=" font-semibold text-black py-1 px-3 border border-neutral rounded-full">
-              View all
-            </button>
+            <Link to ="/marketplace">
+                <button className=" font-semibold text-black py-1 px-3 border border-neutral rounded-full">
+                  View all
+                </button>
+            </Link>
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
@@ -213,90 +225,14 @@ function Home() {
       </div>
 
       {/* Text part : Create and Sell Your NFTs */}
-      <div className="px-4 py-7 my-20 bg-neutral rounded-sm">
-        <h2 className="text-2xl text-center font-semibold text-base-100 pt-5">
-          Artx is an NFT marketplace for curated cryptoart.
-        </h2>
-        <p className="text-center text-gray-300 pb-7">
-          {" "}
-          We’re building a new art market for artists, collectors, and curators.{" "}
-        </p>
-        <div className="flex flex-col md:flex-row justify-around gap-10 md:gap-20 my-10 ">
-          <div className="flex flex-col items-center justify-center h-full">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-12 h-12 text-base-100"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3"
-              />
-            </svg>
-            <h3 className="text-xl text-base-100 font-bold text-center py-2">
-              Setup your wallet
-            </h3>
-            <p className="text-center text-info text-sm w-3/4">
-              Once you’ve set up your wallet of choice, connect it to ArtX by
-              clicking the wallet icon in the navigation menu
-            </p>
-          </div>
-          <div className="flex flex-col items-center justify-center h-full">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-12 h-12 text-base-100"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-              />
-            </svg>
-            <h3 className="text-xl font-bold text-center py-2 text-base-100">
-              Upload & Create Collection
-            </h3>
-            <p className="text-center text-info text-sm w-3/4">
-              Once you’ve set up your wallet of choice, connect it to ArtX by
-              clicking the wallet icon in the navigation menu
-            </p>
-          </div>
-          <div className="flex flex-col items-center justify-center h-full">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-12 h-12 text-base-100"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z"
-              />
-            </svg>
-            <h3 className="text-xl font-bold text-center py-2 text-base-100">
-              List them for sale
-            </h3>
-            <p className="text-center text-info text-sm w-3/4">
-              Upload your work then Click My Collections and set up your
-              collection. Add social links and a description to your NFTs
-            </p>
-          </div>
-        </div>
-      </div>
+      {/* <div className="wave-container">
+        <div className="wave"></div>
+    </div> */}
+
 
       {/* Top Collection */}
       <div
-        className="container mx-auto pl-12 pr-14"
+        className="container mx-auto pl-12 pr-14 mt-24 pt-12"
         style={{ minHeight: "400px" }}
       >
         <div className="flex mb-6">

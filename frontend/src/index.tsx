@@ -51,7 +51,7 @@ const startApp = async () => {
     );
   } else {
     // MetaMask is not available, do not render the app
-    console.error('Please install MetaMask.');
+    document.body.innerHTML = 'Veuillez installer MetaMask pour utiliser cette application.';
   }
 };
 
