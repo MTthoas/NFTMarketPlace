@@ -837,18 +837,20 @@ function NFTDetails() {
 
                           {Historical.map((transaction: any, i: any) => {
                             return (
-                              <Link key={i} to={`https://sepolia.etherscan.io/tx/${transaction.transactionHash}`}>
-                                <tr>
+                                <tr key={i}>
                                 <td className="text-xs">
+                                  <Link key={i} to={`https://sepolia.etherscan.io/tx/${transaction.transactionHash}`}>
                                   from: <span className="font-medium"> {shortenAddress(transaction.from)}</span>
+                                  </Link>
                                 </td>
+                              
                                 <td className="text-xs">
                                   {formatDateTime(transaction.timestamp)}{" "}
                                 </td>
                                 <td className="text-xs">
                                   to: <span className="font-medium "> {shortenAddress(transaction.to)}</span>
                                 </td>
-                                <td className="flex">
+                                <td className="flex items-end  ">
                                   <p className="font-bold text-xs">
                                     {transaction.value} ETH <span className="text-xs font-light"> =   {(
                                       parseFloat(transaction.value) * ethPrice
@@ -860,7 +862,7 @@ function NFTDetails() {
                                   </p>
                                   </td>
                                   </tr>
-                              </Link>
+                       
                             );
                           })}
                         </tbody>
