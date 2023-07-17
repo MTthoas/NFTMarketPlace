@@ -100,7 +100,7 @@ app.get('/user/:address', MarketPlaceController.getUserData);
 app.get('/users', MarketPlaceController.getAllUsers);
 
 app.post('/collection', MarketPlaceController.addNftToCollection);
-app.get('/3030', MarketPlaceController.getAllCollections);
+app.get('/collections', MarketPlaceController.getAllCollections);
 app.delete('/collections', MarketPlaceController.deleteAllCollections);
 app.delete('/collections/deleteNft', MarketPlaceController.deleteNftFromCollection);
 app.get('/getCollection/:tokenId', MarketPlaceController.getNftCollection);
