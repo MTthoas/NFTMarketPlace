@@ -9,6 +9,8 @@ import Footer from './components/Outlet/Footer';
 
 import Home from './components/pages/home/Home'; // assurez-vous que Home est correctement importé
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { useState } from 'react';
 
@@ -16,6 +18,7 @@ const App = () => {
 
   return (
     <div>
+      <ToastContainer />
       <Router>
         <div className="body mb-24">
           <Header />

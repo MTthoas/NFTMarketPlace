@@ -1,6 +1,6 @@
 {
   "MyNFT": {
-    "address": "0x4EB297BDE794fA439483156e155f31111e6363d8",
+    "address": "0xe4afbb2F17403e87495079faBf5fc4051E3C2092",
     "abi": [
       {
         "type": "constructor",
@@ -229,6 +229,32 @@
       },
       {
         "type": "function",
+        "name": "burn",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "burnNFT",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
         "name": "createNFT",
         "constant": false,
         "payable": false,
@@ -265,6 +291,24 @@
           }
         ],
         "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "exists",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "bool"
+          }
+        ]
       },
       {
         "type": "function",
@@ -596,7 +640,7 @@
     ]
   },
   "NFTMarket": {
-    "address": "0x12DB950b04C2E4356867B5Ad68b04C3D66E6db19",
+    "address": "0xf727A101a73C6E155d28A291Dfef560533E91AE6",
     "abi": [
       {
         "type": "constructor",
@@ -607,6 +651,23 @@
             "name": "_nft"
           }
         ]
+      },
+      {
+        "type": "function",
+        "name": "acceptOffer",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          },
+          {
+            "type": "uint256",
+            "name": "offerIndex"
+          }
+        ],
+        "outputs": []
       },
       {
         "type": "function",
@@ -657,6 +718,19 @@
       },
       {
         "type": "function",
+        "name": "burn",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
         "name": "buy",
         "constant": false,
         "stateMutability": "payable",
@@ -665,10 +739,6 @@
           {
             "type": "uint256",
             "name": "tokenId"
-          },
-          {
-            "type": "uint256",
-            "name": "price"
           }
         ],
         "outputs": []
@@ -682,6 +752,23 @@
           {
             "type": "uint256",
             "name": "tokenId"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "endSales",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          },
+          {
+            "type": "address",
+            "name": "tokenOwner"
           }
         ],
         "outputs": []
@@ -799,6 +886,56 @@
       },
       {
         "type": "function",
+        "name": "getOfferCount",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getOffers",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "tuple[]",
+            "components": [
+              {
+                "type": "address",
+                "name": "buyer"
+              },
+              {
+                "type": "uint256",
+                "name": "amount"
+              },
+              {
+                "type": "uint256",
+                "name": "timestamp"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "function",
         "name": "getSalesByOwner",
         "constant": true,
         "stateMutability": "view",
@@ -818,6 +955,24 @@
       {
         "type": "function",
         "name": "isAuctionEnded",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "bool"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "isSalesEnded",
         "constant": true,
         "stateMutability": "view",
         "payable": false,
@@ -889,6 +1044,24 @@
       },
       {
         "type": "function",
+        "name": "makeOffer",
+        "constant": false,
+        "stateMutability": "payable",
+        "payable": true,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          },
+          {
+            "type": "uint256",
+            "name": "offerAmount"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
         "name": "nft",
         "constant": true,
         "stateMutability": "view",
@@ -897,6 +1070,35 @@
         "outputs": [
           {
             "type": "address"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "offers",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256"
+          },
+          {
+            "type": "uint256"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "address",
+            "name": "buyer"
+          },
+          {
+            "type": "uint256",
+            "name": "amount"
+          },
+          {
+            "type": "uint256",
+            "name": "timestamp"
           }
         ]
       },
@@ -916,6 +1118,19 @@
             "type": "uint256"
           }
         ]
+      },
+      {
+        "type": "function",
+        "name": "removeAuction",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": []
       },
       {
         "type": "function",

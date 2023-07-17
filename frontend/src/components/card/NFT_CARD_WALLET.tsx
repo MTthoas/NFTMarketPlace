@@ -1,6 +1,42 @@
 import React, { useState, useEffect } from "react";
 import { NFT } from "../interface/NFT";
 import { Link } from "react-router-dom";
+import { ethers } from "ethers";
+
+import Contracts from "../../contracts/contracts.json";
+
+const provider = new ethers.providers.Web3Provider((window as any).ethereum);
+const signer = provider.getSigner();
+
+let myNftMarket = new ethers.Contract(
+  Contracts.NFTMarket.address,
+  Contracts.NFTMarket.abi,
+  signer
+);
+let myNFT = new ethers.Contract(
+  Contracts.MyNFT.address,
+  Contracts.MyNFT.abi,
+  signer
+);
+
+
+function functionConvetMiliSecondsToTime(millisec : any){
+
+  var seconds = (millisec / 1000).toFixed(0);
+  var minutes = (millisec / (1000 * 60)).toFixed(0);
+  var hours = (millisec / (1000 * 60 * 60)).toFixed(0);
+  var days = (millisec / (1000 * 60 * 60 * 24)).toFixed(0);
+
+  if (parseInt(seconds) < 60) {
+      return seconds + " Sec";
+  } else if (parseInt(minutes) < 60) {
+      return minutes + " Min";
+  } else if (parseInt(hours) < 24) {
+      return hours + " Hrs";
+  } else {
+      return days + " Days"
+  }
+}
 
 const NFT_CARD_WALLET = ({
   tokenId,
@@ -12,7 +48,7 @@ const NFT_CARD_WALLET = ({
   loading,
   setShowModal,
   setValue,
-  unlistMethod
+  unlistMethod,
 }: {
   tokenId: number;
   owner: string;
@@ -27,6 +63,7 @@ const NFT_CARD_WALLET = ({
 }) => {
   const [dataLogs, setData] = useState(data);
   const [key, setKey] = useState(Date.now());
+  const [metaData, setMetaData] = useState<any>([]);
 
   const formatAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
@@ -40,9 +77,62 @@ const NFT_CARD_WALLET = ({
     }
   };
 
+  function getCurrentTimestampInSeconds() {
+    return Math.floor(Date.now() / 1000);
+  }
+
+  const getMetaDataOfNft = async () => {
+    const transactionSales = await myNftMarket.getAllData(tokenId);
+    console.table(transactionSales);
+
+    const getAttributes = await myNFT.getTokenAttributes(tokenId);
+    console.log("dqdsdqsdqsdqsdqsdq", getAttributes);
+
+    const isOnSale = await myNftMarket.isTokenOnSale(tokenId);
+    const isOnAuction = await myNftMarket.isTokenOnAuction(tokenId);
+
+    let type = "none";
+    let listEndTime = 0;
+    let remainingMilliseconds = 0;
+
+    if (isOnSale) {
+      type = "sale";
+      listEndTime = transactionSales.salesEndTime.toNumber();
+    } else if (isOnAuction) {
+      type = "auction";
+      listEndTime = transactionSales.auctionEndTime.toNumber();
+    }
+
+    const remainingSeconds = listEndTime - getCurrentTimestampInSeconds();
+
+    console.log(
+      remainingSeconds + " seconds remaining of the auction " + tokenId
+    );
+
+    if (remainingSeconds > 0) {
+      remainingMilliseconds = remainingSeconds * 1000;
+    }
+
+    console.log(
+      "Highest bid : " + ethers.utils.formatEther(transactionSales.highestBid)
+    );
+
+    let item = {
+      tokenId: tokenId,
+      highestBid: ethers.utils.formatEther(transactionSales.highestBid),
+      listEndTime: remainingMilliseconds,
+    };
+
+    setMetaData(item);
+  };
+
+  useEffect(() => {
+    getMetaDataOfNft();
+  }, [tokenId]);
+
   return (
     <>
-      <div className="h-auto max-h-[393px] w-[220px] border rounded-xl border-gray-400 overflow-hidden">
+      <div className="h-auto max-h-[393px] w-[210px] border rounded-xl border-gray-400 overflow-hidden">
         <Link to={`/nft/${tokenId}`}>
           <div key={key} className="flex flex-col p-1.5">
             <img
@@ -55,7 +145,7 @@ const NFT_CARD_WALLET = ({
             <div className="mt-3 mx-3 flex justify-between">
               <p className="font-semibold text-md">
                 {dataLogs.name
-                  ? LimitString(dataLogs.name, 15)
+                  ? LimitString(dataLogs.name, 12)
                   : "Chargement.."}
               </p>
               <p className="border border-gray-400 text-xs ml-2 my-auto py-1 px-2 rounded-lg">
@@ -79,7 +169,9 @@ const NFT_CARD_WALLET = ({
                     <p className="font-semibold text-sm text-slate-500">
                       Time left
                     </p>
-                    <p className="font-semibold text-sm pt-1">25 days</p>
+                    <p className="font-semibold text-sm pt-1">
+                      {functionConvetMiliSecondsToTime(metaData.listEndTime)}
+                    </p>
                   </>
                 )}
               </div>
@@ -97,7 +189,9 @@ const NFT_CARD_WALLET = ({
                     <p className="font-semibold text-xs text-slate-500">
                       Highest Bid
                     </p>
-                    <p className="font-semibold text-sm pt-2">6.19 wEth</p>
+                    <p className="font-semibold text-sm pt-2">
+                      {metaData.highestBid} wEth
+                    </p>
                   </>
                 )}
               </div>
@@ -142,7 +236,7 @@ const NFT_CARD_WALLET = ({
                 </div>
               </button>
             )
-          ) : data.currentlyListed == true ? (
+          ) : data.type == "sale" ? (
             loading == false ? (
               <button
                 onClick={() => unlistMethod(tokenId)}

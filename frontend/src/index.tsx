@@ -8,7 +8,7 @@ import { configureChains, createConfig, sepolia, WagmiConfig } from 'wagmi';
 import { mainnet, polygon, optimism, arbitrum, goerli, hardhat, polygonMumbai } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import App from './App';
-import { localhost } from 'viem/chains';
+import { localhost} from 'viem/chains';
 import detectEthereumProvider from '@metamask/detect-provider';
 
 const startApp = async () => {

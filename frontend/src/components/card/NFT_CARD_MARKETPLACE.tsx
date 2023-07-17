@@ -16,6 +16,40 @@ let myNftMarket = new ethers.Contract(Contracts.NFTMarket.address, Contracts.NFT
 let myNFT = new ethers.Contract(Contracts.MyNFT.address, Contracts.MyNFT.abi, signer);
 
 
+function functionConvetMiliSecondsToTime(millisec : any){
+
+    var seconds = (millisec / 1000).toFixed(0);
+    var minutes = (millisec / (1000 * 60)).toFixed(0);
+    var hours = (millisec / (1000 * 60 * 60)).toFixed(0);
+    var days = (millisec / (1000 * 60 * 60 * 24)).toFixed(0);
+
+    if (parseInt(seconds) < 60) {
+        return seconds + " Sec";
+    } else if (parseInt(minutes) < 60) {
+        return minutes + " Min";
+    } else if (parseInt(hours) < 24) {
+        return hours + " Hrs";
+    } else {
+        return days + " Days"
+    }
+}
+
+
+function formatDateTime(dateTimeString: any) {
+    const dateTime = new Date(dateTimeString);
+    const day = dateTime.getDate();
+    const month = dateTime.getMonth() + 1;
+    const year = dateTime.getFullYear();
+    const hours = dateTime.getHours();
+    const minutes = dateTime.getMinutes();
+  
+    const formattedDate = `${day}/${month}/${year}`;
+    const formattedTime = `${hours}:${minutes}`;
+  
+    return `${formattedDate} ${formattedTime}`;
+  }
+  
+
 const NFT_CARD_MARKETPLACE = ({tokenId, owner, price, image, type, data} : {tokenId: number, owner: string, price: string, image: string, type:any, data: NFT})  => {
 
     const [dataLogs, setData] = useState(data);
@@ -34,6 +68,10 @@ const NFT_CARD_MARKETPLACE = ({tokenId, owner, price, image, type, data} : {toke
             return str;
         }
     }
+
+    function getCurrentTimestampInSeconds() {
+        return Math.floor(Date.now() / 1000);
+      }
 
     const getMetaDataOfNft = async () => {
 
@@ -54,11 +92,18 @@ const NFT_CARD_MARKETPLACE = ({tokenId, owner, price, image, type, data} : {toke
             listEndTime = transactionSales.auctionEndTime.toNumber();
         }
 
+        const remainingSeconds = listEndTime - getCurrentTimestampInSeconds();
+
+        if (remainingSeconds > 0) {
+            remainingMilliseconds = remainingSeconds * 1000;
+        }
+
         console.log("Highest bid : " + ethers.utils.formatEther(transactionSales.highestBid))
 
         let item = {
             tokenId: tokenId,
             highestBid: ethers.utils.formatEther(transactionSales.highestBid),
+            listEndTime: remainingMilliseconds,
         }
         setMetaData(item);
     }
@@ -81,7 +126,7 @@ const NFT_CARD_MARKETPLACE = ({tokenId, owner, price, image, type, data} : {toke
                 <div className="mt-4">
                     <div className="mx-3 flex justify-between">
                         <p className="font-semibold text-md">
-                        {dataLogs.name ? LimitString(dataLogs.name, 15) : 'Chargement..'}
+                        {dataLogs.name ? LimitString(dataLogs.name, 12) : 'Chargement..'}
                         </p>
                         <p className="border border-gray-400 text-xs ml-2 my-auto py-1 px-2 rounded-lg">
                             #{tokenId}
@@ -98,7 +143,7 @@ const NFT_CARD_MARKETPLACE = ({tokenId, owner, price, image, type, data} : {toke
                                 <p className="font-semibold text-sm text-slate-500">
                                     Price
                                 </p>
-                                <p className="font-semibold text-xs pt-1">
+                                <p className="font-semibold text-sm pt-1">
                                     {price} ETH
                                 </p>
                             </>
@@ -108,7 +153,7 @@ const NFT_CARD_MARKETPLACE = ({tokenId, owner, price, image, type, data} : {toke
                                     Time left
                                 </p>
                                 <p className="font-semibold text-sm pt-1">
-                                    25 days
+                                    {functionConvetMiliSecondsToTime(metaData.listEndTime)}
                                 </p>
                             </>
                             }

@@ -11,9 +11,8 @@ import { ethers } from 'ethers';
 import fs from 'fs';
 require('dotenv').config();
 
-
 const app = express();
-const port = process.env.PORT;
+const port = 3030;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -25,6 +24,7 @@ const alchemyProviderUrl = process.env.SEPHOLIA_URL;
 const provider = new ethers.providers.JsonRpcProvider(alchemyProviderUrl);
 
 const contract = new ethers.Contract(data.NFTMarket.address, data.NFTMarket.abi, provider);
+const myNFT = new ethers.Contract(data.MyNFT.address, data.MyNFT.abi, provider);
 
 cron.schedule('* * * * *', async () => {
   console.log('Running a job every minute');
@@ -36,8 +36,6 @@ cron.schedule('* * * * *', async () => {
       if (await contract.isAuctionEnded(tokenId)) {
 
           console.log("auction management...")
-          // The auction has ended, so call the endAuction function
-          // You will need to replace 'YOUR_PRIVATE_KEY' with your actual private key
 
           const wallet = new ethers.Wallet(process.env.PRIVATE_KEY_ACCOUNT, provider);
           const contractWithSigner = contract.connect(wallet);
@@ -52,6 +50,35 @@ cron.schedule('* * * * *', async () => {
           } catch (error) {
             console.error("Failed to end auction for token ID: " + tokenId, error)
           }
+      }else{
+
+        if(await contract.isSalesEnded(tokenId)){
+
+          console.log("sales management...")
+
+          const wallet = new ethers.Wallet(process.env.PRIVATE_KEY_ACCOUNT, provider);
+          const contractWithSigner = contract.connect(wallet);
+          
+          try{
+
+            const transaction = await myNFT.getTokenData(tokenId);
+
+            const owner = transaction[4];
+
+            console.log(owner)
+
+            const tx = await contractWithSigner.endSales(tokenId, owner);
+            console.log("Waiting for transaction to be mined...");
+            const receipt = await tx.wait();
+            console.log("Transaction Mined:", receipt);
+
+          }catch (error) {
+
+            console.error("Failed to end sale for token ID: " + tokenId, error)
+            
+          }
+
+        }
       }
   }
 });
@@ -72,6 +99,11 @@ app.delete('/transactions/deleteAll', MarketPlaceController.deleteAllTransaction
 app.get('/user/:address', MarketPlaceController.getUserData);
 app.get('/users', MarketPlaceController.getAllUsers);
 
+app.post('/collection', MarketPlaceController.addNftToCollection);
+app.get('/collections', MarketPlaceController.getAllCollections);
+app.delete('/collections', MarketPlaceController.deleteAllCollections);
+app.delete('/collections/deleteNft', MarketPlaceController.deleteNftFromCollection);
+app.get('/getCollection/:tokenId', MarketPlaceController.getNftCollection);
 
 mongoose
   .connect(process.env.MONGODB_URI as string, {
@@ -85,6 +117,6 @@ mongoose
     console.error(error);
   });
 
-app.listen(port, () => {
-  console.log(`App listening at http://localhost:${port}`);
-});
+  app.listen(port, () => {
+    console.log(`App listening at http://54.37.68.74:${port}`);
+  });

@@ -95,26 +95,6 @@ export default function Bid({
                 />
             </div>
 
-            <div className="grid mb-4 mx-4">
-                <label className="mb-1 font-bold text-base">Bid expiration</label>
-                  <FormControl fullWidth size="small">
-                  <Select
-                    labelId="time-select-label"
-                    id="time-select"
-                    value={time}
-                    onChange={handleChange}
-                  >
-                    <MenuItem value={"30 minutes"}>30 minutes</MenuItem>
-                    <MenuItem value={"1 heure"}>1 heure</MenuItem>
-                    <MenuItem value={"2 heures"}>2 heures</MenuItem>
-                    <MenuItem value={"2 heures"}>6 heures</MenuItem>
-                    <MenuItem value={"1 jour"}>1 journée</MenuItem>
-                    {enableNone && <MenuItem value={"none"}>Aucune</MenuItem>}
-                    {/* Ajoutez ici d'autres options si nécessaire */}
-                  </Select>
-                </FormControl>
-            </div>
-
             <div className='flex justify-between mx-5 text-sm text-gray-500 mt-3'>
                 <p> Your balance </p>
                 <p className="text-black"> {Number((data?.formatted)).toFixed(5)} {data?.symbol} </p>

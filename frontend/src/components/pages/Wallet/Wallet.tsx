@@ -30,12 +30,11 @@ const sortOptions = [
 ];
 
 const subCategories = [
-  { name: "Totes", href: "#" },
-  { name: "Backpacks", href: "#" },
-  { name: "Travel Bags", href: "#" },
-  { name: "Hip Bags", href: "#" },
-  { name: "Laptop Sleeves", href: "#" },
+  { name: "Popular", href: "#" },
+  { name: "New", href: "#" },
+  { name: "Price", href: "#" },
 ];
+
 
 const filters = [
   {
@@ -60,19 +59,7 @@ const filters = [
       { value: "organization", label: "Organization", checked: false },
       { value: "accessories", label: "Accessories", checked: false },
     ],
-  },
-  {
-    id: "size",
-    name: "Size",
-    options: [
-      { value: "2l", label: "2L", checked: false },
-      { value: "6l", label: "6L", checked: false },
-      { value: "12l", label: "12L", checked: false },
-      { value: "18l", label: "18L", checked: false },
-      { value: "20l", label: "20L", checked: false },
-      { value: "40l", label: "40L", checked: true },
-    ],
-  },
+  }
 ];
 function convertDurationToSeconds(durationText : any) {
     let durationInSeconds;
@@ -101,6 +88,25 @@ function convertDurationToSeconds(durationText : any) {
         case "1 jour":
             durationInSeconds = 24 * 60 * 60;
             break;
+        case "2 jours":
+            durationInSeconds = 2 * 24 * 60 * 60;
+            break;
+        case "3 jours":
+            durationInSeconds = 3 * 24 * 60 * 60;
+            break;
+        case "4 jours":
+            durationInSeconds = 4 * 24 * 60 * 60;
+            break;
+        case "5 jours":
+            durationInSeconds = 5 * 24 * 60 * 60;
+            break;
+        case "6 jours":
+            durationInSeconds = 6 * 24 * 60 * 60;
+            break;
+        case "1 semaine":
+            durationInSeconds = 7 * 24 * 60 * 60;
+            break;
+
         default:
             durationInSeconds = 0; // Si aucune option n'est sélectionnée ou pour une entrée non valide
             break;
@@ -118,6 +124,7 @@ function Wallet() {
   const [showModal, setShowModal] = useState(false);
   const [value, setValue] = useState<NFT>();
   const [dataLogs, setData] = useState(data);
+  const [balance, setBalance] = useState("");
 
   const [loading, setLoading] = useState<Record<string, boolean>>({});
 
@@ -142,6 +149,12 @@ function Wallet() {
         method: "eth_requestAccounts",
       });
       const account = accounts[0];
+      setAdress(account);
+      
+      // Récupérer la balance du compte utilisateur
+      let balance = await provider.getBalance(account);
+      setBalance(ethers.utils.formatEther(balance));
+      
 
       // GetAllMyNfts with the user adress in parameter
 
@@ -153,9 +166,20 @@ function Wallet() {
 
       const items = await Promise.all(
         transaction.map(async (tokenId: BigNumber) => {
+
+          let tokenExists = await myNftMarket.exists(tokenId.toNumber());
+          
+          if (tokenExists) {
+              // Faites quelque chose avec le token
+          } else {
+              console.log("Le token avec l'ID " + tokenId.toNumber() + " n'existe pas.");
+          }
+
           console.log(tokenId.toNumber());
           const data = await myNftMarket.getTokenData(tokenId.toNumber());
-          const price = ethers.utils.formatEther(data[3]);
+
+          const getAllData = await NFTContract.getAllData(tokenId.toNumber());
+          const price = ethers.utils.formatEther(getAllData.price);
 
           const isOnSale = await NFTContract.isTokenOnSale(tokenId);
           const isOnAuction = await NFTContract.isTokenOnAuction(tokenId);
@@ -254,26 +278,52 @@ function Wallet() {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
 
-      const contract = new ethers.Contract(
-        MarketPlaceJSON.address,
-        MarketPlaceJSON.abi,
+      let NFTContract = new ethers.Contract(
+        Contracts.NFTMarket.address,
+        Contracts.NFTMarket.abi,
+        signer
+      );
+      let myNftMarket = new ethers.Contract(
+        Contracts.MyNFT.address,
+        Contracts.MyNFT.abi,
         signer
       );
 
-      const transaction = await contract.unlistTokenForSale(tokenId);
+      const isOnSale = await NFTContract.isTokenOnSale(tokenId);
+      const isOnAuction = await NFTContract.isTokenOnAuction(tokenId);
 
-      const receipt = await transaction.wait();
+      let type = "none";
 
-      if (receipt.status === 0) {
-        throw new Error("Transaction failed");
-        localStorage.setItem(`loading-${tokenId}`, "false"); // save loading state to local storage
+      if (isOnSale) {
+        type = "sale";
+
+        const transaction = await NFTContract.removeSale(tokenId);
+
+        const receipt = await transaction.wait();
+
+        if (receipt.status === 0) {
+          localStorage.setItem(`loading-${tokenId}`, "false"); // save loading state to local storage
+          throw new Error("Transaction failed");
+        }
+
+        console.log("Transaction Done");
+
+      } else if (isOnAuction) {
+        type = "auction";
+
+        const transaction = await NFTContract.removeAuction(tokenId);
+
+        const receipt = await transaction.wait();
+
+        if (receipt.status === 0) {
+          localStorage.setItem(`loading-${tokenId}`, "false"); // save loading state to local storage
+          throw new Error("Transaction failed");
+        }
+
+        console.log("Transaction Done");
+
       }
 
-      console.log("Transaction Done");
-
-      setData({
-        ...data,
-      });
     } catch (error) {
       console.error("Transaction was rejected: ", error);
 
@@ -426,10 +476,12 @@ function Wallet() {
       </Transition.Root>
 
       <main className="container mx-auto pl-12 pr-14">
-        <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-            My Wallet
-          </h1>
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900 mt-12 mb-3"> My Wallet </h1>
+          <p className="text-medium"> Adress : {adress} </p> 
+          <p className="text-medium"> Balance : {balance.slice(0, 10)} </p>
+
+
+        <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-12">
 
           <div className="flex items-center">
             <Menu as="div" className="relative inline-block text-left">

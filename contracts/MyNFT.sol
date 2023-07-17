@@ -1,10 +1,13 @@
+
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol"; // Ajoutez cette ligne
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract MyNFT is ERC721, Ownable {
+contract MyNFT is ERC721, ERC721Burnable, Ownable {
     uint256 public tokenCounter;
+    
 
     struct Attribute {
         string trait_type;
@@ -34,17 +37,19 @@ contract MyNFT is ERC721, Ownable {
             allAttributes[tokenCounter].push(attributes[i]);
         }
         _mint(msg.sender, tokenCounter);
-        emit NFTCreated(tokenCounter, name, description, image, price, attributes);
         tokenCounter++;
+        emit NFTCreated(tokenCounter, name, description, image, price, attributes);
+
     }
 
     function getTokenData(uint256 tokenId) public view returns (string memory, string memory, string memory, uint256, address) {
-        require(tokenId < tokenCounter, "Token ID does not exist");  // Add this line
-        
+        require(tokenId < tokenCounter, "Token ID does not exist");
+
         address ownerAddress = getOwnerAddress(tokenId);
 
-        return (allNFTs[tokenId].name, allNFTs[tokenId].description, allNFTs[tokenId].image, allNFTs[tokenId].price, ownerAddress);
+        return (allNFTs[tokenId].name, allNFTs[tokenId].description, allNFTs[tokenId].image, allNFTs[tokenId].price, ownerAddress); // Remplacer 0 par allNFTs[tokenId].price
     }
+
 
     function getTokenAttributes(uint256 tokenId) public view returns (Attribute[] memory) {
         require(tokenId < tokenCounter, "Token ID does not exist");  // And this line
@@ -54,6 +59,24 @@ contract MyNFT is ERC721, Ownable {
     function getOwnerAddress(uint256 tokenId) public view returns (address) {
         require(tokenId < tokenCounter, "Token ID does not exist");  // And this line
         return ownerOf(tokenId);
+    }
+
+    function exists(uint256 tokenId) public view returns (bool) {
+        return _exists(tokenId);
+    }
+
+
+    function burnNFT(uint256 tokenId) public {
+        // Checks if the message sender is the owner of the token
+        require(_isApprovedOrOwner(_msgSender(), tokenId), "MyNFT: caller is not owner nor approved");
+
+        // Also destroy the token's data and attributes
+        delete allNFTs[tokenId];
+        delete allAttributes[tokenId];
+
+        // Destroy the token
+        _burn(tokenId);
+
     }
 
 }

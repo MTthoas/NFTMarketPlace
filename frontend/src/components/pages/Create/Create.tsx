@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAccount } from "wagmi";
 import { ethers } from "ethers";
 
@@ -24,9 +24,37 @@ function Create() {
   const [tokenName, setTokenName] = useState<string>("");
   const [tokenDescription, setTokenDescription] = useState<string>("");
   const [tokenPrice, setTokenPrice] = useState<string>("");
+  const [network, setNetwork] = useState<string>("");
+
+  const [collection, setCollection] = useState<string>("");
+
+  const [collections, setCollections] = useState<string[]>([]);
+
+  useEffect(() => {
+    const getCollections = async () => {
+      try {
+        const response = await axios.get("http://54.37.68.74:3030/collections");
+        console.log(response.data);
+        setCollections(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    getCollections();
+  }, []);
 
   const JWT =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJjN2U5ZjAyYy04MzAzLTRjOGYtOWIwZC0xMzQ1YWI5MDlmMjIiLCJlbWFpbCI6Im1hbHRoYXphcjIyN0BnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJpZCI6IkZSQTEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX0seyJpZCI6Ik5ZQzEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX1dLCJ2ZXJzaW9uIjoxfSwibWZhX2VuYWJsZWQiOmZhbHNlLCJzdGF0dXMiOiJBQ1RJVkUifSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiZGM0MTUyYzk5YThhYTI0ZmEzMjIiLCJzY29wZWRLZXlTZWNyZXQiOiJhZmZlYzRiZDQ2ZGE1NjUzZWMyMWE3ZGU4Nzc0OGZlNThlNzVmYTI4MWI0YjczZjBmYzVjMzcxYjIxYmEzOGFjIiwiaWF0IjoxNjg2MjYwNTI2fQ.GwwGHhM8E6ZN_YnMtJIqIB8KVArhxFmc-0Uq5h5it88";
+
+  useEffect(() => {
+    const getNetwork = async () => {
+      const network = await provider.getNetwork();
+      setNetwork(network.name);
+    };
+
+    getNetwork();
+  }, []);
 
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -62,7 +90,7 @@ function Create() {
       return;
     }
 
-    if (!tokenName || !tokenPrice) {
+    if (!tokenName) {
       setLoading(false);
       setErrorMessage("Please fill in all the requested fields.");
       return;
@@ -90,14 +118,11 @@ function Create() {
           {
             trait_type: "Breed",
             value: "Maltipoo",
-          },
-          {
-            trait_type: "Eye color",
-            value: "Mocha",
+            collection: collection,
           },
         ];
 
-        const priceInWei = ethers.utils.parseEther(tokenPrice);
+        const priceInWei = ethers.utils.parseEther("0");
 
         const transaction = await contract.createNFT(
           tokenName,
@@ -108,7 +133,22 @@ function Create() {
         );
         await transaction.wait();
 
-        setSuccessMessage("NFT created successfully");
+        const tokenId = (await contract.tokenCounter()) - 1;
+
+        const bodyRequest = {
+          tokenId: tokenId,
+          collectionName: collection,
+        };
+
+        const response = await axios.post(
+          "http://54.37.68.74:3030/collection",
+          bodyRequest
+        );
+        console.log(response);
+
+        console.log(`Newly created NFT ID: ${tokenId}`);
+
+        setSuccessMessage(`NFT created successfully with ID: ${tokenId}`);
       }
     } catch (error: any) {
       setErrorMessage("An error occurred while creating the NFT.");
@@ -140,9 +180,9 @@ function Create() {
           </div>
 
           {/* Form */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 ">
             {/* Left */}
-            <div className="col-span-1 md:col-span-2 flex flex-col justify-center">
+            <div className="col-span-1 md:col-span-2 flex flex-col justify-center ">
               {/* Address */}
               <div className="mb-8 flex flex-row place-items-center border border-gray-400 p-4 rounded-xl border-solid">
                 <div>
@@ -166,13 +206,13 @@ function Create() {
                     </div>
                   </div>
                   <div>
-                    <p className="text-sm font-medium">Ethereum</p>
+                    <p className="text-sm font-medium">{network}</p>
                   </div>
                 </div>
               </div>
 
               {/* Upload file */}
-              <div className="mb-8">
+              <div className="mb-8 hover:cursor-pointer">
                 <p className="mb-2 font-bold text-lg">Upload file</p>
                 <div className="place-items-center grid border border-gray-400 px-16 py-10 rounded-xl border-dashed relative">
                   {preview ? (
@@ -223,12 +263,12 @@ function Create() {
                         type="file"
                         accept="image/*"
                         onChange={onFileChange}
-                        className="block w-full text-sm text-slate-500
-                  file:mr-4 file:py-2 file:px-4
-                  file:rounded-full file:border-0
-                  file:text-sm file:font-semibold
-                  file:bg-black-50 file:text-black-700
-                  hover:file:bg-black-100"
+                        className="block w-full text-sm hover:cursor-pointer  text-slate-500
+                          file:mr-4 file:py-2 file:px-4
+                          file:rounded-full file:border-0
+                          file:text-sm file:font-semibold
+                          file:bg-black-50 file:text-black-700
+                          hover:file:bg-black-100"
                       />
                     </div>
                   )}
@@ -247,17 +287,30 @@ function Create() {
                     className="border-2 hover:border-gray-400 border-transparent px-4 py-2 rounded-xl transition-colors"
                   />
                 </div>
-                <div className="grid mb-4">
-                  <label className="mb-1 font-bold text-base">Price</label>
-                  <input
-                    type="number"
-                    step="0.000001"
-                    value={tokenPrice}
-                    onChange={(e) => setTokenPrice(e.target.value)}
-                    placeholder="Price in ETH"
-                    className="border-2 hover:border-gray-400 border-transparent px-4 py-2 rounded-xl transition-colors"
-                  />
+
+                <div className="grid mb-2">
+                  <div className="mb-4">
+                    <label
+                      htmlFor="collection"
+                      className="font-bold mb-1 block"
+                    >
+                      Collection
+                    </label>
+                    <input
+                      list="collections"
+                      name="collection"
+                      id="collection"
+                      onChange={(e) => setCollection(e.target.value)}
+                      className="border rounded-xl border-transparent rounded p-2 w-full"
+                    />
+                    <datalist id="collections">
+                      {collections.map((collectionGet: any, index) => (
+                        <option key={index} value={collectionGet.name} />
+                      ))}
+                    </datalist>
+                  </div>
                 </div>
+
                 <div className="grid mb-4">
                   <label className="mb-1 font-bold text-base">
                     Description{" "}
@@ -274,14 +327,14 @@ function Create() {
                 <button
                   onClick={() => !loading && createNewNFT()}
                   disabled={loading !== false}
-                  className={`mt-6 bg-black text-white font-semibold py-3 px-12 rounded-xl ${
+                  className={`mt-6 bg-black text-white w-full font-semibold py-3 px-12 rounded-xl ${
                     loading
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-gray-900"
+                      ? "opacity-50 cursor-not-allowed w-full"
+                      : "hover:bg-gray-900 w-full"
                   }`}
                 >
                   {loading && !errorMessage && !successMessage ? (
-                    <div role="status">
+                    <div role="status ">
                       <svg
                         aria-hidden="true"
                         className="w-5 h-5 mx-auto flex justify-start text-gray-200 animate-spin dark:text-gray-600 fill-white"
@@ -343,9 +396,7 @@ function Create() {
                               <p className="font-semibold text-sm text-slate-500">
                                 Price
                               </p>
-                              <p className="font-semibold">
-                                {tokenPrice || "Not for sell"}
-                              </p>
+                              <p className="font-semibold">{"0.00 ETH"}</p>
                             </div>
                             <div className="col-span-1 w-full">
                               <p className="font-semibold text-sm text-slate-500">
