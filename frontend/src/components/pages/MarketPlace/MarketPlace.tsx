@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import MarketPlaceJSON from "../../../contracts/marketplace.json";
 import axios from "axios";
+import { useAccount } from "wagmi";
 
 import Contracts from "../../../contracts/contracts.json";
 
@@ -64,6 +65,7 @@ const filters = [
 ];
 
 export default function MarketPlace() {
+
   const [data, updateData] = useState<NFT[]>([]);
 
   const [NFT_Auction_data, update_NFT_Auction_data] = useState<NFT_Auction[]>(
@@ -72,38 +74,35 @@ export default function MarketPlace() {
   const [NFT_Sales_data, update_NFT_Sales_data] = useState<NFT_Sales[]>([]);
 
   const [filtersVisible, setFiltersVisible] = useState(true);
-  const [adress, setAdress] = useState("");
 
-  const toggleFilters = () => {
-    setFiltersVisible(!filtersVisible);
-  };
+  const { address } = useAccount();
 
-  const setInfos = async () => {
-    const accounts = await window.ethereum.request({
-      method: "eth_requestAccounts",
-    });
-    setAdress(accounts[0]);
-  };
+  let provider : any;
+  if (address) {
+    provider = new ethers.providers.Web3Provider(window.ethereum).getSigner();
+  } else {
+    provider = new ethers.providers.JsonRpcProvider("https://eth-sepolia.g.alchemy.com/v2/dDrOp8IBds7sg91k_C73L1PXYEud9_5p");
+  }
 
+  let myNftMarket = new ethers.Contract(
+    Contracts.NFTMarket.address,
+    Contracts.NFTMarket.abi,
+    provider
+  );
+  
+  let myNFT = new ethers.Contract(
+    Contracts.MyNFT.address,
+    Contracts.MyNFT.abi,
+    provider
+  );
+  
   function getCurrentTimestampInSeconds() {
     return Math.floor(Date.now() / 1000);
   }
 
   async function getAllNFTs() {
+    
     try {
-      console.log("getAllNFTs");
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-
-      let myNftMarket = new ethers.Contract(
-        Contracts.NFTMarket.address,
-        Contracts.NFTMarket.abi,
-        provider
-      );
-      let myNFT = new ethers.Contract(
-        Contracts.MyNFT.address,
-        Contracts.MyNFT.abi,
-        provider
-      );
 
       // let transactionAuction = await auctionContract.getAllAuctions();
       let transactionSales = await myNftMarket.getAllSales();
@@ -153,6 +152,7 @@ export default function MarketPlace() {
             owner: data[4],
             type: type.toString(),
             listEndTime: remainingMilliseconds,
+            highestBid: ethers.utils.formatEther(getAllData.highestBid),
           };
 
           return item;
@@ -171,37 +171,12 @@ export default function MarketPlace() {
 
   useEffect(() => {
     getAllNFTs();
-    setInfos();
   }, []);
 
   function classNames(...classes: any) {
     return classes.filter(Boolean).join(" ");
   }
 
-  const purchaseNFT = async (nft: NFT) => {
-    try {
-      console.log(`NFT Infos: `, nft);
-
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(
-        MarketPlaceJSON.address,
-        MarketPlaceJSON.abi,
-        signer
-      );
-
-      const priceWei = ethers.utils.parseEther(nft.price.toString());
-      const transaction = await contract.executeSale(nft.tokenId, {
-        value: priceWei,
-      });
-
-      await transaction.wait(); // Attendez que la transaction soit minée
-
-      console.log("NFT acheté avec succès !");
-    } catch (error) {
-      console.log("Erreur lors de l'achat du NFT: ", error);
-    }
-  };
 
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 

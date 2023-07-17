@@ -12,6 +12,7 @@ export interface NFT {
     uri?: any;
     image: string;
     price?: any;
+    highestBid?: any;
     method?: string;
     type: string;
     listEndTime?: any;

@@ -8,13 +8,7 @@ import { NFT } from '../interface/NFT';
 
 import Contracts from '../../contracts/contracts.json';
 import { set } from 'date-fns';
-
-const provider = new ethers.providers.Web3Provider((window as any).ethereum);
-const signer = provider.getSigner();
-
-let myNftMarket = new ethers.Contract(Contracts.NFTMarket.address, Contracts.NFTMarket.abi, signer);
-let myNFT = new ethers.Contract(Contracts.MyNFT.address, Contracts.MyNFT.abi, signer);
-
+import { useAccount } from "wagmi";
 
 function functionConvetMiliSecondsToTime(millisec : any){
 
@@ -73,44 +67,7 @@ const NFT_CARD_MARKETPLACE = ({tokenId, owner, price, image, type, data} : {toke
         return Math.floor(Date.now() / 1000);
       }
 
-    const getMetaDataOfNft = async () => {
 
-        const transactionSales = await myNftMarket.getAllData(tokenId);
-        
-        const isOnSale = await myNftMarket.isTokenOnSale(tokenId);
-        const isOnAuction = await myNftMarket.isTokenOnAuction(tokenId);
-
-        let type = "none";
-        let listEndTime = 0;
-        let remainingMilliseconds = 0;
-
-        if(isOnSale) {
-            type = "sale";
-            listEndTime = transactionSales.salesEndTime.toNumber();
-        } else if(isOnAuction) {
-            type = "auction";
-            listEndTime = transactionSales.auctionEndTime.toNumber();
-        }
-
-        const remainingSeconds = listEndTime - getCurrentTimestampInSeconds();
-
-        if (remainingSeconds > 0) {
-            remainingMilliseconds = remainingSeconds * 1000;
-        }
-
-        console.log("Highest bid : " + ethers.utils.formatEther(transactionSales.highestBid))
-
-        let item = {
-            tokenId: tokenId,
-            highestBid: ethers.utils.formatEther(transactionSales.highestBid),
-            listEndTime: remainingMilliseconds,
-        }
-        setMetaData(item);
-    }
-
-    useEffect(() => {
-        getMetaDataOfNft();
-    }, [])
 
 
     return (
@@ -153,7 +110,7 @@ const NFT_CARD_MARKETPLACE = ({tokenId, owner, price, image, type, data} : {toke
                                     Time left
                                 </p>
                                 <p className="font-semibold text-sm pt-1">
-                                    {functionConvetMiliSecondsToTime(metaData.listEndTime)}
+                                    {functionConvetMiliSecondsToTime(data.listEndTime)}
                                 </p>
                             </>
                             }
@@ -176,7 +133,7 @@ const NFT_CARD_MARKETPLACE = ({tokenId, owner, price, image, type, data} : {toke
                                     Minimum Bid
                                 </p>
                                 <p className="font-semibold text-sm pt-2">
-                                 { metaData.highestBid } wEth
+                                 { data.highestBid } wEth
                                 </p>
                             </>
                             }

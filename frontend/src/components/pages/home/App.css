@@ -1,6 +1,6 @@
 .wave-container {
     position: relative;
-    height: 80vh; /* adjust this to control the wave's height */
+    height: 75vh; /* adjust this to control the wave's height */
     overflow: hidden;
 }
 
@@ -17,7 +17,7 @@
   transform-origin: 50% 50%;
   background-color: transparent;
   border-radius: 38% 42%;
-  box-shadow: inset 0 0 10vw rgba(255,0,255,0.8);
+  box-shadow: inset 0 0 10vw rgba(214, 212, 214, 0.8);
   animation: spin 22s infinite linear;
   mix-blend-mode: multiply;
   z-index: 9999; 
@@ -29,7 +29,7 @@
   margin-top: -125vw;
   transform-origin: 49% 51%;
   border-radius: 40% 38%;
-  box-shadow: inset 0 0 10vw rgba(255,255,0,0.8);
+  box-shadow: inset 0 0 10vw rgba(238, 232, 232, 0.8);
   animation: spin 27s infinite linear;
 }
 
@@ -39,7 +39,7 @@
   margin-top: -125vw;
   transform-origin: 51% 49%;
   border-radius: 48% 42%;
-  box-shadow: inset 0 0 10vw rgba(0,255,255,0.8);
+  box-shadow: inset 0 0 10vw rgba(230, 224, 224, 0.8);
   animation: spin 25s infinite linear;
 }
 

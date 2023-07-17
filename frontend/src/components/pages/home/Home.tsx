@@ -12,11 +12,13 @@ import NFT_CARD_MARKETPLACE from "../../card/NFT_CARD_MARKETPLACE";
 import NftTopCollection from "./card/nftTopCollection";
 import { ethers } from "ethers";
 import { Link } from "react-router-dom";
-
+import { useAccount } from "wagmi";
 
 function Home() {
   const [data, updateData] = useState<NFT[]>([]);
   const [collection, updateCollection] = useState<any>([]);
+  
+  const { address } = useAccount();
   
 
   function getCurrentTimestampInSeconds() {
@@ -48,18 +50,26 @@ function Home() {
   async function getAllNFTs() {
     try {
       console.log("getAllNFTs");
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+
+      let provider;
+      if (address) {
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+      } else {
+        provider = new ethers.providers.JsonRpcProvider("https://eth-sepolia.g.alchemy.com/v2/dDrOp8IBds7sg91k_C73L1PXYEud9_5p");
+      }
 
       let myNftMarket = new ethers.Contract(
         Contracts.NFTMarket.address,
         Contracts.NFTMarket.abi,
         provider
       );
+      
       let myNFT = new ethers.Contract(
         Contracts.MyNFT.address,
         Contracts.MyNFT.abi,
         provider
       );
+      
 
       // let transactionAuction = await auctionContract.getAllAuctions();
       let transactionSales = await myNftMarket.getAllSales();
@@ -103,6 +113,7 @@ function Home() {
             owner: data[4],
             type: type.toString(),
             listEndTime: remainingMilliseconds,
+            highestBid: ethers.utils.formatEther(getAllData.highestBid),
           };
 
           return item;
@@ -129,8 +140,8 @@ function Home() {
   }, []);
 
   return (
-    <main className="w-full hold" >
-      <div className="relative isolate px-6 pt-14 lg:px-8 wave-container ">
+    <main className="w-full hold " >
+      <div className="relative isolate px-6 pt-14 lg:px-8 wave-container  mb-6 ">
         <div
           className="absolute inset-x-0 -top-40 -z-10 transform-gpu  blur-3xl sm:-top-80"
           aria-hidden="true"
@@ -153,24 +164,16 @@ function Home() {
               </a>
             </div>
           </div>
-          <div className="text-center">
+          <div className="text-center pt-5">
             <h1 className="text-4xl font-bold tracking-tight text-neutral sm:text-6xl">
               Discover, collect and sell extraordinary NFTs
             </h1>
             <p className="mt-6 text-lg leading-8 text-info">
-              Digital marketplace for Non-Fungible Tokens (NFTs). Buy, sell, and
+              Digital marketplace for Non-Fungible Tokens (NFTs). Buy, sell, create and
               discover exclusive digital assets.
             </p>
-            <div className="mt-10 flex items-center justify-center gap-x-6">
-              <button className="bg-transparent  hover:bg-secondary text-neutral font-semibold hover:text-white py-2 px-4 border border-neutral hover:border-transparent rounded-full">
-                View collection
-              </button>
-              <a
-                href="#"
-                className="text-sm font-semibold leading-6 text-neutral"
-              >
-                About us <span aria-hidden="true">→</span>
-              </a>
+            <div className="mt-10 flex items-center justify-center gap-x-6 hover:cursor-pointer">
+           
             </div>
           </div>
         </div>
@@ -198,7 +201,7 @@ function Home() {
               Explore New NFTs
             </h2>
             <Link to ="/marketplace">
-                <button className=" font-semibold text-black py-1 px-3 border border-neutral rounded-full">
+                <button className=" font-semibold text-black py-1 px-3 border border-neutral rounded-md">
                   View all
                 </button>
             </Link>
@@ -211,7 +214,6 @@ function Home() {
                 <NFT_CARD_MARKETPLACE
                   key={index}
                   tokenId={value.tokenId}
-                  // seller={value.seller}
                   owner={value.owner}
                   price={value.price}
                   image={value.image}
@@ -239,7 +241,7 @@ function Home() {
           <span className="orange-bar rounded mr-2 mt-1"></span>
           <div className="flex justify-between w-full">
             <h2 className="text-2xl font-bold text-neutral">Top Collections</h2>
-            <button className="bg-base-100 font-semibold text-neutral py-1 px-3 border border-neutral rounded-full">
+            <button className="bg-base-100 font-semibold text-neutral py-1 px-3 border border-neutral rounded-lg">
               View all
             </button>
           </div>
