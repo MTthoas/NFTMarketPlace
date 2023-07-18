@@ -12,7 +12,7 @@ function Success(props : SuccessProps) {
   return (
     <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none modal-container">        
             {/*content*/}
-                <div className="body border-0 rounded-lg h-1/3 w-1/3 shadow-lg relative flex flex-col bg-white outline-none focus:outline-none App flex flex-col items-center justify-center ">                  
+                <div className="body border-0 rounded-lg h-1/3 w-1/3 md:w-1/2 shadow-lg relative flex flex-col bg-white outline-none focus:outline-none App flex flex-col items-center justify-center ">                  
                         <h3 className="text-2xl font-semibold mt-5">Transaction validée</h3>
                         <p className="text-sm text-gray-600">Transaction Hash : {props.transactionHash}</p>
                         <div className="success-animation pt-2 pb-5 ">

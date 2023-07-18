@@ -424,8 +424,8 @@ function Create() {
           </div>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center">
-          <p className="text-2xl font-semibold text-red-600">
+        <div className="flex flex-col items-center justify-center"  style={{height: "400px"}}>
+          <p className="text-2xl font-semibold text-neutral my-auto">
             Please connect your wallet to create a new NFT.
           </p>
         </div>

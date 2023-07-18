@@ -174,8 +174,9 @@ const ListToken = (props: ListTokenProps) => {
                   <MenuItem value={"1 heure"}>1 heure</MenuItem>
                   <MenuItem value={"2 heures"}>2 heures</MenuItem>
                   <MenuItem value={"6 heures"}>6 heures</MenuItem>
-                  <MenuItem value={"1 jours"}>1 journée</MenuItem>
+                  <MenuItem value={"1 jour"}>1 journée</MenuItem>
                   <MenuItem value={"3 jours"}>3 journées</MenuItem>
+                  <MenuItem value={"2 jours"}>2 journées</MenuItem>
                   <MenuItem value={"4 jours"}>4 journées</MenuItem>
                   <MenuItem value={"5 jours"}>5 journées</MenuItem>
                   <MenuItem value={"6 jours"}>6 journées</MenuItem>

@@ -21,6 +21,30 @@ static createUser = async (req: Request, res: Response) => {
   }
 };
 
+static getAllNftsFromCollection = async (req: Request, res: Response) => {
+
+  try {
+
+    const collectionName: string = req.params.name;
+
+    // Find the collection
+
+    let collection = await CollectionModel.findOne({ name: collectionName });
+
+    if (!collection) {
+      // If collection does not exist, send an error response
+      return res.status(404).send('Collection not found.');
+    }
+
+    res.json(collection);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error getting collection.');
+  }
+};
+
+
 static getAllCollections = async (req: Request, res: Response) => {
   try {
     let collections = await CollectionModel.find({});

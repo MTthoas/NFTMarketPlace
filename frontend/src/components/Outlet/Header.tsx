@@ -87,7 +87,7 @@ class Header extends Component<{}, HeaderState> {
                 </svg>
               </label>
             </div>
-            <a className="text-3xl font-bold ml-3 mt-1">
+            <a className="text-3xl font-bold ml-3 mt-1 hover:cursor-pointer" href="/">
               <span className=" mt-2 bg-clip-text font-extrabold  text-transparent bg-gradient-to-r from-neutral via-neutral to-base-100 md:inline-block">
                 {" "}
                 ARTX{" "}

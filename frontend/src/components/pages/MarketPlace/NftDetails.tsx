@@ -17,8 +17,9 @@ import Countdown from "react-countdown";
 import SalesComponant from "./SalesComponant";
 import AuctionComponant from "./AuctionComponant";
 
-import { useAccount } from "wagmi";
-import { add } from "date-fns";
+import NFT_CARD_MARKETPLACE from "../../card/NFT_CARD_MARKETPLACE";
+
+import { add, set } from "date-fns";
 
 import Bid from "../../modal/Bid";
 import BuyNow_Modal from "../../modal/BuyNow_Modal";
@@ -28,41 +29,62 @@ import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 import ListToken from "../Create/ListToken";
+import { useAccount } from "wagmi";
 
 import { timeStamp } from "console";
 
 import "./stylesheets/Nft.css";
+import { get } from "http";
 
-function convertDurationToSeconds(durationText: any) {
+function convertDurationToSeconds(durationText : any) {
   let durationInSeconds;
   switch (durationText) {
-    case "1 minutes":
-      durationInSeconds = 60;
+      case "1 minutes":
+          durationInSeconds = (60);
       break;
-    case "5 minutes":
-      durationInSeconds = 5 * 60;
+      case "5 minutes":
+          durationInSeconds = (5 * 60);
       break;
-    case "15 minutes":
-      durationInSeconds = (30 * 60) / 2;
+      case "15 minutes":
+          durationInSeconds = (30 * 60)/2;
       break;
-    case "30 minutes":
-      durationInSeconds = 30 * 60;
-      break;
-    case "1 heure":
-      durationInSeconds = 1 * 60 * 60;
-      break;
-    case "2 heures":
-      durationInSeconds = 2 * 60 * 60;
-      break;
-    case "6 heures":
-      durationInSeconds = 6 * 60 * 60;
-      break;
-    case "1 jour":
-      durationInSeconds = 24 * 60 * 60;
-      break;
-    default:
-      durationInSeconds = 0; // Si aucune option n'est sélectionnée ou pour une entrée non valide
-      break;
+      case "30 minutes":
+          durationInSeconds = 30 * 60;
+          break;
+      case "1 heure":
+          durationInSeconds = 1 * 60 * 60;
+          break;
+      case "2 heures":
+          durationInSeconds = 2 * 60 * 60;
+          break;
+      case "6 heures":
+          durationInSeconds = 6 * 60 * 60;
+          break;
+      case "1 jour":
+          durationInSeconds = 24 * 60 * 60;
+          break;
+      case "2 jours":
+          durationInSeconds = 2 * 24 * 60 * 60;
+          break;
+      case "3 jours":
+          durationInSeconds = 3 * 24 * 60 * 60;
+          break;
+      case "4 jours":
+          durationInSeconds = 4 * 24 * 60 * 60;
+          break;
+      case "5 jours":
+          durationInSeconds = 5 * 24 * 60 * 60;
+          break;
+      case "6 jours":
+          durationInSeconds = 6 * 24 * 60 * 60;
+          break;
+      case "1 semaine":
+          durationInSeconds = 7 * 24 * 60 * 60;
+          break;
+
+      default:
+          durationInSeconds = 0; // Si aucune option n'est sélectionnée ou pour une entrée non valide
+          break;
   }
   return durationInSeconds;
 }
@@ -116,6 +138,7 @@ function NFTDetails() {
   const [loadingListing, setLoadingListing] = useState(false);
   const [loadingUnlisting, setLoadingUnlisting] = useState(false);
   const [value, setValue] = useState<any>();
+  const [dataCollection, setDataCollection] = useState<any>([]);
 
   const [transactionHash, setTransactionHash] = useState("");
   const [showModalBid, setShowModalBid] = useState(false);
@@ -125,6 +148,12 @@ function NFTDetails() {
   const [Historical, setHistorical] = useState<any>([]);
 
   const [isLoadingDelete, setIsLoadingDelete] = useState(false);
+  const [isLoadingOffer, setIsLoadingOffer] = useState(false);
+  const [isLoadingBid, setIsLoadingBid] = useState(false);
+  const [isLoadingBuyNow, setIsLoadingBuyNow] = useState(false);
+  const [isBurning, setIsBurning] = useState(false);
+  const [loadingIndex, setLoadingIndex] = useState<null | number>(null);
+
 
   const [showModalBuyNow, setShowModalBuyNow] = useState(false);
   const [showModalOffer, setShowModalOffer] = useState(false);
@@ -133,20 +162,28 @@ function NFTDetails() {
 
   const [highestBid, setHighestBid] = useState<any>([]);
   const navigate = useNavigate();
+  
 
-  const provider = new ethers.providers.Web3Provider((window as any).ethereum);
-  const signer = provider.getSigner();
+  let provider : any;
+
+  if (address) {
+    provider = new ethers.providers.Web3Provider(window.ethereum).getSigner();
+  } else {
+    provider = new ethers.providers.JsonRpcProvider("https://eth-sepolia.g.alchemy.com/v2/dDrOp8IBds7sg91k_C73L1PXYEud9_5p");
+  }
 
   let myNftMarket = new ethers.Contract(
     Contracts.NFTMarket.address,
     Contracts.NFTMarket.abi,
-    signer
+    provider
   );
+  
   let myNFT = new ethers.Contract(
     Contracts.MyNFT.address,
     Contracts.MyNFT.abi,
-    signer
+    provider
   );
+  
 
   function getCurrentTimestampInSeconds() {
     return Math.floor(Date.now() / 1000);
@@ -155,6 +192,10 @@ function NFTDetails() {
   const buyNFT = async (TokenId: any, price: any) => {
     try {
       console.log("Buy NFT");
+
+      setShowModalBuyNow(false);
+      setIsLoadingBuyNow(true);
+      
 
       // convert price to wei
       const priceWei = ethers.utils.parseEther(price.toString());
@@ -172,13 +213,16 @@ function NFTDetails() {
         setShowModalSucces(true);
         setTimeout(() => {
           setShowModalSucces(false);
-
+          setShowModalBuyNow(false);
+          setIsLoadingBuyNow(false);
           setTimeout(() => {
             navigate("/wallet");
           });
         }, 3000);
       }, 3000);
     } catch (error) {
+      setShowModalBuyNow(false);
+      setIsLoadingBuyNow(false);
       console.log(error);
     }
   };
@@ -228,12 +272,10 @@ function NFTDetails() {
       listEndTime: remainingMilliseconds,
       collection: collection.data.name,
     };
-
-    console.table(item);
-
+    
     setNft(item);
-
     setHighestBid(ethers.utils.formatEther(transactionSales.highestBid));
+    getAllNftsFromACollection(collection.data.name);
   };
 
   const getEthPrice = async () => {
@@ -249,11 +291,12 @@ function NFTDetails() {
 
   const bid = async (amount: any) => {
     try {
-      const signerAddress = await signer.getAddress();
+
+      setIsLoadingBid(true);
       // Vérifiez que le jeton est en vente aux enchères
       const isOnAuction = await myNftMarket.isTokenOnAuction(nft.tokenId);
 
-      if (nft.owner == signerAddress) {
+      if (nft.owner == address) {
         console.error("Vous ne pouvez pas enchérir sur votre propre jeton");
         return;
       }
@@ -265,6 +308,7 @@ function NFTDetails() {
         console.log("Le jeton est en vente aux enchères");
       }
 
+      setShowModalBid(false);
       // Obtenez les informations sur la vente
       const saleData = await myNftMarket.getAllData(nft.tokenId);
 
@@ -291,7 +335,7 @@ function NFTDetails() {
       console.log("Transaction Mined");
 
       const transactionData = {
-        from: signerAddress, // L'adresse de l'expéditeur
+        from: address, // L'adresse de l'expéditeur
         to: nft.owner, // L'adresse du destinataire
         amount: amount, // Le montant de l'offre
         tokenId: nft.tokenId, // L'ID du jeton
@@ -304,8 +348,11 @@ function NFTDetails() {
         );
         setHistorical([...response.data]);
         getAllBidsFromToken();
+        setIsLoadingBid(false);
+        getNftFromId();
       } catch (error) {
         console.error("Error creating transaction: ", error);
+        setIsLoadingBid(false);
       }
     } catch (error) {
       console.error(error);
@@ -313,7 +360,6 @@ function NFTDetails() {
   };
 
   const getAllBidsFromToken = async () => {
-    const signerAddress = await signer.getAddress();
     // Vérifiez que le jeton est en vente aux enchères
     const getBidData = await myNftMarket.getBidData(id);
 
@@ -324,7 +370,8 @@ function NFTDetails() {
 
     try {
 
-      let currentBlockNumber = await provider.getBlockNumber();
+      let currentBlockNumber = await provider.provider.getBlockNumber();
+
 
       // Set filter to listen for Transfer events from the token contract
       let filter = myNFT.filters.Transfer(null, null, id);
@@ -335,10 +382,10 @@ function NFTDetails() {
       // Process the events
       let history = [];
       for (let event of events) {
-        let block = await provider.getBlock(event.blockNumber);
+        let block = await provider.provider.getBlock(event.blockNumber);
 
         // Get transaction
-        let transaction = await provider.getTransaction(event.transactionHash);
+        let transaction = await provider.provider.getTransaction(event.transactionHash);
 
         // Get Sale Data
         let saleData = await myNftMarket.sales(event.args?.tokenId.toString());
@@ -367,7 +414,6 @@ function NFTDetails() {
 
 
   const getAllOffers = async () => {
-    const signerAddress = await signer.getAddress();
 
     const isOnSale = await myNftMarket.isTokenOnSale(id);
 
@@ -398,9 +444,8 @@ function NFTDetails() {
 
   const burnNft = async () => {
     try {
-      const signerAddress = await signer.getAddress();
 
-      if (nft.owner != signerAddress) {
+      if (nft.owner != address) {
         console.error("Vous ne pouvez pas brûler ce jeton");
         return;
       }
@@ -433,6 +478,7 @@ function NFTDetails() {
 
       localStorage.removeItem("loadingDelete");
       setIsLoadingDelete(false);
+      navigate("/wallet");
 
       // navigate("/wallet");
     } catch (error) {
@@ -444,11 +490,12 @@ function NFTDetails() {
 
   const makeAnOffer = async (offerPrice: any) => {
     try {
-      const signerAddress = await signer.getAddress();
+
+      setIsLoadingOffer(true);
 
       const isOnSale = await myNftMarket.isTokenOnSale(id);
 
-      if (nft.owner == signerAddress) {
+      if (nft.owner == address) {
         console.error("Vous ne pouvez pas enchérir sur votre propre jeton");
         return;
       }
@@ -479,10 +526,11 @@ function NFTDetails() {
         theme: "dark",
       });
 
+      setIsLoadingOffer(false);
       getAllOffers();
-
       console.log("makeAnOffer :", offerPrice);
     } catch (error) {
+      setIsLoadingOffer(false);
       console.error(error);
     }
   };
@@ -542,20 +590,21 @@ function NFTDetails() {
   };
 
   const acceptOffer = async (index: any) => {
-
-    const signerAddress = await signer.getAddress();
-
+    setLoadingIndex(index); // Set the loading state
+  
     const offer = offers[index];
-
     const transaction = await myNftMarket.acceptOffer(id, index);
-
+  
     await transaction.wait();
-
+  
     console.log("Transaction Done");
-
+  
     getAllOffers();
-
+    getNftFromId();
+  
+    setLoadingIndex(null); // Clear the loading state
   }
+  
 
   const ListOnMarketPlace = async (
     tokenId: any,
@@ -565,39 +614,25 @@ function NFTDetails() {
   ) => {
     try {
       const timeConverted = convertDurationToSeconds(time);
-
-      setLoadingListing(true);
+      console.log("Time :" + timeConverted)
       console.log("List");
       localStorage.setItem(`loading-listing`, "true"); // save loading state to local storage
 
       console.log("TokenId :" + tokenId);
       console.log("Method :" + method);
 
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      let NFTContract = new ethers.Contract(
-        Contracts.MyNFT.address,
-        Contracts.MyNFT.abi,
-        signer
-      );
-      let nftMarketContract = new ethers.Contract(
-        Contracts.NFTMarket.address,
-        Contracts.NFTMarket.abi,
-        signer
-      );
-
       const priceInWei = ethers.utils.parseEther(price);
 
       const methodNumber =
         method === "Fixed price" ? 1 : method === "Timed auction" ? 2 : 0;
 
-      const approveTx = await NFTContract.approve(
+      const approveTx = await myNFT.approve(
         Contracts.NFTMarket.address,
         tokenId
       );
       await approveTx.wait();
 
-      const sale = await nftMarketContract.setSale(
+      const sale = await myNftMarket.setSale(
         tokenId,
         methodNumber,
         priceInWei,
@@ -635,13 +670,93 @@ function NFTDetails() {
     }
   };
 
+
+  const getAllNftsFromACollection = async (collectionName : any) => {
+
+    let dataRequest;
+
+    try{
+    const request = axios.get('http://54.37.68.74:3030/collections/'+String(collectionName))
+    const response = await request;
+    dataRequest = response.data;
+
+    }catch(error){
+      console.error(error)
+    }
+
+    let transactionSales = await myNftMarket.getAllSales();
+
+    const Sales = await Promise.all(
+      transactionSales.map(async (i: any) => {
+        const dataFetch = await myNFT.getTokenData(i.toNumber());
+
+        const getAllData = await myNftMarket.getAllData(i.toNumber());
+
+        const price = ethers.utils.formatEther(getAllData.price);
+
+        const isOnSale = await myNftMarket.isTokenOnSale(i.toNumber());
+        const isOnAuction = await myNftMarket.isTokenOnAuction(i.toNumber());
+
+        console.log(dataFetch[0], isOnSale, isOnAuction);
+        let type = "none";
+        let listEndTime = 0;
+        let remainingMilliseconds = 0;
+
+        if (isOnSale) {
+          type = "sale";
+          listEndTime = getAllData.salesEndTime.toNumber();
+        } else if (isOnAuction) {
+          type = "auction";
+          listEndTime = getAllData.auctionEndTime.toNumber();
+        }
+
+        const remainingSeconds = listEndTime - getCurrentTimestampInSeconds();
+
+        if (remainingSeconds > 0) {
+          remainingMilliseconds = remainingSeconds * 1000;
+        }
+
+        const collection = await axios.get(
+          "http://54.37.68.74:3030/getCollection/" + i.toNumber()
+        );
+
+        const item = {
+          tokenId: i.toNumber(),
+          name: dataFetch[0],
+          description: dataFetch[1],
+          image: dataFetch[2],
+          price: price,
+          owner: dataFetch[4],
+          type: type.toString(),
+          listEndTime: remainingMilliseconds,
+          highestBid: ethers.utils.formatEther(getAllData.highestBid),
+          collectionName : collection.data.name,
+        };
+
+        return item;
+      })
+    );
+
+    // Filtrer les nfts qui ne sont pas de la collection demandée et les nfts qui ne sont pas en vente et différent de lui même
+     
+
+    const filteredSales = Sales.filter((sale: any) => {
+
+      return sale.collectionName === collectionName && sale.type !== "none" && sale.tokenId !== Number(id);
+    });
+
+    console.log("filteredSales : " ,filteredSales)
+
+    setDataCollection(filteredSales);
+  }
+
   useEffect(() => {
     getNftFromId();
     getEthPrice();
     getAllBidsFromToken();
     getAllHistoryFromToken();
     getAllOffers();
-    getStates();
+    // getStates();
   }, []);
 
   return (
@@ -698,18 +813,18 @@ function NFTDetails() {
                               .map((bid: any, i: any) => {
                                 return (
                                   <tr key={i}>
-                                    <td className="text-sm">
+                                    <td className="text-xs">
                                       from : <span className="font-medium"> {shortenAddress(bid.bidder)} </span>
                                     </td>
-                                    <td className="text-sm">
+                                    <td className="text-xs">
                                       {formatTimestamp(bid.timestamp)}
                                     </td>
                                     <td className="flex items-end gap-x-1">
-                                      <p className="font-bold text-sm ">
+                                      <p className="font-bold text-xs ">
                                         {ethers.utils.formatEther(bid.amount)}{" "}
                                         ETH = 
                                       </p>
-                                      <p className="font-normal text-sm">
+                                      <p className="font-normal text-xs">
                                         {(
                                           parseFloat(
                                             ethers.utils.formatEther(bid.amount)
@@ -742,31 +857,32 @@ function NFTDetails() {
 
                           {Historical.map((transaction: any, i: any) => {
                             return (
-                              <tr key={i}>
-                                <td className="text-sm">
+                                <tr key={i}>
+                                <td className="text-xs">
+                                  <Link key={i} to={`https://sepolia.etherscan.io/tx/${transaction.transactionHash}`}>
                                   from: <span className="font-medium"> {shortenAddress(transaction.from)}</span>
+                                  </Link>
                                 </td>
+                              
                                 <td className="text-xs">
                                   {formatDateTime(transaction.timestamp)}{" "}
                                 </td>
-                                <td className="text-sm">
+                                <td className="text-xs">
                                   to: <span className="font-medium "> {shortenAddress(transaction.to)}</span>
                                 </td>
-                                <td className="flex flex-col items-end">
+                                <td className="flex items-end  ">
                                   <p className="font-bold text-xs">
-                                    {transaction.value} ETH
-                                  </p>
-                                  <p className="font-normal text-xs">
-                                    {(
+                                    {transaction.value} ETH <span className="text-xs font-light"> =   {(
                                       parseFloat(transaction.value) * ethPrice
                                     ).toFixed(3)}{" "}
-                                    $
+                                    $ </span>
+                                  </p>
+                                  <p className="font-normal text-xs">
+                                  
                                   </p>
                                   </td>
-                                  <td className="text-xs cursor-pointer hover:underline">
-                                    <a href={`https://sepolia.etherscan.io/tx/${transaction.transactionHash}`}> Consult hash</a>
-                                  </td>
-                              </tr>
+                                  </tr>
+                       
                             );
                           })}
                         </tbody>
@@ -846,7 +962,7 @@ function NFTDetails() {
               </div>
 
               {/* Right */}
-              <div className="h-200 w-2/5 p-2">
+              <div className="h-154 w-2/5 p-2">
                 <div className="sticky top-20 z-19 w-full ">
                   <h1 className="text-3xl xl:text-4xl font-bold text-neutral mb-1 pt-12">
                     {nft?.name}
@@ -875,10 +991,13 @@ function NFTDetails() {
                       ethPrice={ethPrice}
                       showModalBuyNow={setShowModalBuyNow}
                       showModalOffer={setShowModalOffer}
+                      isOfferLoading={isLoadingOffer}
+                      isLoadingBuyNow={isLoadingBuyNow}
                       burnNft={burnNft}
                       unlistNft={unList}
                       isLoadingDelete={isLoadingDelete}
                       isLoadingUnlisting={loadingUnlisting}
+                      isBurning={isBurning}
                     />
                   ) : (
                     <AuctionComponant
@@ -890,16 +1009,18 @@ function NFTDetails() {
                       ethPrice={ethPrice}
                       setShowModalBid={setShowModalBid}
                       burnNft={burnNft}
+                      isLoadingBid={isLoadingBid}
                       isLoadingDelete={isLoadingDelete}
                       setShowModalList={setShowModal}
                       isLoadingListing={loadingListing}
                       isLoadingUnlisting={loadingUnlisting}
+                      isBurning={isBurning}
                     />
                   )}
 
                   {nft.owner === address && nft.type === "sale" && (
                     <div className="w-full">
-                      <h3 className="text-2xl font-medium text-neutral mt-7 mb-7">
+                      <h3 className="text-2xl font-medium text-neutral mt-9 mb-7">
                         List of offers
                       </h3>
                       <div
@@ -922,13 +1043,13 @@ function NFTDetails() {
                                         {formatTimestamp(offer.timestamp)}
                                       </td>
                                       <td className="flex flex-col">
-                                        <p className="font-bold text-sm">
+                                        <p className="font-bold text-xs">
                                           {ethers.utils.formatEther(
                                             offer.amount
                                           )}{" "}
                                           ETH
                                         </p>
-                                        <p className="font-normal text-sm">
+                                        <p className="font-normal text-xs">
                                           {(
                                             parseFloat(
                                               ethers.utils.formatEther(
@@ -940,25 +1061,16 @@ function NFTDetails() {
                                         </p>
                                       </td>
                                       <td className="">
-                                        <button
-                                          onClick={() => acceptOffer(i)}
-                                          type="button"
-                                          className="text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 
-                                          font-medium rounded-lg text-sm pr-7 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-neutral 
-                                          dark:border-gray-700 dark:text-white dark:hover:bg-gray-700"
-                                        >
-                                          <svg
-                                            aria-hidden="true"
-                                            className="w-6 h-5"
-                                            viewBox="0 0 2405 2501"
-                                            fill="none"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                          >
-                                            {/* SVG Paths */}
-                                          </svg>
-                                          Accept offer
-                                        </button>
-                                      </td>
+                                      <button
+                                        onClick={() => acceptOffer(i)}
+                                        type="button"
+                                        className={`text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 
+                                        font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-neutral 
+                                        dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 ${loadingIndex === i ? 'loading ml-3' : ''}`}
+                                      >
+                                        {loadingIndex === i ? '' : 'Accept'}
+                                      </button>
+                                    </td>
                                     </tr>
                                   );
                                 })}
@@ -980,12 +1092,35 @@ function NFTDetails() {
               </h3>
 
               <div className="flex flex-row h-full w-full space-x-5">
-                <div className="border border-gray-800 h-64 w-1/6 "></div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+              {dataCollection.map((value : any, index: any) => {
+                return (
+                  <div key={index}>
+                    <Link to={`/nft/${value.tokenId}`}>
+                      <NFT_CARD_MARKETPLACE
+                        key={index}
+                        tokenId={value.tokenId}
+                        owner={value.owner}
+                        price={value.price}
+                        image={value.image}
+                        type={value.type}
+                        data={value}
+                      />
+                    </Link>
+                  </div>
+                );
+              })}
+            </div>
+
+
+
+                {/* <div className="border border-gray-800 h-64 w-1/6 "></div>
                 <div className="border border-gray-800 h-64 w-1/6"></div>
                 <div className="border border-gray-800 h-64 w-1/6"></div>
                 <div className="border border-gray-800 h-64 w-1/6"></div>
                 <div className="border border-gray-800 h-64 w-1/6"></div>
-                <div className="border border-gray-800 h-64 w-1/6"></div>
+                <div className="border border-gray-800 h-64 w-1/6"></div> */}
               </div>
             </div>
 
