@@ -226,7 +226,8 @@ function Wallet() {
   ) => {
     try {
         
-        const timeConverted = convertDurationToSeconds(time);
+      const timeConverted = convertDurationToSeconds(time);
+      console.log("Time converted : " + timeConverted);
 
       setLoading((prev) => ({ ...prev, [tokenId]: true }));
       console.log("List");

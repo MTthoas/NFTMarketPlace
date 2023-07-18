@@ -36,36 +36,55 @@ import { timeStamp } from "console";
 import "./stylesheets/Nft.css";
 import { get } from "http";
 
-function convertDurationToSeconds(durationText: any) {
+function convertDurationToSeconds(durationText : any) {
   let durationInSeconds;
   switch (durationText) {
-    case "1 minutes":
-      durationInSeconds = 60;
+      case "1 minutes":
+          durationInSeconds = (60);
       break;
-    case "5 minutes":
-      durationInSeconds = 5 * 60;
+      case "5 minutes":
+          durationInSeconds = (5 * 60);
       break;
-    case "15 minutes":
-      durationInSeconds = (30 * 60) / 2;
+      case "15 minutes":
+          durationInSeconds = (30 * 60)/2;
       break;
-    case "30 minutes":
-      durationInSeconds = 30 * 60;
-      break;
-    case "1 heure":
-      durationInSeconds = 1 * 60 * 60;
-      break;
-    case "2 heures":
-      durationInSeconds = 2 * 60 * 60;
-      break;
-    case "6 heures":
-      durationInSeconds = 6 * 60 * 60;
-      break;
-    case "1 jour":
-      durationInSeconds = 24 * 60 * 60;
-      break;
-    default:
-      durationInSeconds = 0; // Si aucune option n'est sélectionnée ou pour une entrée non valide
-      break;
+      case "30 minutes":
+          durationInSeconds = 30 * 60;
+          break;
+      case "1 heure":
+          durationInSeconds = 1 * 60 * 60;
+          break;
+      case "2 heures":
+          durationInSeconds = 2 * 60 * 60;
+          break;
+      case "6 heures":
+          durationInSeconds = 6 * 60 * 60;
+          break;
+      case "1 jour":
+          durationInSeconds = 24 * 60 * 60;
+          break;
+      case "2 jours":
+          durationInSeconds = 2 * 24 * 60 * 60;
+          break;
+      case "3 jours":
+          durationInSeconds = 3 * 24 * 60 * 60;
+          break;
+      case "4 jours":
+          durationInSeconds = 4 * 24 * 60 * 60;
+          break;
+      case "5 jours":
+          durationInSeconds = 5 * 24 * 60 * 60;
+          break;
+      case "6 jours":
+          durationInSeconds = 6 * 24 * 60 * 60;
+          break;
+      case "1 semaine":
+          durationInSeconds = 7 * 24 * 60 * 60;
+          break;
+
+      default:
+          durationInSeconds = 0; // Si aucune option n'est sélectionnée ou pour une entrée non valide
+          break;
   }
   return durationInSeconds;
 }
@@ -174,8 +193,9 @@ function NFTDetails() {
     try {
       console.log("Buy NFT");
 
-      setShowModalBuyNow(true);
+      setShowModalBuyNow(false);
       setIsLoadingBuyNow(true);
+      
 
       // convert price to wei
       const priceWei = ethers.utils.parseEther(price.toString());
@@ -458,6 +478,7 @@ function NFTDetails() {
 
       localStorage.removeItem("loadingDelete");
       setIsLoadingDelete(false);
+      navigate("/wallet");
 
       // navigate("/wallet");
     } catch (error) {
@@ -593,8 +614,7 @@ function NFTDetails() {
   ) => {
     try {
       const timeConverted = convertDurationToSeconds(time);
-
-      setLoadingListing(true);
+      console.log("Time :" + timeConverted)
       console.log("List");
       localStorage.setItem(`loading-listing`, "true"); // save loading state to local storage
 
@@ -736,7 +756,7 @@ function NFTDetails() {
     getAllBidsFromToken();
     getAllHistoryFromToken();
     getAllOffers();
-    getStates();
+    // getStates();
   }, []);
 
   return (

@@ -15,11 +15,11 @@ export default function AuctionComponant({
   ethPrice,
   burnNft,
   isLoadingBid,
-  isBurning,
   isLoadingDelete,
   setShowModalList,
   isLoadingListing,
-  isLoadingUnlisting
+  isLoadingUnlisting,
+  isBurning,
 }: any) {
   const { address } = useAccount();
 
