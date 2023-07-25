@@ -27,7 +27,7 @@ Run the following command to start the MongoDB database with Docker:
 docker-compose up mongodb
 ```
 
-## Starting the Server ( Express )
+## Starting the Server (Express)
 
 In the server folder, run the following command to start the server:
 
@@ -35,7 +35,7 @@ In the server folder, run the following command to start the server:
 
  
 
-## Démarrage de l'interface utilisateur ( React)
+## Starting the User Interface (React)
 
 
 In the frontend folder, run the following command to start the user interface:
