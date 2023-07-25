@@ -1,70 +1,86 @@
-# Getting Started with Create React App
+# Web3 Project - NFT Marketplace
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was created by Pecquery Matthias and Rainaud Vincent. It is a Web3 application to interact with the Ethereum blockchain (ERC721). Using : 
+- Hardhat
+- Solidity
+- React / Tailwind / DaisyUI
+- Express, NodeJS
+- MongoDB
 
-## Available Scripts
+## Prerequisites
 
-In the project directory, you can run:
+- Docker
+- Node.js
+- npm
+- Metamask
 
-### `npm start`
+## Installation
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Clone this repository on your local machine.
+Navigate to the project folder.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Starting the Database
 
-### `npm test`
+Run the following command to start the MongoDB database with Docker:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+docker-compose up mongodb
+```
 
-### `npm run build`
+## Starting the Server ( Express )
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+In the server folder, run the following command to start the server:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+    > npm run start
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+ 
 
-### `npm run eject`
+## Démarrage de l'interface utilisateur ( React)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+In the frontend folder, run the following command to start the user interface:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+    > npm run start
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+This launches the application in development mode. Open http://localhost:3000 to view it in your browser.
 
-## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Prérequis
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Docker
+- Node.js
+- npm
 
-### Code Splitting
+## Installation
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+1. Clonez ce dépôt sur votre machine locale.
+2. Naviguez jusqu'au dossier du projet.
 
-### Analyzing the Bundle Size
+## Démarrage de la base de données
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Exécutez la commande suivante pour démarrer la base de données MongoDB avec Docker :
 
-### Making a Progressive Web App
+```bash
+docker-compose up mongodb
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Démarrage du serveur ( Express )
 
-### Advanced Configuration
+Dans le dossier server, exécutez la commande suivante pour démarrer le serveur :
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+    > npm run start
 
-### Deployment
+ 
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Démarrage de l'interface utilisateur ( React)
 
-### `npm run build` fails to minify
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Dans le dossier frontend, exécutez la commande suivante pour démarrer l'interface utilisateur :
+
+    > npm run start
+
+Lance l'application en mode développement. Ouvrez http://localhost:3000 pour la visualiser dans votre navigateur.
+
+## License
+
+MIT License
