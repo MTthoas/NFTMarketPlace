@@ -5,7 +5,7 @@ This project was created by Pecquery Matthias and Rainaud Vincent. It is a Web3 
 - Solidity
 - React / Tailwind / DaisyUI
 - Express, NodeJS
-- MongoDB
+- Docker, MongoDB
 
 ## Prerequisites
 
